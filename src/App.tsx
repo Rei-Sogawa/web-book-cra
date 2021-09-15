@@ -10,7 +10,7 @@ const App: VFC = () => {
         {pathTemplates.map((pathTemplate) => {
           const { Component } = routeMap[pathTemplate]
           return (
-            <Route>
+            <Route key={pathTemplate}>
               <Component />
             </Route>
           )
