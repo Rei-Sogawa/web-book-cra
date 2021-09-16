@@ -80,6 +80,14 @@ const IndexPage: VFC = () => {
                 pl="4"
               >
                 <HStack>
+                  <Text color="gray.500" fontSize="sm" fontWeight="bold">
+                    ページ
+                  </Text>
+
+                  <Text color="gray.500" fontSize="sm" fontWeight="bold">
+                    4 / 4
+                  </Text>
+
                   <HStack spacing="0">
                     <Button size="sm" variant="link">
                       <ArrowBackIcon cursor="pointer" color="gray.500" />
@@ -88,10 +96,6 @@ const IndexPage: VFC = () => {
                       <ArrowForwardIcon cursor="pointer" color="gray.500" />
                     </Button>
                   </HStack>
-
-                  <Text color="gray.500" fontSize="sm" fontWeight="bold">
-                    4 / 4
-                  </Text>
                 </HStack>
               </Box>
 
