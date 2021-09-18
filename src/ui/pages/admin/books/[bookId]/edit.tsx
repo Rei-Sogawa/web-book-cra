@@ -79,11 +79,7 @@ const BookEditPage: VFC = () => {
 
           <VStack flex="1" alignSelf="stretch">
             <Input placeholder="本のタイトル" size="lg" fontWeight="bold" />
-            <AutoResizeTextarea
-              flex="1"
-              placeholder="内容紹介"
-              _placeholder={{ fontWeight: 'bold' }}
-            />
+            <AutoResizeTextarea flex="1" placeholder="内容紹介" />
           </VStack>
         </HStack>
       </Container>
