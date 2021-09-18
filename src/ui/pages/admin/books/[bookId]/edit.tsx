@@ -56,7 +56,7 @@ const BookEditPage: VFC = () => {
 
       <Container maxW="container.md" py="8">
         <HStack alignSelf="stretch" spacing="8">
-          <VStack spacing="3">
+          <VStack spacing="3" alignSelf="start">
             <Box
               cursor="pointer"
               width="210px"
@@ -79,7 +79,9 @@ const BookEditPage: VFC = () => {
 
           <VStack flex="1" alignSelf="stretch">
             <Input placeholder="本のタイトル" size="lg" fontWeight="bold" />
-            <AutoResizeTextarea flex="1" placeholder="内容紹介" />
+            <Box flex="1" alignSelf="stretch">
+              <AutoResizeTextarea placeholder="内容紹介" minH="100%" />
+            </Box>
           </VStack>
         </HStack>
       </Container>
