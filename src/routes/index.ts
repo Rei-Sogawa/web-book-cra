@@ -3,9 +3,19 @@ import { generatePath } from 'react-router'
 import { Admin, Public } from '@/routes/redirectHOCs'
 import IndexPage from '@/ui/pages'
 import ChapterEditPage from '@/ui/pages/admin/books/[bookId]/chapters/[chapterId]/edit'
+import BookEditPage from '@/ui/pages/admin/books/[bookId]/edit'
+import BookNewPage from '@/ui/pages/admin/books/new'
 
 export const routeMap = {
   '/': { path: () => '/', Component: Public(IndexPage) },
+  '/admin/books/new': {
+    path: () => '/admin/books/new',
+    Component: Admin(BookNewPage),
+  },
+  '/admin/books/:bookId/edit': {
+    path: ({ bookId }: { bookId: string }) => generatePath('/admin/books/:bookId/edit', { bookId }),
+    Component: Admin(BookEditPage),
+  },
   '/admin/books/:bookId/chapters/:chapterId/edit': {
     path: ({ bookId, chapterId }: { bookId: string; chapterId: string }) =>
       generatePath('/admin/books/:bookId/chapters/:chapterId/edit', { bookId, chapterId }),
