@@ -111,11 +111,92 @@ const MarkedContentEditor: VFC<MarkedContentEditorProps> = ({ value, onChange })
   )
 }
 
+type ChapterEditorProps = {
+  title: string
+  setTitle: (title: string) => void
+  content: string
+  setContent: (content: string) => void
+}
+
+const ChapterEditor: VFC<ChapterEditorProps> = ({ title, setTitle, content, setContent }) => {
+  const { isOpen: isPreviewing, onOpen: preview, onClose: edit } = useDisclosure()
+
+  return (
+    <HStack pb="8">
+      <VStack spacing="8">
+        {isPreviewing ? (
+          <Text
+            alignSelf="start"
+            bg="white"
+            fontSize="lg"
+            fontWeight="bold"
+            h="48px"
+            w="720px"
+            py="2"
+            px="4"
+            border="1px"
+            borderColor="gray.200"
+            borderRadius="md"
+            display="flex"
+            alignItems="center"
+            boxShadow="md"
+          >
+            {title}
+          </Text>
+        ) : (
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Title"
+            size="lg"
+            alignSelf="start"
+            bg="white"
+            width="720px"
+            fontWeight="bold"
+          />
+        )}
+
+        <HStack spacing="8">
+          {isPreviewing ? (
+            <MarkedContent content={content} />
+          ) : (
+            <MarkedContentEditor value={content} onChange={(e) => setContent(e.target.value)} />
+          )}
+
+          <VStack alignSelf="start" spacing="4">
+            <Box>
+              <Text textAlign="center" fontSize="sm" fontWeight="bold" color="gray.500">
+                Edit / Preview
+              </Text>
+              <Center mt="1">
+                <Switch
+                  size="lg"
+                  isChecked={isPreviewing}
+                  onChange={(e) => (e.target.checked ? preview() : edit())}
+                />
+              </Center>
+            </Box>
+
+            <Box>
+              <Text textAlign="center" fontSize="sm" fontWeight="bold" color="gray.500">
+                Upload Image
+              </Text>
+              <Center mt="1">
+                <Button size="sm">
+                  <Icon as={FaRegImage} h="6" w="6" color="gray.500" />
+                </Button>
+              </Center>
+            </Box>
+          </VStack>
+        </HStack>
+      </VStack>
+    </HStack>
+  )
+}
+
 const ChapterEditPage: VFC = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-
-  const { isOpen: isPreviewing, onOpen: preview, onClose: edit } = useDisclosure()
 
   return (
     <VStack spacing="8" minHeight="100vh" bg="gray.50">
@@ -123,75 +204,7 @@ const ChapterEditPage: VFC = () => {
         <Header title={'タイトル'} onClickSave={() => Promise.resolve()} />
       </Box>
 
-      <HStack pb="8">
-        <VStack spacing="8">
-          {isPreviewing ? (
-            <Text
-              alignSelf="start"
-              bg="white"
-              fontSize="lg"
-              fontWeight="bold"
-              h="48px"
-              w="720px"
-              py="2"
-              px="4"
-              border="1px"
-              borderColor="gray.200"
-              borderRadius="md"
-              display="flex"
-              alignItems="center"
-              boxShadow="md"
-            >
-              {title}
-            </Text>
-          ) : (
-            <Input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Title"
-              size="lg"
-              alignSelf="start"
-              bg="white"
-              width="720px"
-              fontWeight="bold"
-            />
-          )}
-
-          <HStack spacing="8">
-            {isPreviewing ? (
-              <MarkedContent content={content} />
-            ) : (
-              <MarkedContentEditor value={content} onChange={(e) => setContent(e.target.value)} />
-            )}
-
-            <VStack alignSelf="start" spacing="4">
-              <Box>
-                <Text textAlign="center" fontSize="sm" fontWeight="bold" color="gray.500">
-                  Edit / Preview
-                </Text>
-                <Center mt="1">
-                  <Switch
-                    size="lg"
-                    isChecked={isPreviewing}
-                    onChange={(e) => (e.target.checked ? preview() : edit())}
-                  />
-                </Center>
-              </Box>
-
-              <Box>
-                <Text textAlign="center" fontSize="sm" fontWeight="bold" color="gray.500">
-                  Upload Image
-                </Text>
-                <Center mt="1">
-                  <Button size="sm">
-                    <Icon as={FaRegImage} h="6" w="6" color="gray.500"></Icon>
-                  </Button>
-                </Center>
-              </Box>
-            </VStack>
-          </HStack>
-        </VStack>
-      </HStack>
+      <ChapterEditor {...{ title, setTitle, content, setContent }} />
     </VStack>
   )
 }
