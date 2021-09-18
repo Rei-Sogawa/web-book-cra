@@ -22,7 +22,8 @@ import { FaArrowLeft, FaRegImage } from 'react-icons/fa'
 import ResizeTextarea from 'react-textarea-autosize'
 
 import { useMarked } from '@/hooks/useMarked'
-import { getImageUrl, uploadImage } from '@/service/storage'
+import * as ChapterService from '@/service/chapter'
+import { deleteImage, getImageUrl, uploadImage } from '@/service/storage'
 
 type HeaderProps = {
   title: string
@@ -119,26 +120,21 @@ type ChapterEditorProps = {
   setTitle: (title: string) => void
   content: string
   setContent: (content: string) => void
+  handleUploadImage: ChangeEventHandler<HTMLInputElement>
 }
 
-const ChapterEditor: VFC<ChapterEditorProps> = ({ title, setTitle, content, setContent }) => {
+const ChapterEditor: VFC<ChapterEditorProps> = ({
+  title,
+  setTitle,
+  content,
+  setContent,
+  handleUploadImage,
+}) => {
   const { isOpen: isPreviewing, onOpen: preview, onClose: edit } = useDisclosure()
 
   const inputImageRef = useRef<HTMLInputElement>(null)
   const handleClickUploadImage = () => {
     inputImageRef.current?.click()
-  }
-  const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {
-    const file = head(e.target.files)
-    if (file) {
-      const path = `chapters-1-images-${getUnixTime(new Date())}`
-      await uploadImage({
-        path,
-        blob: file,
-      })
-      const imageUrl = await getImageUrl(path)
-      console.log(imageUrl)
-    }
   }
 
   return (
@@ -225,13 +221,30 @@ const ChapterEditPage: VFC = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
 
+  const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {
+    const file = head(e.target.files)
+    if (file) {
+      const path = `books-1-chapters-1-images-${getUnixTime(new Date())}`
+      await uploadImage({
+        path,
+        blob: file,
+      })
+      const imageUrl = await getImageUrl({ path })
+      await ChapterService.updateChapter({
+        bookId: '1',
+        chapterId: '1',
+        editedData: { imageUrls: [imageUrl] },
+      })
+    }
+  }
+
   return (
     <VStack spacing="8" minHeight="100vh" bg="gray.50">
       <Box alignSelf="stretch">
         <Header title={'タイトル'} onClickSave={() => Promise.resolve()} />
       </Box>
 
-      <ChapterEditor {...{ title, setTitle, content, setContent }} />
+      <ChapterEditor {...{ title, setTitle, content, setContent, handleUploadImage }} />
     </VStack>
   )
 }
