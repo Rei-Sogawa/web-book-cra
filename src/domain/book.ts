@@ -3,7 +3,7 @@ import { Timestamp, TimestampToFieldValue, WithId } from '@/types'
 
 export type BookData = {
   title: string
-  authorIds: string[]
+  authorNames: string[]
   imageUrl: string | null
   price: number
   published: boolean
@@ -16,7 +16,7 @@ export type Book = WithId<BookData>
 
 export const getDefaultData = (): TimestampToFieldValue<BookData> => ({
   title: '',
-  authorIds: [],
+  authorNames: [],
   imageUrl: null,
   price: 0,
   published: false,

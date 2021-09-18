@@ -10,11 +10,11 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react'
-import { VFC } from 'react'
+import { useEffect, VFC } from 'react'
 import { FaArrowLeft } from 'react-icons/fa'
 import { useParams } from 'react-router'
 
-import { ChapterService } from '@/service/chapter'
+import { ChapterService, useChapters } from '@/service/chapter'
 import { AutoResizeTextarea } from '@/ui/basics/AutoResizeTextarea'
 
 type HeaderProps = {
@@ -44,8 +44,13 @@ const Header: VFC<HeaderProps> = ({ onClickSave }) => {
 const BookEditPage: VFC = () => {
   const { bookId } = useParams<{ bookId: string }>()
 
+  const chapters = useChapters({ bookId })
+
   const handleClickAddChapter = async () => {
-    await ChapterService.createDoc({ title: '無題のチャプター' }, { bookId })
+    await ChapterService.createDoc(
+      { title: '無題のチャプター', number: chapters!.length + 1 },
+      { bookId }
+    )
   }
 
   return (
@@ -78,7 +83,7 @@ const BookEditPage: VFC = () => {
           </VStack>
 
           <VStack flex="1" alignSelf="stretch">
-            <Input placeholder="本のタイトル" size="lg" fontWeight="bold" />
+            <Input placeholder="本のタイトル" size="lg" fontWeight="bold" fontSize="2xl" />
             <Box flex="1" alignSelf="stretch">
               <AutoResizeTextarea placeholder="内容紹介" minH="100%" />
             </Box>
@@ -89,17 +94,28 @@ const BookEditPage: VFC = () => {
       <Box flex="1" bg="gray.50" alignSelf="stretch">
         <Container maxW="container.md" py="8">
           <VStack spacing="8">
-            <Heading alignSelf="start">Chapters</Heading>
+            <Text alignSelf="start" fontWeight="bold" fontSize="2xl">
+              Chapters
+            </Text>
 
             <VStack alignSelf="stretch" alignItems="stretch" spacing="0.5">
-              <Box h="60px" bg="white"></Box>
+              {chapters?.map((chapter) => (
+                <HStack key={chapter.id} bg="white" py="4" px="8" spacing="8">
+                  <Text fontWeight="bold" color="blue.300" fontFamily="mono">
+                    {chapter.number.toString().padStart(2, '0')}
+                  </Text>
+                  <Button variant="link">{chapter.title}</Button>
+                </HStack>
+              ))}
             </VStack>
 
             <Button
               alignSelf="stretch"
               size="lg"
-              colorScheme="blue"
+              color="gray.500"
               variant="outline"
+              _hover={{ background: 'white' }}
+              _active={{ background: 'white' }}
               leftIcon={<AddIcon />}
               onClick={handleClickAddChapter}
             >

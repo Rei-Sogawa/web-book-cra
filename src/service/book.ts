@@ -9,8 +9,8 @@ export const BookService = createFirestoreService<BookData>({
 })
 
 export const useBooks = () => {
-  const books = useSubscribeCollection({
-    query: query(BookService.getCollectionRef(), orderBy('number')),
+  const books = useSubscribeCollection<BookData>({
+    query: query(BookService.getCollectionRef()),
   })
   return books
 }
