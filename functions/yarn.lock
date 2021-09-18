@@ -1180,7 +1180,7 @@ find-up@^2.0.0, find-up@^2.1.0:
   dependencies:
     locate-path "^2.0.0"
 
-firebase-admin@^9.2.0:
+firebase-admin@^9.8.0:
   version "9.11.1"
   resolved "https://registry.yarnpkg.com/firebase-admin/-/firebase-admin-9.11.1.tgz#b4f472ed51951937f333a4d88a0693ad37ffc90a"
   integrity sha512-Y9fjelljy6MKqwsSbM/UN1k8gBQh5zfm5fCTe0Z6Gch2T3nDUIPsTcf+jfe4o40/MPYuybili9XJjTMmM2e5MQ==
@@ -1204,7 +1204,7 @@ firebase-functions-test@^0.2.0:
     "@types/lodash" "^4.14.104"
     lodash "^4.17.5"
 
-firebase-functions@^3.11.0:
+firebase-functions@^3.14.1:
   version "3.15.6"
   resolved "https://registry.yarnpkg.com/firebase-functions/-/firebase-functions-3.15.6.tgz#5008bde8864ff4c236ee0641ff392194d9df19cb"
   integrity sha512-VII8hV/jmg1L97SJrz7I0a4Heju4b2+4RxKBIcey5sU5pqV96acIjUOwn124GRZP9hStK36q8hm0W5s9lfQ3HQ==

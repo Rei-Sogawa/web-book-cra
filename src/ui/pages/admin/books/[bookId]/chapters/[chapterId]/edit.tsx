@@ -15,11 +15,14 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react'
-import { ChangeEventHandler, ForwardedRef, forwardRef, useState, VFC } from 'react'
+import { getUnixTime } from 'date-fns'
+import { head } from 'lodash-es'
+import { ChangeEventHandler, ForwardedRef, forwardRef, useRef, useState, VFC } from 'react'
 import { FaArrowLeft, FaRegImage } from 'react-icons/fa'
 import ResizeTextarea from 'react-textarea-autosize'
 
 import { useMarked } from '@/hooks/useMarked'
+import { getImageUrl, uploadImage } from '@/service/storage'
 
 type HeaderProps = {
   title: string
@@ -121,6 +124,23 @@ type ChapterEditorProps = {
 const ChapterEditor: VFC<ChapterEditorProps> = ({ title, setTitle, content, setContent }) => {
   const { isOpen: isPreviewing, onOpen: preview, onClose: edit } = useDisclosure()
 
+  const inputImageRef = useRef<HTMLInputElement>(null)
+  const handleClickUploadImage = () => {
+    inputImageRef.current?.click()
+  }
+  const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {
+    const file = head(e.target.files)
+    if (file) {
+      const path = `chapters-1-images-${getUnixTime(new Date())}`
+      await uploadImage({
+        path,
+        blob: file,
+      })
+      const imageUrl = await getImageUrl(path)
+      console.log(imageUrl)
+    }
+  }
+
   return (
     <HStack pb="8">
       <VStack spacing="8">
@@ -182,7 +202,14 @@ const ChapterEditor: VFC<ChapterEditorProps> = ({ title, setTitle, content, setC
                 Upload Image
               </Text>
               <Center mt="1">
-                <Button size="sm">
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={inputImageRef}
+                  style={{ display: 'none' }}
+                  onChange={handleUploadImage}
+                />
+                <Button size="sm" onClick={handleClickUploadImage}>
                   <Icon as={FaRegImage} h="6" w="6" color="gray.500" />
                 </Button>
               </Center>
