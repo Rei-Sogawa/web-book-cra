@@ -15,6 +15,7 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "dompurify": "^2.3.1",
+    "firebase": "^9.0.2",
     "framer-motion": "^4",
     "github-markdown-css": "^4.0.0",
     "marked": "^3.0.4",
@@ -50,6 +51,7 @@
     "@types/marked": "^3.0.1",
     "@types/react-router-dom": "^5.1.9",
     "eslint-import-resolver-alias": "^1.1.2",
-    "eslint-plugin-simple-import-sort": "^7.0.0"
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "firebase-tools": "^9.18.0"
   }
 }
