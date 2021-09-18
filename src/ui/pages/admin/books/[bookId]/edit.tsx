@@ -45,10 +45,7 @@ const BookEditPage: VFC = () => {
   const { bookId } = useParams<{ bookId: string }>()
 
   const handleClickAddChapter = async () => {
-    await ChapterService.createDoc({
-      params: { bookId },
-      newData: { title: '無題のチャプター' },
-    })
+    await ChapterService.createDoc({ title: '無題のチャプター' }, { bookId })
   }
 
   return (

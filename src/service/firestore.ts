@@ -24,38 +24,27 @@ export const createFirestoreService = <Data, PathParams = void>({
 }) => {
   const getCollectionRef = (params: PathParams) => collection(db, getPath(params))
 
-  const getDocRef = ({ params, id }: { params: PathParams; id: string }) =>
-    doc(db, getPath(params), id)
+  const getDocRef = (id: string, params: PathParams) => doc(db, getPath(params), id)
 
-  const _getDoc = async ({ params, id }: { params: PathParams; id: string }) => {
-    const docSnap = await getDoc(getDocRef({ params, id }))
+  const _getDoc = async (id: string, params: PathParams) => {
+    const docSnap = await getDoc(getDocRef(id, params))
     return { id: docSnap.id, ...docSnap.data() } as WithId<Data>
   }
 
-  const _createDoc = ({
-    params,
-    newData,
-  }: {
-    params: PathParams
-    newData: Partial<Data | TimestampToFieldValue<Data>>
-  }) => {
+  const _createDoc = (newData: Partial<Data | TimestampToFieldValue<Data>>, params: PathParams) => {
     return addDoc(getCollectionRef(params), { ...getDefaultData(), ...newData })
   }
 
-  const _updateDoc = ({
-    params,
-    id,
-    editedData,
-  }: {
+  const _updateDoc = (
+    editedData: Partial<Data | TimestampToFieldValue<Data>>,
+    id: string,
     params: PathParams
-    id: string
-    editedData: Partial<Data | TimestampToFieldValue<Data>>
-  }) => {
-    return updateDoc<DocumentData>(getDocRef({ params, id }), editedData)
+  ) => {
+    return updateDoc<DocumentData>(getDocRef(id, params), editedData)
   }
 
-  const _deleteDoc = ({ params, id }: { params: PathParams; id: string }) => {
-    return deleteDoc(getDocRef({ params, id }))
+  const _deleteDoc = (id: string, params: PathParams) => {
+    return deleteDoc(getDocRef(id, params))
   }
 
   return {

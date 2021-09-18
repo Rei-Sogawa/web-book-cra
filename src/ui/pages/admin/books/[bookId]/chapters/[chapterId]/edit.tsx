@@ -22,7 +22,7 @@ import { FaArrowLeft, FaRegImage } from 'react-icons/fa'
 import ResizeTextarea from 'react-textarea-autosize'
 
 import { useMarked } from '@/hooks/useMarked'
-import * as ChapterService from '@/service/chapter'
+import { ChapterService } from '@/service/chapter'
 import { deleteImage, getImageUrl, uploadImage } from '@/service/storage'
 import { AutoResizeTextarea } from '@/ui/basics/AutoResizeTextarea'
 
@@ -215,11 +215,6 @@ const ChapterEditPage: VFC = () => {
         blob: file,
       })
       const imageUrl = await getImageUrl({ path })
-      await ChapterService.updateChapter({
-        bookId: '1',
-        chapterId: '1',
-        editedData: { imageUrls: [imageUrl] },
-      })
     }
   }
 

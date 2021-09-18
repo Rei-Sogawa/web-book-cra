@@ -17,7 +17,7 @@ const BookNewPage: VFC = () => {
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
-    const docSnap = await BookService.createDoc({ newData: { title } })
+    const docSnap = await BookService.createDoc({ title })
     history.push(routeMap['/admin/books/:bookId/edit'].path({ bookId: docSnap.id }))
   }
 
