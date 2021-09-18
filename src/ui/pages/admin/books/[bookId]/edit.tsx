@@ -14,7 +14,7 @@ import { VFC } from 'react'
 import { FaArrowLeft } from 'react-icons/fa'
 import { useParams } from 'react-router'
 
-import * as ChapterService from '@/service/chapter'
+import { ChapterService } from '@/service/chapter'
 import { AutoResizeTextarea } from '@/ui/basics/AutoResizeTextarea'
 
 type HeaderProps = {
@@ -45,7 +45,10 @@ const BookEditPage: VFC = () => {
   const { bookId } = useParams<{ bookId: string }>()
 
   const handleClickAddChapter = async () => {
-    await ChapterService.createChapter({ bookId, newData: { title: '無題のチャプター' } })
+    await ChapterService.createDoc({
+      params: { bookId },
+      newData: { title: '無題のチャプター' },
+    })
   }
 
   return (

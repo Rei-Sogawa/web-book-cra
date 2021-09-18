@@ -1,19 +1,16 @@
-import { addDoc, collection, doc, getDoc } from 'firebase/firestore'
+import { orderBy, query } from 'firebase/firestore'
 
-import { Book, BookData, getDefaultData } from '@/domain/book'
-import { db } from '@/firebaseApp'
+import { BookData, getDefaultData } from '@/domain/book'
+import { createFirestoreService, useSubscribeCollection } from '@/service/firestore'
 
-const booksPath = () => 'books'
+export const BookService = createFirestoreService<BookData, void>({
+  getPath: () => 'books',
+  getDefaultData,
+})
 
-const booksCollectionRef = () => collection(db, booksPath())
-
-const bookDocRef = ({ bookId }: { bookId: string }) => doc(db, booksPath(), bookId)
-
-export const createBook = ({ newData }: { newData: Partial<BookData> }) => {
-  return addDoc(booksCollectionRef(), { ...getDefaultData(), ...newData })
-}
-
-export const getBook = async ({ bookId }: { bookId: string }) => {
-  const docSnap = await getDoc(bookDocRef({ bookId }))
-  return { id: docSnap.id, ...docSnap.data() } as Book
+export const useBooks = () => {
+  const books = useSubscribeCollection({
+    query: query(BookService.getCollectionRef(), orderBy('number')),
+  })
+  return books
 }

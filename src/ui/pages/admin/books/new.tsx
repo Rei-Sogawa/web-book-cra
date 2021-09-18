@@ -4,7 +4,7 @@ import { FaArrowLeft } from 'react-icons/fa'
 import { useHistory } from 'react-router'
 
 import { routeMap } from '@/routes'
-import * as BookService from '@/service/book'
+import { BookService } from '@/service/book'
 
 const BookNewPage: VFC = () => {
   const history = useHistory()
@@ -17,7 +17,7 @@ const BookNewPage: VFC = () => {
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
-    const docSnap = await BookService.createBook({ newData: { title } })
+    const docSnap = await BookService.createDoc({ newData: { title } })
     history.push(routeMap['/admin/books/:bookId/edit'].path({ bookId: docSnap.id }))
   }
 
