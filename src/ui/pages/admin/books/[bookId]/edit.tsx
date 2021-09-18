@@ -66,15 +66,15 @@ const BookEditPage: VFC = () => {
               cursor="pointer"
               width="210px"
               height="300px"
-              bg="gray.50"
+              bg="gray.100"
               borderRadius="md"
-              boxShadow="lg"
+              boxShadow="md"
               display="flex"
               alignItems="center"
               justifyContent="center"
             >
               <Text fontWeight="bold" fontSize="2xl" color="gray.500" pb="8">
-                Book Cover
+                Web Book
               </Text>
             </Box>
             <Button variant="link" fontWeight="normal" fontSize="sm">
