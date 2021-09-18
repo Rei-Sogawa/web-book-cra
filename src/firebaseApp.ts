@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app'
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore'
 import { connectStorageEmulator, getStorage } from 'firebase/storage'
 
 const firebaseConfig = {
@@ -12,6 +13,9 @@ const firebaseConfig = {
 }
 
 const app = initializeApp(firebaseConfig)
+
+export const db = getFirestore(app)
+connectFirestoreEmulator(db, 'localhost', 8080)
 
 export const storage = getStorage(app)
 connectStorageEmulator(storage, 'localhost', 9199)
