@@ -4,8 +4,7 @@ import { Chapter, ChapterData, getDefaultData } from '@/domain/chapter'
 import { db } from '@/firebaseApp'
 import { serverTimestamp } from '@/lib/date'
 
-// const chaptersPath = ({ bookId }: { bookId: string }) => `books/${bookId}/chapters`
-const chaptersPath = ({ bookId }: { bookId: string }) => `books/bookId/chapters`
+const chaptersPath = ({ bookId }: { bookId: string }) => `books/${bookId}/chapters`
 
 const chaptersCollectionRef = ({ bookId }: { bookId: string }) =>
   collection(db, chaptersPath({ bookId }))

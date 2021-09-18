@@ -24,6 +24,7 @@ import ResizeTextarea from 'react-textarea-autosize'
 import { useMarked } from '@/hooks/useMarked'
 import * as ChapterService from '@/service/chapter'
 import { deleteImage, getImageUrl, uploadImage } from '@/service/storage'
+import { AutoResizeTextarea } from '@/ui/basics/AutoResizeTextarea'
 
 type HeaderProps = {
   title: string
@@ -32,7 +33,7 @@ type HeaderProps = {
 
 const Header: VFC<HeaderProps> = ({ title, onClickSave }) => {
   return (
-    <Box h="14" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
+    <Box h="16" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
       <Container maxW="container.lg" h="100%">
         <HStack h="100%" justifyContent="space-between">
           <HStack>
@@ -42,7 +43,7 @@ const Header: VFC<HeaderProps> = ({ title, onClickSave }) => {
             <Text fontWeight="bold">{title}</Text>
           </HStack>
 
-          <Button size="sm" colorScheme="blue" onClick={onClickSave}>
+          <Button colorScheme="blue" onClick={onClickSave}>
             保存する
           </Button>
         </HStack>
@@ -78,23 +79,6 @@ const MarkedContent: VFC<MarkedContentProps> = ({ content }) => {
   )
 }
 
-// https://github.com/chakra-ui/chakra-ui/issues/670#issuecomment-669916624
-const AutoResizeTextarea = forwardRef(
-  (props: TextareaProps, ref: ForwardedRef<HTMLTextAreaElement>) => {
-    return (
-      <Textarea
-        bg="white"
-        overflow="hidden"
-        resize="none"
-        ref={ref}
-        minRows={1}
-        as={ResizeTextarea}
-        {...props}
-      />
-    )
-  }
-)
-
 type MarkedContentEditorProps = {
   value: string
   onChange: ChangeEventHandler<HTMLTextAreaElement>
@@ -107,6 +91,7 @@ const MarkedContentEditor: VFC<MarkedContentEditorProps> = ({ value, onChange })
       _placeholder={{
         fontWeight: 'bold',
       }}
+      bg="white"
       minH="440px"
       width="720px"
       value={value}

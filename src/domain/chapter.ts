@@ -3,7 +3,7 @@ import { Timestamp, TimestampToFieldValue, WithId } from '@/types'
 
 export type ChapterData = {
   number: number
-  heading: string
+  title: string
   content: string
   imageUrls: string[]
   createdAt: Timestamp
@@ -14,7 +14,7 @@ export type Chapter = WithId<ChapterData>
 
 export const getDefaultData = (): TimestampToFieldValue<ChapterData> => ({
   number: 0,
-  heading: '',
+  title: '',
   content: '',
   imageUrls: [],
   createdAt: serverTimestamp(),
