@@ -29,10 +29,10 @@ import { AutoResizeTextarea } from '@/ui/basics/AutoResizeTextarea'
 import { ImageUpload } from '@/ui/basics/ImageUpload'
 
 type HeaderProps = {
-  onClickSave: () => Promise<void>
+  onSave: () => Promise<void>
 }
 
-const Header: VFC<HeaderProps> = ({ onClickSave }) => {
+const Header: VFC<HeaderProps> = ({ onSave }) => {
   return (
     <Box h="16" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
       <Container maxW="container.lg" h="100%">
@@ -43,7 +43,7 @@ const Header: VFC<HeaderProps> = ({ onClickSave }) => {
             </Link>
           </HStack>
 
-          <Button colorScheme="blue" onClick={onClickSave}>
+          <Button colorScheme="blue" onClick={onSave}>
             保存する
           </Button>
         </HStack>
@@ -57,22 +57,22 @@ type UseStateReturn<T> = [T, Dispatch<SetStateAction<T>>]
 type BookFormProps = {
   titleState: UseStateReturn<string>
   descriptionState: UseStateReturn<string>
-  imageUrl: string | null
-  updateBookCover: (file: File) => Promise<void>
-  deleteBookCover: () => Promise<void>
+  imageUrl: Book['imageUrl']
+  onUpdateBookCover: (file: File) => Promise<void>
+  onDeleteBookCover: () => Promise<void>
 }
 
 const BookForm: VFC<BookFormProps> = ({
   titleState: [title, setTitle],
-  descriptionState: [contentIntroduction, setContentIntroduction],
+  descriptionState: [description, setDescription],
   imageUrl,
-  updateBookCover,
-  deleteBookCover,
+  onUpdateBookCover,
+  onDeleteBookCover,
 }) => {
   const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {
     const file = head(e.target.files)
     if (file) {
-      await updateBookCover(file)
+      await onUpdateBookCover(file)
     }
   }
 
@@ -111,7 +111,7 @@ const BookForm: VFC<BookFormProps> = ({
               <Text fontWeight="bold" fontSize="sm" color="gray.500" pl="1.5" pb="1">
                 /
               </Text>
-              <Button variant="link" fontSize="sm" px="0" onClick={deleteBookCover}>
+              <Button variant="link" fontSize="sm" px="0" onClick={onDeleteBookCover}>
                 削除
               </Button>
             </>
@@ -132,8 +132,8 @@ const BookForm: VFC<BookFormProps> = ({
           <AutoResizeTextarea
             placeholder="内容紹介"
             minH="100%"
-            value={contentIntroduction}
-            onChange={(e) => setContentIntroduction(e.target.value)}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </Box>
       </VStack>
@@ -145,7 +145,7 @@ type BookEditPageProps = {
   bookId: string
   book: Book
   chapters: Chapter[]
-  saveBook: (bookData: Partial<BookData>) => Promise<void>
+  saveBook: (editedBookData: Partial<BookData>) => Promise<void>
   updateBookCover: (file: File) => Promise<void>
   deleteBookCover: () => Promise<void>
   addChapter: () => Promise<void>
@@ -163,7 +163,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({
   const [title, setTitle] = useState(book.title)
   const [description, setDescription] = useState(book.description)
 
-  const handleClickSave = async () => {
+  const handleSave = async () => {
     await saveBook({ title, description })
   }
 
@@ -172,7 +172,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({
       {book && (
         <>
           <Box alignSelf="stretch">
-            <Header onClickSave={handleClickSave} />
+            <Header onSave={handleSave} />
           </Box>
 
           <Container maxW="container.md" py="8">
@@ -181,8 +181,8 @@ const BookEditPage: VFC<BookEditPageProps> = ({
                 titleState: [title, setTitle],
                 descriptionState: [description, setDescription],
                 imageUrl: book.imageUrl,
-                updateBookCover,
-                deleteBookCover,
+                onUpdateBookCover: updateBookCover,
+                onDeleteBookCover: deleteBookCover,
               }}
             />
           </Container>
