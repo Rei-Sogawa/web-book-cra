@@ -3,25 +3,47 @@ import {
   Box,
   Button,
   Container,
+  FormControl,
+  FormHelperText,
+  FormLabel,
   HStack,
   Icon,
   Image,
   Input,
   Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Switch,
   Text,
+  Tooltip,
+  useDisclosure,
   VStack,
 } from '@chakra-ui/react'
 import { orderBy } from 'firebase/firestore'
 import { every } from 'lodash-es'
 import { head } from 'lodash-es'
-import { ChangeEventHandler, Dispatch, SetStateAction, useEffect, useState, VFC } from 'react'
-import { FaArrowLeft } from 'react-icons/fa'
+import {
+  ChangeEventHandler,
+  Dispatch,
+  FormEventHandler,
+  SetStateAction,
+  useState,
+  VFC,
+} from 'react'
+import { useForm } from 'react-hook-form'
+import { FaArrowLeft, FaBars } from 'react-icons/fa'
 import { Link as ReactRouterLink, Prompt, useHistory, useParams } from 'react-router-dom'
-import { useAsyncFn, useBeforeUnload, useMount } from 'react-use'
+import { useAsyncFn, useMount } from 'react-use'
 
 import { Book, BookData } from '@/domain/book'
 import { Chapter } from '@/domain/chapter'
 import { assertIsDefined } from '@/lib/assert'
+import { fromDate } from '@/lib/date'
 import { routeMap } from '@/routes'
 import { BookService } from '@/service/book'
 import { ChapterService } from '@/service/chapter'
@@ -29,26 +51,137 @@ import { StorageService } from '@/service/storage'
 import { AutoResizeTextarea } from '@/ui/basics/AutoResizeTextarea'
 import { ImageUpload } from '@/ui/basics/ImageUpload'
 
-type HeaderProps = {
-  onSaveBook: () => Promise<void>
+type BookDetail = Pick<BookData, 'published' | 'authorNames' | 'releasedAt' | 'price'>
+
+type BookDetailFormModalProps = {
+  book: BookDetail
+  isOpen: boolean
+  onClose: () => void
+  onSaveBookDetail: (book: BookDetail) => Promise<void>
 }
 
-const Header: VFC<HeaderProps> = ({ onSaveBook }) => {
+const BookDetailFormModal: VFC<BookDetailFormModalProps> = ({
+  book,
+  isOpen,
+  onClose,
+  onSaveBookDetail,
+}) => {
+  const getDefaultValues = () => ({
+    published: book.published,
+    authorNames: book.authorNames.join(','),
+    releasedAt: book.releasedAt?.toDate(),
+    price: book.price,
+  })
+
+  const {
+    register,
+    handleSubmit: hookFormSubmit,
+    reset,
+  } = useForm({
+    defaultValues: getDefaultValues(),
+  })
+
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+    hookFormSubmit(async ({ published, authorNames, releasedAt, price }) => {
+      await onSaveBookDetail({
+        published,
+        authorNames: authorNames.split(',').filter(Boolean),
+        releasedAt: releasedAt ? fromDate(new Date(releasedAt)) : null,
+        price: Number(price),
+      })
+      reset(getDefaultValues())
+      onClose()
+    })(e)
+  }
+
   return (
-    <Box h="16" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>本の設定</ModalHeader>
+        <ModalCloseButton />
+        <form onSubmit={handleSubmit}>
+          <ModalBody>
+            <VStack spacing="4">
+              <FormControl>
+                <FormLabel fontSize="sm" fontWeight="bold" color="gray.500">
+                  非公開 / 公開
+                </FormLabel>
+                <Switch size="lg" {...register('published')} />
+              </FormControl>
+
+              <FormControl>
+                <FormLabel fontSize="sm" fontWeight="bold" color="gray.500">
+                  著者名
+                </FormLabel>
+                <Input autoComplete="off" {...register('authorNames')} placeholder="著者A, 著者B" />
+                <FormHelperText>複数人の場合はカンマ区切りで入力してください。</FormHelperText>
+              </FormControl>
+
+              <FormControl>
+                <FormLabel fontSize="sm" fontWeight="bold" color="gray.500">
+                  発売日
+                </FormLabel>
+                <Input type="date" {...register('releasedAt')} />
+              </FormControl>
+
+              <FormControl>
+                <FormLabel fontSize="sm" fontWeight="bold" color="gray.500">
+                  価格（円）
+                </FormLabel>
+                <Input type="number" autoComplete="off" {...register('price')} />
+              </FormControl>
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <Button type="submit" size="sm" colorScheme="blue">
+              保存
+            </Button>
+          </ModalFooter>
+        </form>
+      </ModalContent>
+    </Modal>
+  )
+}
+
+type HeaderProps = {
+  book: Book
+  onSaveBook: () => Promise<void>
+  onSaveBookDetail: (
+    bookDetail: Pick<BookData, 'published' | 'authorNames' | 'releasedAt' | 'price'>
+  ) => Promise<void>
+}
+
+const Header: VFC<HeaderProps> = ({ book, onSaveBook, onSaveBookDetail }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  return (
+    <Box h="14" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
       <Container maxW="container.lg" h="100%">
         <HStack h="100%" justifyContent="space-between">
-          <HStack>
-            <Link as={ReactRouterLink} to={routeMap['/'].path()}>
-              <Icon as={FaArrowLeft} h="6" w="6" color="gray.500" />
-            </Link>
-          </HStack>
+          <Link as={ReactRouterLink} to={routeMap['/'].path()}>
+            <Icon as={FaArrowLeft} h="5" w="5" color="gray.500" />
+          </Link>
 
-          <Button colorScheme="blue" onClick={onSaveBook}>
-            保存する
-          </Button>
+          <HStack spacing="4">
+            <Tooltip label="本の設定">
+              <Button size="sm" onClick={onOpen}>
+                <Icon as={FaBars} h="5" w="5" color="gray.500" />
+              </Button>
+            </Tooltip>
+            <Button size="sm" colorScheme="blue" onClick={onSaveBook}>
+              保存する
+            </Button>
+          </HStack>
         </HStack>
       </Container>
+
+      <BookDetailFormModal
+        book={book}
+        isOpen={isOpen}
+        onClose={onClose}
+        onSaveBookDetail={onSaveBookDetail}
+      />
     </Box>
   )
 }
@@ -80,8 +213,8 @@ const BookForm: VFC<BookFormProps> = ({
     <HStack spacing="8">
       <VStack alignSelf="start">
         <Box
-          width="210px"
-          height="300px"
+          width="200px"
+          height="280px"
           bg="gray.100"
           borderRadius="md"
           boxShadow="md"
@@ -144,6 +277,9 @@ type BookEditPageProps = {
   book: Book
   chapters: Chapter[]
   saveBook: ({ title, description }: Pick<BookData, 'title' | 'description'>) => Promise<void>
+  saveBookDetail: (
+    bookDetail: Pick<BookData, 'published' | 'authorNames' | 'releasedAt' | 'price'>
+  ) => Promise<void>
   uploadBookCover: (file: File) => Promise<void>
   deleteBookCover: () => Promise<void>
   addChapter: () => Promise<void>
@@ -154,6 +290,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({
   book,
   chapters,
   saveBook,
+  saveBookDetail,
   uploadBookCover,
   deleteBookCover,
   addChapter,
@@ -182,7 +319,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({
 
       <VStack minHeight="100vh">
         <Box alignSelf="stretch">
-          <Header onSaveBook={handleSaveBook} />
+          <Header book={book} onSaveBook={handleSaveBook} onSaveBookDetail={saveBookDetail} />
         </Box>
 
         <Container maxW="container.md" py="8">
@@ -266,6 +403,16 @@ const BookEditPageContainer: VFC = () => {
     await fetchBook()
   }
 
+  const saveBookDetail = async ({
+    published,
+    authorNames,
+    releasedAt,
+    price,
+  }: Pick<BookData, 'published' | 'authorNames' | 'releasedAt' | 'price'>) => {
+    await BookService.updateDoc({ published, authorNames, releasedAt, price }, bookId)
+    await fetchBook()
+  }
+
   const uploadBookCover = async (file: File) => {
     const path = `books-${bookId}`
     await StorageService.uploadImage({ path, blob: file })
@@ -296,6 +443,7 @@ const BookEditPageContainer: VFC = () => {
           book={book!}
           chapters={chapters!}
           saveBook={saveBook}
+          saveBookDetail={saveBookDetail}
           uploadBookCover={uploadBookCover}
           deleteBookCover={deleteBookCover}
           addChapter={addChapter}

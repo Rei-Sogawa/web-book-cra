@@ -39,7 +39,7 @@ type HeaderProps = {
 
 const Header: VFC<HeaderProps> = ({ book, onSaveChapter }) => {
   return (
-    <Box h="16" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
+    <Box h="14" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
       <Container maxW="container.lg" h="100%">
         <HStack h="100%" justifyContent="space-between">
           <HStack spacing="4">
@@ -47,14 +47,14 @@ const Header: VFC<HeaderProps> = ({ book, onSaveChapter }) => {
               as={ReactRouterLink}
               to={routeMap['/admin/books/:bookId/edit'].path({ bookId: book.id })}
             >
-              <Icon as={FaArrowLeft} h="6" w="6" color="gray.500" />
+              <Icon as={FaArrowLeft} h="5" w="5" color="gray.500" />
             </Link>
             <Text fontWeight="bold" fontSize="lg">
               {book.title}
             </Text>
           </HStack>
 
-          <Button colorScheme="blue" onClick={onSaveChapter}>
+          <Button size="sm" colorScheme="blue" onClick={onSaveChapter}>
             保存する
           </Button>
         </HStack>
