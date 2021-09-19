@@ -269,6 +269,7 @@ const BookEditPageContainer: VFC = () => {
   }
 
   const deleteBookCover = async () => {
+    if (!window.confirm('削除します。よろしいですか？')) return
     await StorageService.deleteImage({ path: imagePath })
     await BookService.updateDoc({ imageUrl: null }, bookId)
     await fetchBook()
