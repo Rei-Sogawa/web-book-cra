@@ -1,16 +1,7 @@
-import { orderBy, query } from 'firebase/firestore'
-
 import { BookData, getDefaultData } from '@/domain/book'
-import { createFirestoreService, useSubscribeCollection } from '@/service/firestore'
+import { createFirestoreService } from '@/service/firestore'
 
-export const BookService = createFirestoreService<BookData>({
-  getPath: () => 'books',
+export const BookService = createFirestoreService<BookData, void>({
+  getCollectionPath: () => 'books',
   getDefaultData,
 })
-
-export const useBooks = () => {
-  const books = useSubscribeCollection<BookData>({
-    query: query(BookService.getCollectionRef(), orderBy('updatedAt', 'desc')),
-  })
-  return books
-}

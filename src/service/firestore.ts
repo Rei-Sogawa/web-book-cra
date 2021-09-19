@@ -13,31 +13,31 @@ import {
   QueryConstraint,
   updateDoc,
 } from 'firebase/firestore'
-import { curry } from 'lodash-es'
 import { DependencyList, useEffect, useState } from 'react'
 
 import { db } from '@/firebaseApp'
 import { TimestampToFieldValue, WithId } from '@/types'
 
-export const createFirestoreService = <Data, PathParams = void>({
-  getPath,
+export const createFirestoreService = <Data, PathParams>({
+  getCollectionPath,
   getDefaultData,
 }: {
-  getPath: (pathParams: PathParams) => string
+  getCollectionPath: (pathParams: PathParams) => string
   getDefaultData: () => TimestampToFieldValue<Data>
 }) => {
-  const getCollectionRef = (pathParams: PathParams) => collection(db, getPath(pathParams))
+  const getCollectionRef = (pathParams: PathParams) => collection(db, getCollectionPath(pathParams))
 
-  const getDocRef = (id: string, pathParams: PathParams) => doc(db, getPath(pathParams), id)
+  const getDocRef = (id: string, pathParams: PathParams) =>
+    doc(db, getCollectionPath(pathParams), id)
 
   const _getDoc = async (id: string, pathParams: PathParams) => {
     const docSnap = await getDoc(getDocRef(id, pathParams))
     return { id: docSnap.id, ...docSnap.data() } as WithId<Data>
   }
 
-  const _getDocs = async (pathParams: PathParams, queryConstraints?: QueryConstraint[]) => {
+  const _getDocs = async (pathParams: PathParams, ...queryConstraints: QueryConstraint[]) => {
     const querySnap = await getDocs(
-      queryConstraints
+      queryConstraints.length
         ? query(getCollectionRef(pathParams), ...queryConstraints)
         : getCollectionRef(pathParams)
     )

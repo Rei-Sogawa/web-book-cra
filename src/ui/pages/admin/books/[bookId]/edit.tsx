@@ -14,24 +14,16 @@ import {
 import { orderBy } from 'firebase/firestore'
 import { every } from 'lodash-es'
 import { head } from 'lodash-es'
-import {
-  ChangeEventHandler,
-  Component,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-  VFC,
-} from 'react'
+import { ChangeEventHandler, Dispatch, SetStateAction, useEffect, useState, VFC } from 'react'
 import { FaArrowLeft } from 'react-icons/fa'
 import { Link as ReactRouterLink, useParams } from 'react-router-dom'
-import { useAsync, useAsyncFn, useMount } from 'react-use'
+import { useAsyncFn, useMount } from 'react-use'
 
 import { Book, BookData } from '@/domain/book'
 import { Chapter } from '@/domain/chapter'
 import { routeMap } from '@/routes'
 import { BookService } from '@/service/book'
-import { ChapterService, useChapters } from '@/service/chapter'
+import { ChapterService } from '@/service/chapter'
 import { StorageService } from '@/service/storage'
 import { AutoResizeTextarea } from '@/ui/basics/AutoResizeTextarea'
 import { ImageUpload } from '@/ui/basics/ImageUpload'
@@ -238,18 +230,9 @@ const BookEditPageContainer: VFC = () => {
     return BookService.getDoc(bookId)
   })
 
-  const [{ value: books }, fetchBooks] = useAsyncFn(() => {
-    return BookService.getDocs(undefined, [orderBy('name')])
+  const [{ value: chapters }, fetchChapters] = useAsyncFn(() => {
+    return ChapterService.getDocs({ bookId }, orderBy('number'))
   })
-
-  const [{ value: chapters }, fetchChapters] = useAsyncFn(async () => {
-    const res = ChapterService.getDocs({ bookId })
-    return res
-  })
-
-  useEffect(() => {
-    console.log(chapters)
-  }, [chapters])
 
   useMount(() => {
     fetchBook()
