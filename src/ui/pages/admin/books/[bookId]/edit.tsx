@@ -21,6 +21,7 @@ import { useAsyncFn, useMount } from 'react-use'
 
 import { Book, BookData } from '@/domain/book'
 import { Chapter } from '@/domain/chapter'
+import { assertIsDefined } from '@/lib/assert'
 import { routeMap } from '@/routes'
 import { BookService } from '@/service/book'
 import { ChapterService } from '@/service/chapter'
@@ -253,24 +254,25 @@ const BookEditPageContainer: VFC = () => {
     await fetchBook()
   }
 
-  const imagePath = `books-${bookId}`
-
   const uploadBookCover = async (file: File) => {
+    const imagePath = `books-${bookId}`
     await StorageService.uploadImage({ path: imagePath, blob: file })
     const imageUrl = await StorageService.getImageUrl({ path: imagePath })
-    await BookService.updateDoc({ imageUrl }, bookId)
+    await BookService.updateDoc({ imageUrl, imagePath }, bookId)
     await fetchBook()
   }
 
   const deleteBookCover = async () => {
     if (!window.confirm('削除します。よろしいですか？')) return
-    await StorageService.deleteImage({ path: imagePath })
-    await BookService.updateDoc({ imageUrl: null }, bookId)
+    assertIsDefined(book?.imagePath)
+    await StorageService.deleteImage({ path: book.imagePath })
+    await BookService.updateDoc({ imageUrl: null, imagePath: null }, bookId)
     await fetchBook()
   }
 
   const addChapter = async () => {
-    await ChapterService.createDoc({ number: chapters!.length + 1 }, { bookId })
+    assertIsDefined(chapters)
+    await ChapterService.createDoc({ number: chapters.length + 1 }, { bookId })
     await fetchChapters()
   }
 
