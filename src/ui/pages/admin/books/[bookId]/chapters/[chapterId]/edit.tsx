@@ -8,39 +8,47 @@ import {
   HStack,
   Icon,
   Input,
+  Link,
   Switch,
   Text,
-  Textarea,
-  TextareaProps,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react'
 import { getUnixTime } from 'date-fns'
 import { head } from 'lodash-es'
-import { ChangeEventHandler, ForwardedRef, forwardRef, useRef, useState, VFC } from 'react'
+import { ChangeEventHandler, useRef, useState, VFC } from 'react'
 import { FaArrowLeft, FaRegImage } from 'react-icons/fa'
-import ResizeTextarea from 'react-textarea-autosize'
+import { Link as ReactRouterLink, useParams } from 'react-router-dom'
+import { useAsync } from 'react-use'
 
+import { Book } from '@/domain/book'
 import { useMarked } from '@/hooks/useMarked'
+import { routeMap } from '@/routes'
+import { BookService } from '@/service/book'
 import { ChapterService } from '@/service/chapter'
 import { deleteImage, getImageUrl, uploadImage } from '@/service/storage'
 import { AutoResizeTextarea } from '@/ui/basics/AutoResizeTextarea'
 
 type HeaderProps = {
-  title: string
+  book: Book
   onClickSave: () => Promise<void>
 }
 
-const Header: VFC<HeaderProps> = ({ title, onClickSave }) => {
+const Header: VFC<HeaderProps> = ({ book, onClickSave }) => {
   return (
     <Box h="16" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
       <Container maxW="container.lg" h="100%">
         <HStack h="100%" justifyContent="space-between">
           <HStack>
-            <Button variant="link" p="1">
+            <Link
+              as={ReactRouterLink}
+              to={routeMap['/admin/books/:bookId/edit'].path({ bookId: book.id })}
+            >
               <Icon as={FaArrowLeft} h="6" w="6" color="gray.500" />
-            </Button>
-            <Text fontWeight="bold">{title}</Text>
+            </Link>
+            <Text fontWeight="bold" fontSize="2xl">
+              {book.title}
+            </Text>
           </HStack>
 
           <Button colorScheme="blue" onClick={onClickSave}>
@@ -203,6 +211,13 @@ const ChapterEditor: VFC<ChapterEditorProps> = ({
 }
 
 const ChapterEditPage: VFC = () => {
+  const { bookId } = useParams<{ bookId: string }>()
+
+  const { value: book } = useAsync(async () => {
+    const res = await BookService.getDoc(bookId)
+    return res
+  }, [bookId])
+
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
 
@@ -220,11 +235,15 @@ const ChapterEditPage: VFC = () => {
 
   return (
     <VStack spacing="8" minHeight="100vh" bg="gray.50">
-      <Box alignSelf="stretch">
-        <Header title={'タイトル'} onClickSave={() => Promise.resolve()} />
-      </Box>
+      {book && (
+        <>
+          <Box alignSelf="stretch">
+            <Header book={book} onClickSave={() => Promise.resolve()} />
+          </Box>
 
-      <ChapterEditor {...{ title, setTitle, content, setContent, handleUploadImage }} />
+          <ChapterEditor {...{ title, setTitle, content, setContent, handleUploadImage }} />
+        </>
+      )}
     </VStack>
   )
 }

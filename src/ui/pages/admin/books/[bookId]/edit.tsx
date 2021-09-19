@@ -1,19 +1,10 @@
 import { AddIcon } from '@chakra-ui/icons'
-import {
-  Box,
-  Button,
-  Container,
-  Heading,
-  HStack,
-  Icon,
-  Input,
-  Text,
-  VStack,
-} from '@chakra-ui/react'
-import { useEffect, VFC } from 'react'
+import { Box, Button, Container, HStack, Icon, Input, Link, Text, VStack } from '@chakra-ui/react'
+import { VFC } from 'react'
 import { FaArrowLeft } from 'react-icons/fa'
-import { useParams } from 'react-router'
+import { Link as ReactRouterLink, useParams } from 'react-router-dom'
 
+import { routeMap } from '@/routes'
 import { ChapterService, useChapters } from '@/service/chapter'
 import { AutoResizeTextarea } from '@/ui/basics/AutoResizeTextarea'
 
@@ -27,9 +18,9 @@ const Header: VFC<HeaderProps> = ({ onClickSave }) => {
       <Container maxW="container.lg" h="100%">
         <HStack h="100%" justifyContent="space-between">
           <HStack>
-            <Button variant="link" p="1">
+            <Link as={ReactRouterLink} to={routeMap['/'].path()}>
               <Icon as={FaArrowLeft} h="6" w="6" color="gray.500" />
-            </Button>
+            </Link>
           </HStack>
 
           <Button colorScheme="blue" onClick={onClickSave}>
@@ -98,22 +89,34 @@ const BookEditPage: VFC = () => {
               Chapters
             </Text>
 
-            <VStack alignSelf="stretch" alignItems="stretch" spacing="0.5">
-              {chapters?.map((chapter) => (
-                <HStack key={chapter.id} bg="white" py="4" px="8" spacing="8">
-                  <Text fontWeight="bold" color="blue.300" fontFamily="mono">
-                    {chapter.number.toString().padStart(2, '0')}
-                  </Text>
-                  <Button variant="link">{chapter.title}</Button>
-                </HStack>
-              ))}
-            </VStack>
+            {chapters?.length && (
+              <VStack alignSelf="stretch" alignItems="stretch" spacing="0.5">
+                {chapters.map((chapter) => (
+                  <HStack key={chapter.id} bg="white" py="4" px="8" spacing="8">
+                    <Text fontWeight="bold" fontSize="lg" fontFamily="mono" color="blue.300">
+                      {chapter.number.toString().padStart(2, '0')}
+                    </Text>
+                    <Link
+                      as={ReactRouterLink}
+                      to={routeMap['/admin/books/:bookId/chapters/:chapterId/edit'].path({
+                        bookId,
+                        chapterId: chapter.id,
+                      })}
+                      fontWeight="bold"
+                      fontSize="lg"
+                    >
+                      {chapter.title}
+                    </Link>
+                  </HStack>
+                ))}
+              </VStack>
+            )}
 
             <Button
               alignSelf="stretch"
               size="lg"
-              color="gray.500"
               variant="outline"
+              color="gray.500"
               _hover={{ background: 'white' }}
               _active={{ background: 'white' }}
               leftIcon={<AddIcon />}
