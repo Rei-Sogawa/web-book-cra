@@ -14,7 +14,7 @@ import {
 import { orderBy } from 'firebase/firestore'
 import { every } from 'lodash-es'
 import { head } from 'lodash-es'
-import { ChangeEventHandler, Dispatch, SetStateAction, useEffect, useState, VFC } from 'react'
+import { ChangeEventHandler, Dispatch, SetStateAction, useState, VFC } from 'react'
 import { FaArrowLeft } from 'react-icons/fa'
 import { Link as ReactRouterLink, useParams } from 'react-router-dom'
 import { useAsyncFn, useMount } from 'react-use'
@@ -58,43 +58,66 @@ type BookFormProps = {
   titleState: UseStateReturn<string>
   descriptionState: UseStateReturn<string>
   imageUrl: string | null
-  onUploadImage: ChangeEventHandler<HTMLInputElement>
+  updateBookCover: (file: File) => Promise<void>
+  deleteBookCover: () => Promise<void>
 }
 
 const BookForm: VFC<BookFormProps> = ({
   titleState: [title, setTitle],
   descriptionState: [contentIntroduction, setContentIntroduction],
   imageUrl,
-  onUploadImage,
+  updateBookCover,
+  deleteBookCover,
 }) => {
+  const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {
+    const file = head(e.target.files)
+    if (file) {
+      await updateBookCover(file)
+    }
+  }
+
   return (
     <HStack spacing="8">
-      <ImageUpload onUploadImage={onUploadImage}>
-        <VStack spacing="3">
-          <Box
-            cursor="pointer"
-            width="210px"
-            height="300px"
-            bg="gray.100"
-            borderRadius="md"
-            boxShadow="md"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-          >
-            {imageUrl ? (
-              <Image src={imageUrl} />
-            ) : (
-              <Text fontWeight="bold" fontSize="2xl" color="gray.500" pb="8">
-                Web Book
-              </Text>
-            )}
-          </Box>
-          <Button variant="link" fontWeight="normal" fontSize="sm">
-            カバー画像を変更
+      <VStack>
+        <Box
+          cursor="pointer"
+          width="210px"
+          height="300px"
+          bg="gray.100"
+          borderRadius="md"
+          boxShadow="md"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          {imageUrl ? (
+            <Image src={imageUrl} />
+          ) : (
+            <Text fontWeight="bold" fontSize="2xl" color="gray.500" pb="8">
+              Web Book
+            </Text>
+          )}
+        </Box>
+
+        <HStack alignItems="center" spacing="0">
+          <Button variant="link" fontSize="sm">
+            <ImageUpload onUploadImage={handleUploadImage}>
+              <Text>画像を設定</Text>
+            </ImageUpload>
           </Button>
-        </VStack>
-      </ImageUpload>
+
+          {imageUrl && (
+            <>
+              <Text fontWeight="bold" fontSize="sm" color="gray.500" pl="1.5" pb="1">
+                /
+              </Text>
+              <Button variant="link" fontSize="sm" px="0" onClick={deleteBookCover}>
+                削除
+              </Button>
+            </>
+          )}
+        </HStack>
+      </VStack>
 
       <VStack flex="1" alignSelf="stretch">
         <Input
@@ -124,6 +147,7 @@ type BookEditPageProps = {
   chapters: Chapter[]
   saveBook: (bookData: Partial<BookData>) => Promise<void>
   updateBookCover: (file: File) => Promise<void>
+  deleteBookCover: () => Promise<void>
   addChapter: () => Promise<void>
 }
 
@@ -133,24 +157,14 @@ const BookEditPage: VFC<BookEditPageProps> = ({
   chapters,
   saveBook,
   updateBookCover,
+  deleteBookCover,
   addChapter,
 }) => {
-  const handleClickAddChapter = async () => {
-    await addChapter()
-  }
-
   const [title, setTitle] = useState(book.title)
   const [description, setDescription] = useState(book.description)
 
   const handleClickSave = async () => {
     await saveBook({ title, description })
-  }
-
-  const handleUploadImage: ChangeEventHandler<HTMLInputElement> = (e) => {
-    const file = head(e.target.files)
-    if (file) {
-      updateBookCover(file)
-    }
   }
 
   return (
@@ -167,7 +181,8 @@ const BookEditPage: VFC<BookEditPageProps> = ({
                 titleState: [title, setTitle],
                 descriptionState: [description, setDescription],
                 imageUrl: book.imageUrl,
-                onUploadImage: handleUploadImage,
+                updateBookCover,
+                deleteBookCover,
               }}
             />
           </Container>
@@ -210,7 +225,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({
                   _hover={{ background: 'white' }}
                   _active={{ background: 'white' }}
                   leftIcon={<AddIcon />}
-                  onClick={handleClickAddChapter}
+                  onClick={addChapter}
                 >
                   チャプターを追加
                 </Button>
@@ -244,11 +259,18 @@ const BookEditPageContainer: VFC = () => {
     await fetchBook()
   }
 
+  const imagePath = `books-${bookId}`
+
   const updateBookCover = async (file: File) => {
-    const path = `books-${bookId}`
-    await StorageService.uploadImage({ path, blob: file })
-    const imageUrl = await StorageService.getImageUrl({ path })
+    await StorageService.uploadImage({ path: imagePath, blob: file })
+    const imageUrl = await StorageService.getImageUrl({ path: imagePath })
     await BookService.updateDoc({ imageUrl }, bookId)
+    await fetchBook()
+  }
+
+  const deleteBookCover = async () => {
+    await StorageService.deleteImage({ path: imagePath })
+    await BookService.updateDoc({ imageUrl: null }, bookId)
     await fetchBook()
   }
 
@@ -266,6 +288,7 @@ const BookEditPageContainer: VFC = () => {
           chapters={chapters!}
           saveBook={saveBook}
           updateBookCover={updateBookCover}
+          deleteBookCover={deleteBookCover}
           addChapter={addChapter}
         />
       )}
