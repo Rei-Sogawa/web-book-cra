@@ -1,6 +1,4 @@
-import { AddIcon } from '@chakra-ui/icons'
-import { Avatar, Box, Button, Container, Flex, HStack, Text } from '@chakra-ui/react'
-import { ReactNode, VFC } from 'react'
+import { VFC } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 import { pathTemplates, routeMap } from '@/routes'
