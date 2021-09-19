@@ -6,10 +6,14 @@ import {
   DocumentData,
   DocumentReference,
   getDoc,
+  getDocs,
   onSnapshot,
   Query,
+  query,
+  QueryConstraint,
   updateDoc,
 } from 'firebase/firestore'
+import { curry } from 'lodash-es'
 import { DependencyList, useEffect, useState } from 'react'
 
 import { db } from '@/firebaseApp'
@@ -19,36 +23,49 @@ export const createFirestoreService = <Data, PathParams = void>({
   getPath,
   getDefaultData,
 }: {
-  getPath: (params: PathParams) => string
+  getPath: (pathParams: PathParams) => string
   getDefaultData: () => TimestampToFieldValue<Data>
 }) => {
-  const getCollectionRef = (params: PathParams) => collection(db, getPath(params))
+  const getCollectionRef = (pathParams: PathParams) => collection(db, getPath(pathParams))
 
-  const getDocRef = (id: string, params: PathParams) => doc(db, getPath(params), id)
+  const getDocRef = (id: string, pathParams: PathParams) => doc(db, getPath(pathParams), id)
 
-  const _getDoc = async (id: string, params: PathParams) => {
-    const docSnap = await getDoc(getDocRef(id, params))
+  const _getDoc = async (id: string, pathParams: PathParams) => {
+    const docSnap = await getDoc(getDocRef(id, pathParams))
     return { id: docSnap.id, ...docSnap.data() } as WithId<Data>
   }
 
-  const _createDoc = (newData: Partial<Data | TimestampToFieldValue<Data>>, params: PathParams) => {
-    return addDoc(getCollectionRef(params), { ...getDefaultData(), ...newData })
+  const _getDocs = async (pathParams: PathParams, queryConstraints?: QueryConstraint[]) => {
+    const querySnap = await getDocs(
+      queryConstraints
+        ? query(getCollectionRef(pathParams), ...queryConstraints)
+        : getCollectionRef(pathParams)
+    )
+    return querySnap.docs.map((doc) => ({ id: doc.id, ...doc.data() } as WithId<Data>))
+  }
+
+  const _createDoc = (
+    newData: Partial<Data | TimestampToFieldValue<Data>>,
+    pathParams: PathParams
+  ) => {
+    return addDoc(getCollectionRef(pathParams), { ...getDefaultData(), ...newData })
   }
 
   const _updateDoc = (
     editedData: Partial<Data | TimestampToFieldValue<Data>>,
     id: string,
-    params: PathParams
+    pathParams: PathParams
   ) => {
-    return updateDoc<DocumentData>(getDocRef(id, params), editedData)
+    return updateDoc<DocumentData>(getDocRef(id, pathParams), editedData)
   }
 
-  const _deleteDoc = (id: string, params: PathParams) => {
-    return deleteDoc(getDocRef(id, params))
+  const _deleteDoc = (id: string, pathParams: PathParams) => {
+    return deleteDoc(getDocRef(id, pathParams))
   }
 
   return {
     getDoc: _getDoc,
+    getDocs: _getDocs,
     createDoc: _createDoc,
     updateDoc: _updateDoc,
     deleteDoc: _deleteDoc,

@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react'
 import { getUnixTime } from 'date-fns'
 import { head } from 'lodash-es'
-import { ChangeEventHandler, useRef, useState, VFC } from 'react'
+import { ChangeEventHandler, useState, VFC } from 'react'
 import { FaArrowLeft, FaRegImage } from 'react-icons/fa'
 import { Link as ReactRouterLink, useParams } from 'react-router-dom'
 import { useAsync } from 'react-use'
@@ -26,8 +26,9 @@ import { useMarked } from '@/hooks/useMarked'
 import { routeMap } from '@/routes'
 import { BookService } from '@/service/book'
 import { ChapterService } from '@/service/chapter'
-import { deleteImage, getImageUrl, uploadImage } from '@/service/storage'
+import { StorageService } from '@/service/storage'
 import { AutoResizeTextarea } from '@/ui/basics/AutoResizeTextarea'
+import { ImageUpload } from '@/ui/basics/ImageUpload'
 
 type HeaderProps = {
   book: Book
@@ -39,14 +40,14 @@ const Header: VFC<HeaderProps> = ({ book, onClickSave }) => {
     <Box h="16" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
       <Container maxW="container.lg" h="100%">
         <HStack h="100%" justifyContent="space-between">
-          <HStack>
+          <HStack spacing="4">
             <Link
               as={ReactRouterLink}
               to={routeMap['/admin/books/:bookId/edit'].path({ bookId: book.id })}
             >
               <Icon as={FaArrowLeft} h="6" w="6" color="gray.500" />
             </Link>
-            <Text fontWeight="bold" fontSize="2xl">
+            <Text fontWeight="bold" fontSize="lg">
               {book.title}
             </Text>
           </HStack>
@@ -125,11 +126,6 @@ const ChapterEditor: VFC<ChapterEditorProps> = ({
 }) => {
   const { isOpen: isPreviewing, onOpen: preview, onClose: edit } = useDisclosure()
 
-  const inputImageRef = useRef<HTMLInputElement>(null)
-  const handleClickUploadImage = () => {
-    inputImageRef.current?.click()
-  }
-
   return (
     <HStack pb="8">
       <VStack spacing="8">
@@ -191,16 +187,11 @@ const ChapterEditor: VFC<ChapterEditorProps> = ({
                 Upload Image
               </Text>
               <Center mt="1">
-                <input
-                  type="file"
-                  accept="image/*"
-                  ref={inputImageRef}
-                  style={{ display: 'none' }}
-                  onChange={handleUploadImage}
-                />
-                <Button size="sm" onClick={handleClickUploadImage}>
-                  <Icon as={FaRegImage} h="6" w="6" color="gray.500" />
-                </Button>
+                <ImageUpload onUploadImage={handleUploadImage}>
+                  <Button size="sm">
+                    <Icon as={FaRegImage} h="6" w="6" color="gray.500" />
+                  </Button>
+                </ImageUpload>
               </Center>
             </Box>
           </VStack>
@@ -214,8 +205,7 @@ const ChapterEditPage: VFC = () => {
   const { bookId } = useParams<{ bookId: string }>()
 
   const { value: book } = useAsync(async () => {
-    const res = await BookService.getDoc(bookId)
-    return res
+    return await BookService.getDoc(bookId)
   }, [bookId])
 
   const [title, setTitle] = useState('')
@@ -225,11 +215,11 @@ const ChapterEditPage: VFC = () => {
     const file = head(e.target.files)
     if (file) {
       const path = `books-1-chapters-1-images-${getUnixTime(new Date())}`
-      await uploadImage({
+      await StorageService.uploadImage({
         path,
         blob: file,
       })
-      const imageUrl = await getImageUrl({ path })
+      const imageUrl = await StorageService.getImageUrl({ path })
     }
   }
 
