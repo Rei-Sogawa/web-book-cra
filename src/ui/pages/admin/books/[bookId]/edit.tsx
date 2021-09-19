@@ -29,10 +29,10 @@ import { AutoResizeTextarea } from '@/ui/basics/AutoResizeTextarea'
 import { ImageUpload } from '@/ui/basics/ImageUpload'
 
 type HeaderProps = {
-  onSave: () => Promise<void>
+  onSaveBook: () => Promise<void>
 }
 
-const Header: VFC<HeaderProps> = ({ onSave }) => {
+const Header: VFC<HeaderProps> = ({ onSaveBook }) => {
   return (
     <Box h="16" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
       <Container maxW="container.lg" h="100%">
@@ -43,7 +43,7 @@ const Header: VFC<HeaderProps> = ({ onSave }) => {
             </Link>
           </HStack>
 
-          <Button colorScheme="blue" onClick={onSave}>
+          <Button colorScheme="blue" onClick={onSaveBook}>
             保存する
           </Button>
         </HStack>
@@ -58,7 +58,7 @@ type BookFormProps = {
   titleState: UseStateReturn<string>
   descriptionState: UseStateReturn<string>
   imageUrl: Book['imageUrl']
-  onUpdateBookCover: (file: File) => Promise<void>
+  onUploadBookCover: (file: File) => Promise<void>
   onDeleteBookCover: () => Promise<void>
 }
 
@@ -66,21 +66,20 @@ const BookForm: VFC<BookFormProps> = ({
   titleState: [title, setTitle],
   descriptionState: [description, setDescription],
   imageUrl,
-  onUpdateBookCover,
+  onUploadBookCover,
   onDeleteBookCover,
 }) => {
   const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {
     const file = head(e.target.files)
     if (file) {
-      await onUpdateBookCover(file)
+      await onUploadBookCover(file)
     }
   }
 
   return (
     <HStack spacing="8">
-      <VStack>
+      <VStack alignSelf="start">
         <Box
-          cursor="pointer"
           width="210px"
           height="300px"
           bg="gray.100"
@@ -124,7 +123,6 @@ const BookForm: VFC<BookFormProps> = ({
           placeholder="本のタイトル"
           size="lg"
           fontWeight="bold"
-          fontSize="2xl"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
@@ -146,7 +144,7 @@ type BookEditPageProps = {
   book: Book
   chapters: Chapter[]
   saveBook: (editedBookData: Partial<BookData>) => Promise<void>
-  updateBookCover: (file: File) => Promise<void>
+  uploadBookCover: (file: File) => Promise<void>
   deleteBookCover: () => Promise<void>
   addChapter: () => Promise<void>
 }
@@ -156,7 +154,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({
   book,
   chapters,
   saveBook,
-  updateBookCover,
+  uploadBookCover,
   deleteBookCover,
   addChapter,
 }) => {
@@ -169,71 +167,67 @@ const BookEditPage: VFC<BookEditPageProps> = ({
 
   return (
     <VStack minHeight="100vh">
-      {book && (
-        <>
-          <Box alignSelf="stretch">
-            <Header onSave={handleSave} />
-          </Box>
+      <Box alignSelf="stretch">
+        <Header onSaveBook={handleSave} />
+      </Box>
 
-          <Container maxW="container.md" py="8">
-            <BookForm
-              {...{
-                titleState: [title, setTitle],
-                descriptionState: [description, setDescription],
-                imageUrl: book.imageUrl,
-                onUpdateBookCover: updateBookCover,
-                onDeleteBookCover: deleteBookCover,
-              }}
-            />
-          </Container>
+      <Container maxW="container.md" py="8">
+        <BookForm
+          {...{
+            titleState: [title, setTitle],
+            descriptionState: [description, setDescription],
+            imageUrl: book.imageUrl,
+            onUploadBookCover: uploadBookCover,
+            onDeleteBookCover: deleteBookCover,
+          }}
+        />
+      </Container>
 
-          <Box flex="1" bg="gray.50" alignSelf="stretch">
-            <Container maxW="container.md" py="8">
-              <VStack spacing="8">
-                <Text alignSelf="start" fontWeight="bold" fontSize="2xl">
-                  Chapters
-                </Text>
+      <Box flex="1" bg="gray.50" alignSelf="stretch">
+        <Container maxW="container.md" py="8">
+          <VStack spacing="8">
+            <Text alignSelf="start" fontWeight="bold" fontSize="2xl">
+              Chapters
+            </Text>
 
-                {chapters?.length && (
-                  <VStack alignSelf="stretch" alignItems="stretch" spacing="0.5">
-                    {chapters.map((chapter) => (
-                      <HStack key={chapter.id} bg="white" py="4" px="8" spacing="8">
-                        <Text fontWeight="bold" fontSize="lg" fontFamily="mono" color="blue.300">
-                          {chapter.number.toString().padStart(2, '0')}
-                        </Text>
-                        <Link
-                          as={ReactRouterLink}
-                          to={routeMap['/admin/books/:bookId/chapters/:chapterId/edit'].path({
-                            bookId,
-                            chapterId: chapter.id,
-                          })}
-                          fontWeight="bold"
-                          fontSize="lg"
-                        >
-                          {chapter.title || '無題のチャプター'}
-                        </Link>
-                      </HStack>
-                    ))}
-                  </VStack>
-                )}
-
-                <Button
-                  alignSelf="stretch"
-                  size="lg"
-                  variant="outline"
-                  color="gray.500"
-                  _hover={{ background: 'white' }}
-                  _active={{ background: 'white' }}
-                  leftIcon={<AddIcon />}
-                  onClick={addChapter}
-                >
-                  チャプターを追加
-                </Button>
+            {chapters?.length && (
+              <VStack alignSelf="stretch" alignItems="stretch" spacing="0.5">
+                {chapters.map((chapter) => (
+                  <HStack key={chapter.id} bg="white" py="4" px="8" spacing="8">
+                    <Text fontWeight="bold" fontSize="lg" fontFamily="mono" color="blue.300">
+                      {chapter.number.toString().padStart(2, '0')}
+                    </Text>
+                    <Link
+                      as={ReactRouterLink}
+                      to={routeMap['/admin/books/:bookId/chapters/:chapterId/edit'].path({
+                        bookId,
+                        chapterId: chapter.id,
+                      })}
+                      fontWeight="bold"
+                      fontSize="lg"
+                    >
+                      {chapter.title || '無題のチャプター'}
+                    </Link>
+                  </HStack>
+                ))}
               </VStack>
-            </Container>
-          </Box>
-        </>
-      )}
+            )}
+
+            <Button
+              alignSelf="stretch"
+              size="lg"
+              variant="outline"
+              color="gray.500"
+              _hover={{ background: 'white' }}
+              _active={{ background: 'white' }}
+              leftIcon={<AddIcon />}
+              onClick={addChapter}
+            >
+              チャプターを追加
+            </Button>
+          </VStack>
+        </Container>
+      </Box>
     </VStack>
   )
 }
@@ -261,7 +255,7 @@ const BookEditPageContainer: VFC = () => {
 
   const imagePath = `books-${bookId}`
 
-  const updateBookCover = async (file: File) => {
+  const uploadBookCover = async (file: File) => {
     await StorageService.uploadImage({ path: imagePath, blob: file })
     const imageUrl = await StorageService.getImageUrl({ path: imagePath })
     await BookService.updateDoc({ imageUrl }, bookId)
@@ -288,7 +282,7 @@ const BookEditPageContainer: VFC = () => {
           book={book!}
           chapters={chapters!}
           saveBook={saveBook}
-          updateBookCover={updateBookCover}
+          uploadBookCover={uploadBookCover}
           deleteBookCover={deleteBookCover}
           addChapter={addChapter}
         />

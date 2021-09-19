@@ -16,12 +16,14 @@ import {
 } from '@chakra-ui/react'
 import { getUnixTime } from 'date-fns'
 import { head } from 'lodash-es'
+import { every } from 'lodash-es'
 import { ChangeEventHandler, useState, VFC } from 'react'
 import { FaArrowLeft, FaRegImage } from 'react-icons/fa'
 import { Link as ReactRouterLink, useParams } from 'react-router-dom'
-import { useAsync } from 'react-use'
+import { useAsync, useAsyncFn, useMount } from 'react-use'
 
 import { Book } from '@/domain/book'
+import { Chapter } from '@/domain/chapter'
 import { useMarked } from '@/hooks/useMarked'
 import { routeMap } from '@/routes'
 import { BookService } from '@/service/book'
@@ -32,10 +34,10 @@ import { ImageUpload } from '@/ui/basics/ImageUpload'
 
 type HeaderProps = {
   book: Book
-  onClickSave: () => Promise<void>
+  onSaveChapter: () => Promise<void>
 }
 
-const Header: VFC<HeaderProps> = ({ book, onClickSave }) => {
+const Header: VFC<HeaderProps> = ({ book, onSaveChapter }) => {
   return (
     <Box h="16" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
       <Container maxW="container.lg" h="100%">
@@ -52,7 +54,7 @@ const Header: VFC<HeaderProps> = ({ book, onClickSave }) => {
             </Text>
           </HStack>
 
-          <Button colorScheme="blue" onClick={onClickSave}>
+          <Button colorScheme="blue" onClick={onSaveChapter}>
             保存する
           </Button>
         </HStack>
@@ -201,41 +203,49 @@ const ChapterEditor: VFC<ChapterEditorProps> = ({
   )
 }
 
-const ChapterEditPage: VFC = () => {
-  const { bookId } = useParams<{ bookId: string }>()
+type ChapterEditPageProps = {
+  book: Book
+  chapter: Chapter
+}
 
-  const { value: book } = useAsync(async () => {
-    return await BookService.getDoc(bookId)
-  }, [bookId])
+const ChapterEditPage: VFC<ChapterEditPageProps> = ({ book, chapter }) => {
+  const [title, setTitle] = useState(chapter.title)
+  const [content, setContent] = useState(chapter.content)
 
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
-
-  const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {
-    const file = head(e.target.files)
-    if (file) {
-      const path = `books-1-chapters-1-images-${getUnixTime(new Date())}`
-      await StorageService.uploadImage({
-        path,
-        blob: file,
-      })
-      const imageUrl = await StorageService.getImageUrl({ path })
-    }
-  }
+  const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {}
 
   return (
     <VStack spacing="8" minHeight="100vh" bg="gray.50">
-      {book && (
-        <>
-          <Box alignSelf="stretch">
-            <Header book={book} onClickSave={() => Promise.resolve()} />
-          </Box>
+      <Box alignSelf="stretch">
+        <Header book={book} onSaveChapter={() => Promise.resolve()} />
+      </Box>
 
-          <ChapterEditor {...{ title, setTitle, content, setContent, handleUploadImage }} />
-        </>
-      )}
+      <ChapterEditor {...{ title, setTitle, content, setContent, handleUploadImage }} />
     </VStack>
   )
 }
 
-export default ChapterEditPage
+const ChapterEditPageContainer: VFC = () => {
+  const { bookId, chapterId } = useParams<{ bookId: string; chapterId: string }>()
+
+  const [{ value: book }, fetchBook] = useAsyncFn(() => {
+    return BookService.getDoc(bookId)
+  })
+
+  const [{ value: chapter }, fetchChapter] = useAsyncFn(() => {
+    return ChapterService.getDoc(chapterId, { bookId })
+  })
+
+  useMount(() => {
+    fetchBook()
+    fetchChapter()
+  })
+
+  const uploadImage = async (file: File) => {}
+
+  return (
+    <>{every([book, chapter], Boolean) && <ChapterEditPage book={book!} chapter={chapter!} />}</>
+  )
+}
+
+export default ChapterEditPageContainer
