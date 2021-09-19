@@ -58,7 +58,7 @@ type UseStateReturn<T> = [T, Dispatch<SetStateAction<T>>]
 type BookFormProps = {
   titleState: UseStateReturn<string>
   descriptionState: UseStateReturn<string>
-  imageUrl: Book['imageUrl']
+  image: Book['image']
   onUploadBookCover: (file: File) => Promise<void>
   onDeleteBookCover: () => Promise<void>
 }
@@ -66,15 +66,14 @@ type BookFormProps = {
 const BookForm: VFC<BookFormProps> = ({
   titleState: [title, setTitle],
   descriptionState: [description, setDescription],
-  imageUrl,
+  image,
   onUploadBookCover,
   onDeleteBookCover,
 }) => {
   const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {
     const file = head(e.target.files)
-    if (file) {
-      await onUploadBookCover(file)
-    }
+    if (!file) return
+    await onUploadBookCover(file)
   }
 
   return (
@@ -90,8 +89,8 @@ const BookForm: VFC<BookFormProps> = ({
           alignItems="center"
           justifyContent="center"
         >
-          {imageUrl ? (
-            <Image src={imageUrl} />
+          {image ? (
+            <Image src={image.url} />
           ) : (
             <Text fontWeight="bold" fontSize="2xl" color="gray.500" pb="8">
               Web Book
@@ -106,7 +105,7 @@ const BookForm: VFC<BookFormProps> = ({
             </ImageUpload>
           </Button>
 
-          {imageUrl && (
+          {image && (
             <>
               <Text fontWeight="bold" fontSize="sm" color="gray.500" pl="1.5" pb="1">
                 /
@@ -144,7 +143,7 @@ type BookEditPageProps = {
   bookId: string
   book: Book
   chapters: Chapter[]
-  saveBook: (editedBookData: Partial<BookData>) => Promise<void>
+  saveBook: ({ title, description }: Pick<BookData, 'title' | 'description'>) => Promise<void>
   uploadBookCover: (file: File) => Promise<void>
   deleteBookCover: () => Promise<void>
   addChapter: () => Promise<void>
@@ -177,7 +176,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({
           {...{
             titleState: [title, setTitle],
             descriptionState: [description, setDescription],
-            imageUrl: book.imageUrl,
+            image: book.image,
             onUploadBookCover: uploadBookCover,
             onDeleteBookCover: deleteBookCover,
           }}
@@ -249,24 +248,24 @@ const BookEditPageContainer: VFC = () => {
     fetchChapters()
   })
 
-  const saveBook = async (bookData: Partial<BookData>) => {
-    await BookService.updateDoc(bookData, bookId)
+  const saveBook = async ({ title, description }: Pick<BookData, 'title' | 'description'>) => {
+    await BookService.updateDoc({ title, description }, bookId)
     await fetchBook()
   }
 
   const uploadBookCover = async (file: File) => {
-    const imagePath = `books-${bookId}`
-    await StorageService.uploadImage({ path: imagePath, blob: file })
-    const imageUrl = await StorageService.getImageUrl({ path: imagePath })
-    await BookService.updateDoc({ imageUrl, imagePath }, bookId)
+    const path = `books-${bookId}`
+    await StorageService.uploadImage({ path, blob: file })
+    const url = await StorageService.getImageUrl({ path })
+    await BookService.updateDoc({ image: { path, url } }, bookId)
     await fetchBook()
   }
 
   const deleteBookCover = async () => {
     if (!window.confirm('削除します。よろしいですか？')) return
-    assertIsDefined(book?.imagePath)
-    await StorageService.deleteImage({ path: book.imagePath })
-    await BookService.updateDoc({ imageUrl: null, imagePath: null }, bookId)
+    assertIsDefined(book?.image)
+    await StorageService.deleteImage({ path: book.image.path })
+    await BookService.updateDoc({ image: null }, bookId)
     await fetchBook()
   }
 

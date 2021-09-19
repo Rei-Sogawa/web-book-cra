@@ -5,8 +5,7 @@ export type BookData = {
   title: string
   description: string
   authorNames: string[]
-  imageUrl: string | null
-  imagePath: string | null
+  image: { path: string; url: string } | null
   price: number
   published: boolean
   releasedAt: Timestamp | null
@@ -20,8 +19,7 @@ export const getDefaultData = (): TimestampToFieldValue<BookData> => ({
   title: '',
   description: '',
   authorNames: [],
-  imageUrl: null,
-  imagePath: null,
+  image: null,
   price: 0,
   published: false,
   releasedAt: null,

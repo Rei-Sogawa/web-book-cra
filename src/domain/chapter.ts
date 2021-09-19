@@ -5,7 +5,7 @@ export type ChapterData = {
   number: number
   title: string
   content: string
-  imageUrls: string[]
+  images: { path: string; url: string }[]
   createdAt: Timestamp
   updatedAt: Timestamp
 }
@@ -16,7 +16,7 @@ export const getDefaultData = (): TimestampToFieldValue<ChapterData> => ({
   number: 0,
   title: '',
   content: '',
-  imageUrls: [],
+  images: [],
   createdAt: serverTimestamp(),
   updatedAt: serverTimestamp(),
 })

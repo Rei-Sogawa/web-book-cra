@@ -14,17 +14,17 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react'
-import { getUnixTime } from 'date-fns'
 import { head } from 'lodash-es'
 import { every } from 'lodash-es'
 import { ChangeEventHandler, useState, VFC } from 'react'
 import { FaArrowLeft, FaRegImage } from 'react-icons/fa'
 import { Link as ReactRouterLink, useParams } from 'react-router-dom'
-import { useAsync, useAsyncFn, useMount } from 'react-use'
+import { useAsyncFn, useMount } from 'react-use'
 
 import { Book } from '@/domain/book'
-import { Chapter } from '@/domain/chapter'
+import { Chapter, ChapterData } from '@/domain/chapter'
 import { useMarked } from '@/hooks/useMarked'
+import { assertIsDefined } from '@/lib/assert'
 import { routeMap } from '@/routes'
 import { BookService } from '@/service/book'
 import { ChapterService } from '@/service/chapter'
@@ -206,18 +206,35 @@ const ChapterEditor: VFC<ChapterEditorProps> = ({
 type ChapterEditPageProps = {
   book: Book
   chapter: Chapter
+  saveChapter: ({ title, content }: Pick<Chapter, 'title' | 'content'>) => Promise<void>
+  uploadImage: (file: File) => Promise<string>
 }
 
-const ChapterEditPage: VFC<ChapterEditPageProps> = ({ book, chapter }) => {
+const ChapterEditPage: VFC<ChapterEditPageProps> = ({
+  book,
+  chapter,
+  saveChapter,
+  uploadImage,
+}) => {
   const [title, setTitle] = useState(chapter.title)
   const [content, setContent] = useState(chapter.content)
 
-  const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {}
+  const handleSaveChapter = async () => {
+    await saveChapter({ title, content })
+  }
+
+  const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {
+    const file = head(e.target.files)
+    if (!file) return
+    const url = await uploadImage(file)
+    const markedUrl = `![](${url})`
+    setContent((prev) => prev + markedUrl + '\n')
+  }
 
   return (
     <VStack spacing="8" minHeight="100vh" bg="gray.50">
       <Box alignSelf="stretch">
-        <Header book={book} onSaveChapter={() => Promise.resolve()} />
+        <Header book={book} onSaveChapter={handleSaveChapter} />
       </Box>
 
       <ChapterEditor {...{ title, setTitle, content, setContent, handleUploadImage }} />
@@ -241,10 +258,46 @@ const ChapterEditPageContainer: VFC = () => {
     fetchChapter()
   })
 
-  const uploadImage = async (file: File) => {}
+  const saveChapter = async ({ title, content }: Pick<ChapterData, 'title' | 'content'>) => {
+    assertIsDefined(chapter)
+    const deletedFiles = chapter.images.filter((image) => !content.includes(image.url))
+    await ChapterService.updateDoc(
+      {
+        title,
+        content,
+        images: chapter.images.filter(
+          (image) => !deletedFiles.find((deletedImage) => deletedImage.path === image.path)
+        ),
+      },
+      chapterId,
+      { bookId }
+    )
+    await Promise.all(deletedFiles.map((image) => StorageService.deleteImage({ path: image.path })))
+  }
+
+  const uploadImage = async (file: File) => {
+    assertIsDefined(chapter)
+    const path = `books-${bookId}-chapters-${chapterId}-${new Date().getTime()}`
+    await StorageService.uploadImage({ path, blob: file })
+    const url = await StorageService.getImageUrl({ path })
+    await ChapterService.updateDoc({ images: [...chapter.images, { path, url }] }, chapterId, {
+      bookId,
+    })
+    await fetchChapter()
+    return url
+  }
 
   return (
-    <>{every([book, chapter], Boolean) && <ChapterEditPage book={book!} chapter={chapter!} />}</>
+    <>
+      {every([book, chapter], Boolean) && (
+        <ChapterEditPage
+          book={book!}
+          chapter={chapter!}
+          uploadImage={uploadImage}
+          saveChapter={saveChapter}
+        />
+      )}
+    </>
   )
 }
 
