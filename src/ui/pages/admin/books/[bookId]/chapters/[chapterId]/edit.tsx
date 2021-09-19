@@ -16,9 +16,9 @@ import {
 } from '@chakra-ui/react'
 import { head } from 'lodash-es'
 import { every } from 'lodash-es'
-import { ChangeEventHandler, useState, VFC } from 'react'
+import { ChangeEventHandler, useEffect, useState, VFC } from 'react'
 import { FaArrowLeft, FaRegImage } from 'react-icons/fa'
-import { Link as ReactRouterLink, useParams } from 'react-router-dom'
+import { Link as ReactRouterLink, Prompt, useParams } from 'react-router-dom'
 import { useAsyncFn, useMount } from 'react-use'
 
 import { Book } from '@/domain/book'
@@ -231,14 +231,24 @@ const ChapterEditPage: VFC<ChapterEditPageProps> = ({
     setContent((prev) => prev + markedUrl + '\n')
   }
 
-  return (
-    <VStack spacing="8" minHeight="100vh" bg="gray.50">
-      <Box alignSelf="stretch">
-        <Header book={book} onSaveChapter={handleSaveChapter} />
-      </Box>
+  const changed = chapter.title !== title || chapter.content !== content
 
-      <ChapterEditor {...{ title, setTitle, content, setContent, handleUploadImage }} />
-    </VStack>
+  useEffect(() => {
+    console.log(changed)
+  }, [changed])
+
+  return (
+    <>
+      <Prompt when={changed} message="保存せずに終了しますか？" />
+
+      <VStack spacing="8" minHeight="100vh" bg="gray.50">
+        <Box alignSelf="stretch">
+          <Header book={book} onSaveChapter={handleSaveChapter} />
+        </Box>
+
+        <ChapterEditor {...{ title, setTitle, content, setContent, handleUploadImage }} />
+      </VStack>
+    </>
   )
 }
 

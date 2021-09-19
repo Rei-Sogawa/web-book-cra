@@ -14,10 +14,10 @@ import {
 import { orderBy } from 'firebase/firestore'
 import { every } from 'lodash-es'
 import { head } from 'lodash-es'
-import { ChangeEventHandler, Dispatch, SetStateAction, useState, VFC } from 'react'
+import { ChangeEventHandler, Dispatch, SetStateAction, useEffect, useState, VFC } from 'react'
 import { FaArrowLeft } from 'react-icons/fa'
-import { Link as ReactRouterLink, useParams } from 'react-router-dom'
-import { useAsyncFn, useMount } from 'react-use'
+import { Link as ReactRouterLink, Prompt, useHistory, useParams } from 'react-router-dom'
+import { useAsyncFn, useBeforeUnload, useMount } from 'react-use'
 
 import { Book, BookData } from '@/domain/book'
 import { Chapter } from '@/domain/chapter'
@@ -158,77 +158,90 @@ const BookEditPage: VFC<BookEditPageProps> = ({
   deleteBookCover,
   addChapter,
 }) => {
+  const history = useHistory()
+
   const [title, setTitle] = useState(book.title)
   const [description, setDescription] = useState(book.description)
 
-  const handleSave = async () => {
+  const handleSaveBook = async () => {
     await saveBook({ title, description })
   }
 
+  const changed = book.title !== title || book.description !== description
+
+  const handleClickChapter = async (chapterId: string) => {
+    if (changed) await saveBook({ title, description })
+    history.push(
+      routeMap['/admin/books/:bookId/chapters/:chapterId/edit'].path({ bookId, chapterId })
+    )
+  }
+
   return (
-    <VStack minHeight="100vh">
-      <Box alignSelf="stretch">
-        <Header onSaveBook={handleSave} />
-      </Box>
+    <>
+      <Prompt when={changed} message="保存せずに終了しますか？" />
 
-      <Container maxW="container.md" py="8">
-        <BookForm
-          {...{
-            titleState: [title, setTitle],
-            descriptionState: [description, setDescription],
-            image: book.image,
-            onUploadBookCover: uploadBookCover,
-            onDeleteBookCover: deleteBookCover,
-          }}
-        />
-      </Container>
+      <VStack minHeight="100vh">
+        <Box alignSelf="stretch">
+          <Header onSaveBook={handleSaveBook} />
+        </Box>
 
-      <Box flex="1" bg="gray.50" alignSelf="stretch">
         <Container maxW="container.md" py="8">
-          <VStack spacing="8">
-            <Text alignSelf="start" fontWeight="bold" fontSize="2xl">
-              Chapters
-            </Text>
-
-            {chapters?.length && (
-              <VStack alignSelf="stretch" alignItems="stretch" spacing="0.5">
-                {chapters.map((chapter) => (
-                  <HStack key={chapter.id} bg="white" py="4" px="8" spacing="8">
-                    <Text fontWeight="bold" fontSize="lg" fontFamily="mono" color="blue.300">
-                      {chapter.number.toString().padStart(2, '0')}
-                    </Text>
-                    <Link
-                      as={ReactRouterLink}
-                      to={routeMap['/admin/books/:bookId/chapters/:chapterId/edit'].path({
-                        bookId,
-                        chapterId: chapter.id,
-                      })}
-                      fontWeight="bold"
-                      fontSize="lg"
-                    >
-                      {chapter.title || '無題のチャプター'}
-                    </Link>
-                  </HStack>
-                ))}
-              </VStack>
-            )}
-
-            <Button
-              alignSelf="stretch"
-              size="lg"
-              variant="outline"
-              color="gray.500"
-              _hover={{ background: 'white' }}
-              _active={{ background: 'white' }}
-              leftIcon={<AddIcon />}
-              onClick={addChapter}
-            >
-              チャプターを追加
-            </Button>
-          </VStack>
+          <BookForm
+            {...{
+              titleState: [title, setTitle],
+              descriptionState: [description, setDescription],
+              image: book.image,
+              onUploadBookCover: uploadBookCover,
+              onDeleteBookCover: deleteBookCover,
+            }}
+          />
         </Container>
-      </Box>
-    </VStack>
+
+        <Box flex="1" bg="gray.50" alignSelf="stretch">
+          <Container maxW="container.md" py="8">
+            <VStack spacing="8">
+              <Text alignSelf="start" fontWeight="bold" fontSize="2xl">
+                Chapters
+              </Text>
+
+              {chapters?.length && (
+                <VStack alignSelf="stretch" alignItems="stretch" spacing="0.5">
+                  {chapters.map((chapter) => (
+                    <HStack key={chapter.id} bg="white" py="4" px="8" spacing="8">
+                      <Text fontWeight="bold" fontSize="lg" fontFamily="mono" color="blue.300">
+                        {chapter.number.toString().padStart(2, '0')}
+                      </Text>
+                      <Button
+                        onClick={() => handleClickChapter(chapter.id)}
+                        variant="link"
+                        color="black"
+                        fontWeight="bold"
+                        fontSize="lg"
+                      >
+                        {chapter.title || '無題のチャプター'}
+                      </Button>
+                    </HStack>
+                  ))}
+                </VStack>
+              )}
+
+              <Button
+                alignSelf="stretch"
+                size="lg"
+                variant="outline"
+                color="gray.500"
+                _hover={{ background: 'white' }}
+                _active={{ background: 'white' }}
+                leftIcon={<AddIcon />}
+                onClick={addChapter}
+              >
+                チャプターを追加
+              </Button>
+            </VStack>
+          </Container>
+        </Box>
+      </VStack>
+    </>
   )
 }
 
