@@ -74,13 +74,7 @@ export const createFirestoreService = <Data, PathParams>({
   }
 }
 
-export const useSubscribeCollection = <Data>({
-  query,
-  deps = [],
-}: {
-  query: Query
-  deps?: DependencyList
-}) => {
+export const useSubscribeCollection = <Data>(query: Query, deps: DependencyList = []) => {
   const [values, setValues] = useState<WithId<Data>[]>()
 
   useEffect(() => {
@@ -99,13 +93,7 @@ export const useSubscribeCollection = <Data>({
   return values
 }
 
-export const useSubscribeDoc = <Data>({
-  docRef,
-  deps = [],
-}: {
-  docRef: DocumentReference
-  deps: DependencyList
-}) => {
+export const useSubscribeDoc = <Data>(docRef: DocumentReference, deps: DependencyList = []) => {
   const [value, setValue] = useState<WithId<Data>>()
 
   useEffect(() => {
