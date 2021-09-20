@@ -62,6 +62,10 @@ type BookItemProps = {
 const BookItem: VFC<BookItemProps> = ({ book, onDeleteBook }) => {
   const history = useHistory()
 
+  const handleClickShow = () => {
+    history.push(routeMap['/admin/books/:bookId/viewer'].path({ bookId: book.id }))
+  }
+
   const handleClickEdit = () => {
     history.push(routeMap['/admin/books/:bookId/edit'].path({ bookId: book.id }))
   }
@@ -130,6 +134,7 @@ const BookItem: VFC<BookItemProps> = ({ book, onDeleteBook }) => {
             size="sm"
             isRound
             icon={<Icon as={BiRightArrow} h="4" w="4" color="gray.500" />}
+            onClick={handleClickShow}
           />
           <IconButton
             aria-label="edit book"
