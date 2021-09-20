@@ -1,4 +1,4 @@
-import { Alert, Box, Container, HStack, Image, Link, Text, VStack } from '@chakra-ui/react'
+import { Box, Container, HStack, Image, Link, Text, VStack } from '@chakra-ui/react'
 import { orderBy } from 'firebase/firestore'
 import { every, head, last } from 'lodash-es'
 import { VFC } from 'react'
@@ -50,17 +50,14 @@ type BookViewerProps = {
 }
 
 const BookViewer: VFC<BookViewerProps> = ({ book, chapters }) => {
-  const rootPath = routeMap['/admin/books/:bookId/viewer'].path({ bookId: book.id })
+  const rootPathTemplate = '/admin/books/:bookId/viewer'
+  const rootPath = routeMap[rootPathTemplate].path({ bookId: book.id })
   const chapterPathTemplate = '/admin/books/:bookId/viewer/:chapterId'
   const chapterPath = (chapterId: string) => `${rootPath}/${chapterId}`
 
   const history = useHistory()
   const lastPathname = last(history.location.pathname.split('/'))
-  const currentChapter = chapters.find(({ id }) => id === lastPathname)
-
-  useMount(() => {
-    if (head(chapters)) history.push(chapterPath(chapters[0].id))
-  })
+  const currentChapter = chapters.find(({ id }) => id === lastPathname) || head(chapters)
 
   const handleClickHome = () => {
     history.push(routeMap['/admin/books'].path())
@@ -140,6 +137,14 @@ const BookViewer: VFC<BookViewerProps> = ({ book, chapters }) => {
       </VStack>
 
       <Switch>
+        <Route path={rootPathTemplate}>
+          {currentChapter && (
+            <Box flex="1">
+              <Viewer chapter={currentChapter} />
+            </Box>
+          )}
+        </Route>
+
         <Route path={chapterPathTemplate} exact>
           {currentChapter && (
             <Box flex="1">
