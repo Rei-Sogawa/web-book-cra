@@ -227,7 +227,7 @@ const BookForm: VFC<BookFormProps> = ({
           justifyContent="center"
         >
           {image ? (
-            <Image src={image.url} />
+            <Image src={image.url} boxShadow="md" />
           ) : (
             <Text fontWeight="bold" fontSize="2xl" color="gray.500" pb="8">
               Web Book

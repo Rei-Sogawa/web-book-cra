@@ -85,7 +85,7 @@ const BookItem: VFC<BookItemProps> = ({ book, onDeleteBook }) => {
             justifyContent="center"
           >
             {book.image ? (
-              <Image src={book.image.url} />
+              <Image src={book.image.url} boxShadow="md" />
             ) : (
               <Text fontWeight="bold" color="gray.500" pb="4">
                 Web Book
