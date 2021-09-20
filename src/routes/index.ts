@@ -1,6 +1,6 @@
 import { generatePath } from 'react-router'
 
-import { Admin, Public } from '@/routes/redirectHOCs'
+import { Admin, Public } from '@/routes/authenticate'
 import IndexPage from '@/ui/pages'
 import ChapterEditPage from '@/ui/pages/admin/books/[bookId]/chapters/[chapterId]/edit'
 import BookEditPage from '@/ui/pages/admin/books/[bookId]/edit'

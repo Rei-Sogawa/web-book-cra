@@ -3,10 +3,15 @@ import { FormEventHandler, useState, VFC } from 'react'
 import { FaArrowLeft } from 'react-icons/fa'
 import { useHistory } from 'react-router'
 
+import { BookData } from '@/domain/book'
 import { routeMap } from '@/routes'
 import { BookService } from '@/service/book'
 
-const BookNewPage: VFC = () => {
+type BookNewPageProps = {
+  createBook: (newBookData: Pick<BookData, 'title'>) => Promise<string>
+}
+
+const BookNewPage: VFC<BookNewPageProps> = ({ createBook }) => {
   const history = useHistory()
 
   const handleClickBack = () => {
@@ -17,8 +22,8 @@ const BookNewPage: VFC = () => {
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
-    const docSnap = await BookService.createDoc({ title })
-    history.push(routeMap['/admin/books/:bookId/edit'].path({ bookId: docSnap.id }))
+    const newBookId = await createBook({ title })
+    history.push(routeMap['/admin/books/:bookId/edit'].path({ bookId: newBookId }))
   }
 
   return (
@@ -63,4 +68,13 @@ const BookNewPage: VFC = () => {
   )
 }
 
-export default BookNewPage
+const BookNewPageContainer: VFC = () => {
+  const createBook = async (newBookData: Pick<BookData, 'title'>) => {
+    const docSnap = await BookService.createDoc(newBookData)
+    return docSnap.id
+  }
+
+  return <BookNewPage createBook={createBook} />
+}
+
+export default BookNewPageContainer

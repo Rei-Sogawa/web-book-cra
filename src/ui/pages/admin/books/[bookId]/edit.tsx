@@ -24,6 +24,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react'
+import { format } from 'date-fns'
 import { orderBy } from 'firebase/firestore'
 import { every } from 'lodash-es'
 import { head } from 'lodash-es'
@@ -32,6 +33,7 @@ import {
   Dispatch,
   FormEventHandler,
   SetStateAction,
+  useEffect,
   useState,
   VFC,
 } from 'react'
@@ -66,20 +68,18 @@ const BookDetailFormModal: VFC<BookDetailFormModalProps> = ({
   onClose,
   onSaveBookDetail,
 }) => {
-  const getDefaultValues = () => ({
-    published: book.published,
-    authorNames: book.authorNames.join(','),
-    releasedAt: book.releasedAt?.toDate(),
-    price: book.price,
-  })
+  const { register, handleSubmit: hookFormSubmit, reset } = useForm()
 
-  const {
-    register,
-    handleSubmit: hookFormSubmit,
-    reset,
-  } = useForm({
-    defaultValues: getDefaultValues(),
-  })
+  useEffect(() => {
+    const getDefaultValues = () => ({
+      published: book.published,
+      authorNames: book.authorNames.join(','),
+      releasedAt: book.releasedAt ? format(book.releasedAt.toDate(), 'yyyy-MM-dd') : '',
+      price: book.price,
+    })
+    reset(getDefaultValues())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, reset])
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     hookFormSubmit(async ({ published, authorNames, releasedAt, price }) => {
@@ -89,7 +89,6 @@ const BookDetailFormModal: VFC<BookDetailFormModalProps> = ({
         releasedAt: releasedAt ? fromDate(new Date(releasedAt)) : null,
         price: Number(price),
       })
-      reset(getDefaultValues())
       onClose()
     })(e)
   }
