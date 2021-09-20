@@ -7,6 +7,7 @@ import {
   Icon,
   IconButton,
   Image,
+  Link,
   Tag,
   Text,
   VStack,
@@ -17,12 +18,14 @@ import { every } from 'lodash-es'
 import React, { VFC } from 'react'
 import { BiRightArrow } from 'react-icons/bi'
 import { HiOutlinePencil, HiOutlineTrash } from 'react-icons/hi'
-import { useHistory } from 'react-router'
+import { Link as ReactRouterLink, useHistory } from 'react-router-dom'
 import { useAsyncFn, useMount } from 'react-use'
 
 import { Book } from '@/domain/book'
 import { routeMap } from '@/routes'
 import { BookService } from '@/service/book'
+import { ChapterService } from '@/service/chapter'
+import { StorageService } from '@/service/storage'
 
 const Header: VFC = () => {
   const history = useHistory()
@@ -91,7 +94,13 @@ const BookItem: VFC<BookItemProps> = ({ book, onDeleteBook }) => {
           </Box>
 
           <VStack alignSelf="start" alignItems="start" spacing="1">
-            <Text fontWeight="bold">{book.title}</Text>
+            <Link
+              as={ReactRouterLink}
+              to={routeMap['/admin/books/:bookId/edit'].path({ bookId: book.id })}
+              fontWeight="bold"
+            >
+              {book.title}
+            </Link>
             {book.published ? (
               <Tag size="sm" colorScheme="blue" fontWeight="bold" fontSize="xs" color="blue.900">
                 公開中
@@ -154,7 +163,7 @@ const BooksPage: VFC<BooksPageProps> = ({ books, deleteBook }) => {
         <Header />
       </Box>
 
-      <Container maxW="container.md">
+      <Container maxW="container.md" pb="8">
         <VStack spacing="4" alignItems="stretch">
           <Text fontWeight="bold" fontSize="2xl">
             Books
@@ -185,8 +194,21 @@ const BooksPageContainer: VFC = () => {
 
   const deleteBook = async (book: Book) => {
     if (!window.confirm('削除します。よろしいですか？')) return
-    // TODO: 画像削除も
     await BookService.deleteDoc(book.id)
+    if (book.image) await StorageService.deleteImage({ path: book.image.path })
+    const chapters = await ChapterService.getDocs({ bookId: book.id })
+    await Promise.all(
+      chapters.map((chapter) => ChapterService.deleteDoc(chapter.id, { bookId: book.id }))
+    )
+    const chapterImagePaths = chapters
+      .map((chapter) => chapter.images)
+      .map((images) => images.map((image) => image.path))
+      .flat()
+    await Promise.all(
+      chapterImagePaths.map((chapterImagePath) =>
+        StorageService.deleteImage({ path: chapterImagePath })
+      )
+    )
     await fetchBooks()
   }
 
