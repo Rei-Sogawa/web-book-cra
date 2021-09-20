@@ -15,7 +15,7 @@ const BookNewPage: VFC<BookNewPageProps> = ({ createBook }) => {
   const history = useHistory()
 
   const handleClickBack = () => {
-    history.push(routeMap['/'].path())
+    history.push(routeMap['/admin/books'].path())
   }
 
   const [title, setTitle] = useState('')

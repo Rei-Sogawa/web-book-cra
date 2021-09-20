@@ -105,7 +105,7 @@ const BookDetailFormModal: VFC<BookDetailFormModalProps> = ({
             <VStack spacing="4">
               <FormControl>
                 <FormLabel fontSize="sm" fontWeight="bold" color="gray.500">
-                  非公開 / 公開
+                  未公開 / 公開
                 </FormLabel>
                 <Switch size="lg" {...register('published')} />
               </FormControl>
@@ -159,15 +159,16 @@ const Header: VFC<HeaderProps> = ({ book, onSaveBook, onSaveBookDetail }) => {
     <Box h="14" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
       <Container maxW="container.lg" h="100%">
         <HStack h="100%" justifyContent="space-between">
-          <Link as={ReactRouterLink} to={routeMap['/'].path()}>
-            <Icon as={FaArrowLeft} h="5" w="5" color="gray.500" />
+          <Link as={ReactRouterLink} to={routeMap['/admin/books'].path()}>
+            <Icon as={FaArrowLeft} h="4" w="4" color="gray.500" />
           </Link>
 
           <HStack spacing="4">
             <Tooltip label="本の設定">
               <IconButton
-                aria-label="book detail setting"
-                icon={<Icon as={FaBars} h="5" w="5" color="gray.500" />}
+                aria-label="edit book detail"
+                icon={<Icon as={FaBars} h="4" w="4" color="gray.500" />}
+                size="sm"
                 isRound
                 onClick={onOpen}
               />

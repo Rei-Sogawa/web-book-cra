@@ -43,12 +43,12 @@ const Header: VFC<HeaderProps> = ({ book, onSaveChapter }) => {
     <Box h="14" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
       <Container maxW="container.lg" h="100%">
         <HStack h="100%" justifyContent="space-between">
-          <HStack spacing="4">
+          <HStack spacing="4" alignItems="center">
             <Link
               as={ReactRouterLink}
               to={routeMap['/admin/books/:bookId/edit'].path({ bookId: book.id })}
             >
-              <Icon as={FaArrowLeft} h="5" w="5" color="gray.500" />
+              <Icon as={FaArrowLeft} h="4" w="4" color="gray.500" />
             </Link>
             <Text fontWeight="bold" fontSize="lg">
               {book.title}
@@ -195,6 +195,8 @@ const ChapterEditor: VFC<ChapterEditorProps> = ({
                     aria-label="upload image"
                     icon={<Icon as={FaRegImage} h="6" w="6" color="gray.500" />}
                     isRound
+                    bgColor="white"
+                    boxShadow="md"
                   />
                 </ImageUpload>
               </Center>
@@ -286,6 +288,7 @@ const ChapterEditPageContainer: VFC = () => {
       { bookId }
     )
     await Promise.all(deletedFiles.map((image) => StorageService.deleteImage({ path: image.path })))
+    await fetchChapter()
   }
 
   const uploadImage = async (file: File) => {
