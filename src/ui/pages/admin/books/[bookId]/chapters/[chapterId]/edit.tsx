@@ -7,6 +7,7 @@ import {
   Container,
   HStack,
   Icon,
+  IconButton,
   Input,
   Link,
   Switch,
@@ -190,9 +191,11 @@ const ChapterEditor: VFC<ChapterEditorProps> = ({
               </Text>
               <Center mt="1">
                 <ImageUpload onUploadImage={handleUploadImage}>
-                  <Button size="sm">
-                    <Icon as={FaRegImage} h="6" w="6" color="gray.500" />
-                  </Button>
+                  <IconButton
+                    aria-label="upload image"
+                    icon={<Icon as={FaRegImage} h="6" w="6" color="gray.500" />}
+                    isRound
+                  />
                 </ImageUpload>
               </Center>
             </Box>

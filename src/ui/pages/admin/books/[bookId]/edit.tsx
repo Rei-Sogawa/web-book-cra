@@ -8,6 +8,7 @@ import {
   FormLabel,
   HStack,
   Icon,
+  IconButton,
   Image,
   Input,
   Link,
@@ -164,9 +165,12 @@ const Header: VFC<HeaderProps> = ({ book, onSaveBook, onSaveBookDetail }) => {
 
           <HStack spacing="4">
             <Tooltip label="本の設定">
-              <Button size="sm" onClick={onOpen}>
-                <Icon as={FaBars} h="5" w="5" color="gray.500" />
-              </Button>
+              <IconButton
+                aria-label="book detail setting"
+                icon={<Icon as={FaBars} h="5" w="5" color="gray.500" />}
+                isRound
+                onClick={onOpen}
+              />
             </Tooltip>
             <Button size="sm" colorScheme="blue" onClick={onSaveBook}>
               保存する
