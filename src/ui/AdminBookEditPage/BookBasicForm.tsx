@@ -3,8 +3,8 @@ import { head } from 'lodash-es'
 import { ChangeEventHandler, Dispatch, SetStateAction, VFC } from 'react'
 
 import { Book } from '@/domain'
-import { AutoResizeTextarea } from '@/ui/basics/AutoResizeTextarea'
-import { ImageUpload } from '@/ui/basics/ImageUpload'
+import { AutoResizeTextarea } from '@/ui/Shared/AutoResizeTextarea'
+import { ImageUpload } from '@/ui/Shared/ImageUpload'
 
 type UseStateReturn<T> = [T, Dispatch<SetStateAction<T>>]
 

@@ -28,8 +28,8 @@ import { assertIsDefined } from '@/lib/assert'
 import { routeMap } from '@/routes'
 import { BookService, ChapterService } from '@/service/firestore'
 import { StorageService } from '@/service/storage'
-import { AutoResizeTextarea } from '@/ui/basics/AutoResizeTextarea'
-import { ImageUpload } from '@/ui/basics/ImageUpload'
+import { AutoResizeTextarea } from '@/ui/Shared/AutoResizeTextarea'
+import { ImageUpload } from '@/ui/Shared/ImageUpload'
 
 type HeaderProps = {
   book: Book

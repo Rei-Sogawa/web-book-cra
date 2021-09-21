@@ -2,11 +2,11 @@ import { generatePath } from 'react-router'
 
 import { Admin, Public } from '@/routes/authenticate'
 import AdminBookEditPage from '@/ui/AdminBookEditPage/Index'
-import IndexPage from '@/ui/pages'
-import BooksPage from '@/ui/pages/admin/books'
-import ChapterEditPage from '@/ui/pages/admin/books/[bookId]/chapters/[chapterId]/edit'
-import BookViewerPage from '@/ui/pages/admin/books/[bookId]/viewer'
-import BookNewPage from '@/ui/pages/admin/books/new'
+import AdminBookNewPage from '@/ui/AdminBookNewPage/Index'
+import AdminBooksPage from '@/ui/AdminBooksPage/Index'
+import AdminBookViewerPage from '@/ui/AdminBookViewerPage/Index'
+import AdminChapterEditPage from '@/ui/AdminChapterEditPage/Index'
+import HomePage from '@/ui/HomePage/Index'
 
 const basic = {
   exact: true,
@@ -15,41 +15,51 @@ const basic = {
 export const routeMap = {
   '/': {
     ...basic,
-    path: () => '/',
-    Component: Public(IndexPage),
+    path: () => {
+      return '/'
+    },
+    Component: Public(HomePage),
   },
 
   '/admin/books': {
     ...basic,
-    path: () => '/admin/books',
-    Component: Admin(BooksPage),
+    path: () => {
+      return '/admin/books'
+    },
+    Component: Admin(AdminBooksPage),
   },
 
   '/admin/books/new': {
     ...basic,
-    path: () => '/admin/books/new',
-    Component: Admin(BookNewPage),
+    path: () => {
+      return '/admin/books/new'
+    },
+    Component: Admin(AdminBookNewPage),
   },
 
   '/admin/books/:bookId/edit': {
     ...basic,
-    path: ({ bookId }: { bookId: string }) => generatePath('/admin/books/:bookId/edit', { bookId }),
+    path: ({ bookId }: { bookId: string }) => {
+      return generatePath('/admin/books/:bookId/edit', { bookId })
+    },
     Component: Admin(AdminBookEditPage),
   },
 
   '/admin/books/:bookId/viewer': {
     ...basic,
-    path: ({ bookId }: { bookId: string }) =>
-      generatePath('/admin/books/:bookId/viewer', { bookId }),
-    Component: Admin(BookViewerPage),
+    path: ({ bookId }: { bookId: string }) => {
+      return generatePath('/admin/books/:bookId/viewer', { bookId })
+    },
+    Component: Admin(AdminBookViewerPage),
     exact: false,
   },
 
   '/admin/books/:bookId/chapters/:chapterId/edit': {
     ...basic,
-    path: ({ bookId, chapterId }: { bookId: string; chapterId: string }) =>
-      generatePath('/admin/books/:bookId/chapters/:chapterId/edit', { bookId, chapterId }),
-    Component: Admin(ChapterEditPage),
+    path: ({ bookId, chapterId }: { bookId: string; chapterId: string }) => {
+      return generatePath('/admin/books/:bookId/chapters/:chapterId/edit', { bookId, chapterId })
+    },
+    Component: Admin(AdminChapterEditPage),
   },
 }
 
