@@ -9,9 +9,9 @@ import { routeMap } from '@/routes'
 const BookNewPage: VFC = () => {
   const history = useHistory()
 
-  const [title, setTitle] = useState('')
-
   const { createBook } = useAdminBookNewPageCommands()
+
+  const [title, setTitle] = useState('')
 
   const handleClickBack = () => {
     history.push(routeMap['/admin/books'].path())
