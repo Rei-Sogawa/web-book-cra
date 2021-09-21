@@ -3,7 +3,10 @@ import { every } from 'lodash-es'
 import { useState, VFC } from 'react'
 import { Prompt, useHistory, useParams } from 'react-router-dom'
 
-import { useBookEditPageCommand, useBookEditPageQuery } from '@/application/adminBookEditPage'
+import {
+  useAdminBookEditPageCommand,
+  useAdminBookEditPageQuery,
+} from '@/application/adminBookEditPage'
 import { Book, Chapter } from '@/domain'
 import { routeMap } from '@/routes'
 import { BookBasicForm, BookBasicFormProps } from '@/ui/AdminBookEditPage/BookBasicForm'
@@ -18,12 +21,13 @@ type BookEditPageProps = {
 
 const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
   const history = useHistory()
+
   const [title, setTitle] = useState(book.title)
   const [description, setDescription] = useState(book.description)
   const changed = book.title !== title || book.description !== description
 
   const { saveBook, saveBookDetail, uploadBookCover, deleteBookCover, addChapter } =
-    useBookEditPageCommand()
+    useAdminBookEditPageCommand()
 
   const handleSaveBook: HeaderProps['onSaveBook'] = async () => {
     await saveBook({ title, description }, bookId)
@@ -84,7 +88,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
 
 const Wrapper: VFC = () => {
   const { bookId } = useParams<{ bookId: string }>()
-  const { book, chapters } = useBookEditPageQuery(bookId)
+  const { book, chapters } = useAdminBookEditPageQuery(bookId)
 
   return (
     <>

@@ -10,7 +10,7 @@ import {
 } from '@/service/firestore'
 import { StorageService } from '@/service/storage'
 
-export const useBookEditPageQuery = (bookId: string) => {
+export const useAdminBookEditPageQuery = (bookId: string) => {
   const book = useSubscribeDoc<BookData>(BookService.getDocRef(bookId))
   const chapters = useSubscribeCollection<ChapterData>(
     query(ChapterService.getCollectionRef({ bookId }), orderBy('number'))
@@ -22,7 +22,7 @@ export const useBookEditPageQuery = (bookId: string) => {
   }
 }
 
-export const useBookEditPageCommand = () => {
+export const useAdminBookEditPageCommand = () => {
   const saveBook = async (
     editedBookData: Pick<BookData, 'title' | 'description'>,
     bookId: string
