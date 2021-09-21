@@ -21,7 +21,7 @@ import { HiOutlinePencil, HiOutlineTrash } from 'react-icons/hi'
 import { Link as ReactRouterLink, useHistory } from 'react-router-dom'
 import { useAsyncFn, useMount } from 'react-use'
 
-import { Book } from '@/domain/book'
+import { Book } from '@/domain'
 import { routeMap } from '@/routes'
 import { BookService, ChapterService } from '@/service/firestore'
 import { StorageService } from '@/service/storage'
@@ -88,7 +88,7 @@ const BookItem: VFC<BookItemProps> = ({ book, onDeleteBook }) => {
             justifyContent="center"
           >
             {book.image ? (
-              <Image src={book.image.url} boxShadow="md" />
+              <Image src={book.image.url} />
             ) : (
               <Text fontWeight="bold" color="gray.500" pb="4">
                 Web Book

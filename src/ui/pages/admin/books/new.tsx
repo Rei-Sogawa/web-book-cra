@@ -3,7 +3,7 @@ import { FormEventHandler, useState, VFC } from 'react'
 import { FaArrowLeft } from 'react-icons/fa'
 import { useHistory } from 'react-router'
 
-import { BookData } from '@/domain/book'
+import { BookData } from '@/domain'
 import { routeMap } from '@/routes'
 import { BookService } from '@/service/firestore'
 
