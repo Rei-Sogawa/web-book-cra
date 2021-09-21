@@ -30,7 +30,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({ book, chapters }) => {
     await saveBook({ title, description })
   }
   const handleDeleteBookCover: BookBasicFormProps['onDeleteBookCover'] = async () => {
-    await deleteBookCover(book.image)
+    await deleteBookCover(book)
   }
   const handleClickChapter: ChaptersProps['onClickChapter'] = async (chapterId: string) => {
     if (changed) await saveBook({ title, description })

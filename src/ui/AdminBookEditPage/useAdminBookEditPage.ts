@@ -45,10 +45,10 @@ export const useAdminBookEditPageCommand = () => {
     await BookService.updateDoc({ image: { path, url } }, bookId)
   }
 
-  const deleteBookCover = async (bookImage: Book['image']) => {
+  const deleteBookCover = async (book: Pick<Book, 'image'>) => {
     if (!window.confirm('削除します。よろしいですか？')) return
-    assertIsDefined(bookImage)
-    await StorageService.deleteImage(bookImage.path)
+    assertIsDefined(book.image)
+    await StorageService.deleteImage(book.image.path)
     await BookService.updateDoc({ image: null }, bookId)
   }
 
