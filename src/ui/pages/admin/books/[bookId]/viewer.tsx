@@ -9,8 +9,7 @@ import { Book } from '@/domain/book'
 import { Chapter } from '@/domain/chapter'
 import { useMarked } from '@/hooks/useMarked'
 import { routeMap } from '@/routes'
-import { BookService } from '@/service/book'
-import { ChapterService } from '@/service/chapter'
+import { BookService, ChapterService } from '@/service/firestore'
 
 type ViewerProps = {
   chapter: Chapter

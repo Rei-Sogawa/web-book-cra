@@ -5,7 +5,7 @@ import { useHistory } from 'react-router'
 
 import { BookData } from '@/domain/book'
 import { routeMap } from '@/routes'
-import { BookService } from '@/service/book'
+import { BookService } from '@/service/firestore'
 
 type BookNewPageProps = {
   createBook: (newBookData: Pick<BookData, 'title'>) => Promise<string>

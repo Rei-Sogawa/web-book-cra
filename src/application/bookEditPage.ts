@@ -1,11 +1,13 @@
 import { orderBy, query } from 'firebase/firestore'
 
 import { Book, BookData } from '@/domain/book'
-import { Chapter } from '@/domain/chapter'
 import { assertIsDefined } from '@/lib/assert'
-import { BookService } from '@/service/book'
-import { ChapterService } from '@/service/chapter'
-import { useSubscribeCollection, useSubscribeDoc } from '@/service/firestore'
+import {
+  BookService,
+  ChapterService,
+  useSubscribeCollection,
+  useSubscribeDoc,
+} from '@/service/firestore'
 import { StorageService } from '@/service/storage'
 
 const useBookEditPageQuery = (bookId: string) => {
@@ -50,8 +52,8 @@ const useBookEditPageCommand = () => {
     await BookService.updateDoc({ image: null }, book.id)
   }
 
-  const addChapter = async (chapters: Chapter[], bookId: string) => {
-    await ChapterService.createDoc({ number: chapters.length + 1 }, { bookId })
+  const addChapter = async (chaptersLength: number, bookId: string) => {
+    await ChapterService.createDoc({ number: chaptersLength + 1 }, { bookId })
   }
 
   return {

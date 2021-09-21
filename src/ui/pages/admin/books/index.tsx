@@ -23,8 +23,7 @@ import { useAsyncFn, useMount } from 'react-use'
 
 import { Book } from '@/domain/book'
 import { routeMap } from '@/routes'
-import { BookService } from '@/service/book'
-import { ChapterService } from '@/service/chapter'
+import { BookService, ChapterService } from '@/service/firestore'
 import { StorageService } from '@/service/storage'
 
 const Header: VFC = () => {
