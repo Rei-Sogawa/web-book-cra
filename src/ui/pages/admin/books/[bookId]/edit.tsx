@@ -7,8 +7,8 @@ import { Prompt, useHistory, useParams } from 'react-router-dom'
 import { useBookEditPageCommand, useBookEditPageQuery } from '@/application/adminBookEditPage'
 import { Book, Chapter } from '@/domain'
 import { routeMap } from '@/routes'
-import { BookForm } from '@/ui/components/AdminBookEditPage/BookForm'
-import { Header } from '@/ui/components/AdminBookEditPage/Header'
+import { BookForm, BookFormProps } from '@/ui/components/AdminBookEditPage/BookForm'
+import { Header, HeaderProps } from '@/ui/components/AdminBookEditPage/Header'
 
 type BookEditPageProps = {
   bookId: string
@@ -23,13 +23,29 @@ const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
   const history = useHistory()
   const [title, setTitle] = useState(book.title)
   const [description, setDescription] = useState(book.description)
+
   const changed = book.title !== title || book.description !== description
 
+  const handleSaveBook: HeaderProps['onSaveBook'] = async () => {
+    await saveBook({ title, description }, bookId)
+  }
+  const handleSaveBookDetail: HeaderProps['onSaveBookDetail'] = async (v) => {
+    await saveBookDetail(v, bookId)
+  }
+  const handleUploadBookCover: BookFormProps['onUploadBookCover'] = async (file) => {
+    await uploadBookCover(file, bookId)
+  }
+  const handleDeleteBookCover: BookFormProps['onDeleteBookCover'] = async () => {
+    await deleteBookCover(book)
+  }
   const handleClickChapter = async (chapterId: string) => {
     if (changed) await saveBook({ title, description }, bookId)
     history.push(
       routeMap['/admin/books/:bookId/chapters/:chapterId/edit'].path({ bookId, chapterId })
     )
+  }
+  const handleClickAddChapter = async () => {
+    await addChapter(chapters.length, bookId)
   }
 
   return (
@@ -38,11 +54,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
 
       <VStack minHeight="100vh">
         <Box alignSelf="stretch">
-          <Header
-            book={book}
-            onSaveBook={() => saveBook({ title, description }, bookId)}
-            onSaveBookDetail={(v) => saveBookDetail(v, bookId)}
-          />
+          <Header book={book} onSaveBook={handleSaveBook} onSaveBookDetail={handleSaveBookDetail} />
         </Box>
 
         <Container maxW="container.md" py="8">
@@ -51,8 +63,8 @@ const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
               titleState: [title, setTitle],
               descriptionState: [description, setDescription],
               image: book.image,
-              onUploadBookCover: (file) => uploadBookCover(file, bookId),
-              onDeleteBookCover: () => deleteBookCover(book),
+              onUploadBookCover: handleUploadBookCover,
+              onDeleteBookCover: handleDeleteBookCover,
             }}
           />
         </Container>
@@ -93,7 +105,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
                 _hover={{ background: 'white' }}
                 _active={{ background: 'white' }}
                 leftIcon={<AddIcon />}
-                onClick={() => addChapter(chapters.length + 1, bookId)}
+                onClick={handleClickAddChapter}
               >
                 チャプターを追加
               </Button>
