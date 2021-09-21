@@ -15,7 +15,7 @@ import { Link as ReactRouterLink } from 'react-router-dom'
 
 import { Book, BookData } from '@/domain'
 import { routeMap } from '@/routes'
-import { BookDetailFormModal } from '@/ui/components/AdminBookEditPage/BookDetailFormModal'
+import { BookDetailFormModal } from '@/ui/AdminBookEditPage/BookDetailFormModal'
 
 export type HeaderProps = {
   book: Book

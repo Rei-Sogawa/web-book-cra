@@ -8,7 +8,7 @@ import { ImageUpload } from '@/ui/basics/ImageUpload'
 
 type UseStateReturn<T> = [T, Dispatch<SetStateAction<T>>]
 
-export type BookFormProps = {
+export type BookBasicFormProps = {
   titleState: UseStateReturn<string>
   descriptionState: UseStateReturn<string>
   image: Book['image']
@@ -16,7 +16,7 @@ export type BookFormProps = {
   onDeleteBookCover: () => Promise<void>
 }
 
-export const BookForm: VFC<BookFormProps> = ({
+export const BookBasicForm: VFC<BookBasicFormProps> = ({
   titleState: [title, setTitle],
   descriptionState: [description, setDescription],
   image,

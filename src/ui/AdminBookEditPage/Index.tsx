@@ -6,9 +6,9 @@ import { Prompt, useHistory, useParams } from 'react-router-dom'
 import { useBookEditPageCommand, useBookEditPageQuery } from '@/application/adminBookEditPage'
 import { Book, Chapter } from '@/domain'
 import { routeMap } from '@/routes'
-import { BookForm, BookFormProps } from '@/ui/components/AdminBookEditPage/BookForm'
-import { Chapters, ChaptersProps } from '@/ui/components/AdminBookEditPage/Chapters'
-import { Header, HeaderProps } from '@/ui/components/AdminBookEditPage/Header'
+import { BookBasicForm, BookBasicFormProps } from '@/ui/AdminBookEditPage/BookBasicForm'
+import { Chapters, ChaptersProps } from '@/ui/AdminBookEditPage/Chapters'
+import { Header, HeaderProps } from '@/ui/AdminBookEditPage/Header'
 
 type BookEditPageProps = {
   bookId: string
@@ -31,10 +31,10 @@ const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
   const handleSaveBookDetail: HeaderProps['onSaveBookDetail'] = async (v) => {
     await saveBookDetail(v, bookId)
   }
-  const handleUploadBookCover: BookFormProps['onUploadBookCover'] = async (file) => {
+  const handleUploadBookCover: BookBasicFormProps['onUploadBookCover'] = async (file) => {
     await uploadBookCover(file, bookId)
   }
-  const handleDeleteBookCover: BookFormProps['onDeleteBookCover'] = async () => {
+  const handleDeleteBookCover: BookBasicFormProps['onDeleteBookCover'] = async () => {
     await deleteBookCover(book)
   }
   const handleClickChapter: ChaptersProps['onClickChapter'] = async (chapterId: string) => {
@@ -57,7 +57,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
         </Box>
 
         <Container maxW="container.md" py="8">
-          <BookForm
+          <BookBasicForm
             {...{
               titleState: [title, setTitle],
               descriptionState: [description, setDescription],
@@ -82,7 +82,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
   )
 }
 
-const BookEditPageWrapper: VFC = () => {
+const Wrapper: VFC = () => {
   const { bookId } = useParams<{ bookId: string }>()
   const { book, chapters } = useBookEditPageQuery(bookId)
 
@@ -95,4 +95,4 @@ const BookEditPageWrapper: VFC = () => {
   )
 }
 
-export default BookEditPageWrapper
+export default Wrapper
