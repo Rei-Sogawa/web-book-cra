@@ -1,6 +1,6 @@
 import { orderBy, query } from 'firebase/firestore'
 
-import { Book, BookData } from '@/domain'
+import { Book, BookData, ChapterData } from '@/domain'
 import { assertIsDefined } from '@/lib/assert'
 import {
   BookService,
@@ -9,8 +9,6 @@ import {
   useSubscribeDoc,
 } from '@/service/firestore'
 import { StorageService } from '@/service/storage'
-
-import { ChapterData } from '../domain/chapter'
 
 export const useBookEditPageQuery = (bookId: string) => {
   const book = useSubscribeDoc<BookData>(BookService.getDocRef(bookId))

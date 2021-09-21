@@ -17,14 +17,13 @@ type BookEditPageProps = {
 }
 
 const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
-  const { saveBook, saveBookDetail, uploadBookCover, deleteBookCover, addChapter } =
-    useBookEditPageCommand()
-
   const history = useHistory()
   const [title, setTitle] = useState(book.title)
   const [description, setDescription] = useState(book.description)
-
   const changed = book.title !== title || book.description !== description
+
+  const { saveBook, saveBookDetail, uploadBookCover, deleteBookCover, addChapter } =
+    useBookEditPageCommand()
 
   const handleSaveBook: HeaderProps['onSaveBook'] = async () => {
     await saveBook({ title, description }, bookId)
