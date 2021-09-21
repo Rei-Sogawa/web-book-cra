@@ -4,6 +4,7 @@ import { useState, VFC } from 'react'
 import { Prompt, useHistory } from 'react-router-dom'
 
 import { Book, Chapter } from '@/domain'
+import { useAppToast } from '@/hooks/useAppToast'
 import { routeMap } from '@/routes'
 
 import { BookBasicForm, BookBasicFormProps } from './BookBasicForm'
@@ -18,6 +19,7 @@ type BookEditPageProps = {
 
 const BookEditPage: VFC<BookEditPageProps> = ({ book, chapters }) => {
   const history = useHistory()
+  const toast = useAppToast()
 
   const { saveBook, saveBookDetail, uploadBookCover, deleteBookCover, addChapter } =
     useAdminBookEditPageCommand()
@@ -27,12 +29,20 @@ const BookEditPage: VFC<BookEditPageProps> = ({ book, chapters }) => {
   const changed = book.title !== title || book.description !== description
 
   const handleSaveBook: HeaderProps['onSaveBook'] = async () => {
+    if (!title.trim()) {
+      toast.error('本のタイトルを入力してください。')
+      return
+    }
     await saveBook({ title, description })
   }
   const handleDeleteBookCover: BookBasicFormProps['onDeleteBookCover'] = async () => {
     await deleteBookCover(book)
   }
   const handleClickChapter: ChaptersProps['onClickChapter'] = async (chapterId: string) => {
+    if (!title.trim()) {
+      toast.error('本のタイトルを入力してください。')
+      return
+    }
     if (changed) await saveBook({ title, description })
     history.push(
       routeMap['/admin/books/:bookId/chapters/:chapterId/edit'].path({ bookId: book.id, chapterId })
