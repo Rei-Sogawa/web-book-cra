@@ -19,11 +19,11 @@ import { db } from '@/firebaseApp'
 import { TimestampToFieldValue, WithId } from '@/types'
 
 export const createFirestoreService = <Data, PathParams>({
-  getCollectionPath,
   getDefaultData,
+  getCollectionPath,
 }: {
-  getCollectionPath: (pathParams: PathParams) => string
   getDefaultData: () => TimestampToFieldValue<Data>
+  getCollectionPath: (pathParams: PathParams) => string
 }) => {
   const getCollectionRef = (pathParams: PathParams) => collection(db, getCollectionPath(pathParams))
 

@@ -26,7 +26,6 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { format } from 'date-fns'
-import { orderBy } from 'firebase/firestore'
 import { every } from 'lodash-es'
 import { head } from 'lodash-es'
 import {
@@ -41,15 +40,12 @@ import {
 import { useForm } from 'react-hook-form'
 import { FaArrowLeft, FaBars } from 'react-icons/fa'
 import { Link as ReactRouterLink, Prompt, useHistory, useParams } from 'react-router-dom'
-import { useAsyncFn, useMount } from 'react-use'
 
+import { useBookEditPageCommand, useBookEditPageQuery } from '@/application/bookEditPage'
 import { Book, BookData } from '@/domain/book'
 import { Chapter } from '@/domain/chapter'
-import { assertIsDefined } from '@/lib/assert'
 import { fromDate } from '@/lib/date'
 import { routeMap } from '@/routes'
-import { BookService, ChapterService } from '@/service/firestore'
-import { StorageService } from '@/service/storage'
 import { AutoResizeTextarea } from '@/ui/basics/AutoResizeTextarea'
 import { ImageUpload } from '@/ui/basics/ImageUpload'
 
@@ -226,7 +222,7 @@ const BookForm: VFC<BookFormProps> = ({
           justifyContent="center"
         >
           {image ? (
-            <Image src={image.url} boxShadow="md" />
+            <Image src={image.url} />
           ) : (
             <Text fontWeight="bold" fontSize="2xl" color="gray.500" pb="8">
               Web Book
@@ -279,38 +275,23 @@ type BookEditPageProps = {
   bookId: string
   book: Book
   chapters: Chapter[]
-  saveBook: ({ title, description }: Pick<BookData, 'title' | 'description'>) => Promise<void>
-  saveBookDetail: (
-    bookDetail: Pick<BookData, 'published' | 'authorNames' | 'releasedAt' | 'price'>
-  ) => Promise<void>
-  uploadBookCover: (file: File) => Promise<void>
-  deleteBookCover: () => Promise<void>
-  addChapter: () => Promise<void>
 }
 
-const BookEditPage: VFC<BookEditPageProps> = ({
-  bookId,
-  book,
-  chapters,
-  saveBook,
-  saveBookDetail,
-  uploadBookCover,
-  deleteBookCover,
-  addChapter,
-}) => {
-  const history = useHistory()
+const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
+  const { saveBook, saveBookDetail, uploadBookCover, deleteBookCover, addChapter } =
+    useBookEditPageCommand()
 
+  const history = useHistory()
   const [title, setTitle] = useState(book.title)
   const [description, setDescription] = useState(book.description)
-
-  const handleSaveBook = async () => {
-    await saveBook({ title, description })
-  }
-
   const changed = book.title !== title || book.description !== description
 
+  const handleSaveBook = async () => {
+    await saveBook({ title, description }, bookId)
+  }
+
   const handleClickChapter = async (chapterId: string) => {
-    if (changed) await saveBook({ title, description })
+    if (changed) await saveBook({ title, description }, bookId)
     history.push(
       routeMap['/admin/books/:bookId/chapters/:chapterId/edit'].path({ bookId, chapterId })
     )
@@ -322,7 +303,11 @@ const BookEditPage: VFC<BookEditPageProps> = ({
 
       <VStack minHeight="100vh">
         <Box alignSelf="stretch">
-          <Header book={book} onSaveBook={handleSaveBook} onSaveBookDetail={saveBookDetail} />
+          <Header
+            book={book}
+            onSaveBook={handleSaveBook}
+            onSaveBookDetail={(v) => saveBookDetail(v, bookId)}
+          />
         </Box>
 
         <Container maxW="container.md" py="8">
@@ -331,8 +316,8 @@ const BookEditPage: VFC<BookEditPageProps> = ({
               titleState: [title, setTitle],
               descriptionState: [description, setDescription],
               image: book.image,
-              onUploadBookCover: uploadBookCover,
-              onDeleteBookCover: deleteBookCover,
+              onUploadBookCover: (file) => uploadBookCover(file, bookId),
+              onDeleteBookCover: () => deleteBookCover(book),
             }}
           />
         </Container>
@@ -373,7 +358,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({
                 _hover={{ background: 'white' }}
                 _active={{ background: 'white' }}
                 leftIcon={<AddIcon />}
-                onClick={addChapter}
+                onClick={() => addChapter(chapters.length + 1, bookId)}
               >
                 チャプターを追加
               </Button>
@@ -387,70 +372,12 @@ const BookEditPage: VFC<BookEditPageProps> = ({
 
 const BookEditPageContainer: VFC = () => {
   const { bookId } = useParams<{ bookId: string }>()
-
-  const [{ value: book }, fetchBook] = useAsyncFn(() => {
-    return BookService.getDoc(bookId)
-  })
-
-  const [{ value: chapters }, fetchChapters] = useAsyncFn(() => {
-    return ChapterService.getDocs({ bookId }, orderBy('number'))
-  })
-
-  useMount(() => {
-    fetchBook()
-    fetchChapters()
-  })
-
-  const saveBook = async ({ title, description }: Pick<BookData, 'title' | 'description'>) => {
-    await BookService.updateDoc({ title, description }, bookId)
-    await fetchBook()
-  }
-
-  const saveBookDetail = async ({
-    published,
-    authorNames,
-    releasedAt,
-    price,
-  }: Pick<BookData, 'published' | 'authorNames' | 'releasedAt' | 'price'>) => {
-    await BookService.updateDoc({ published, authorNames, releasedAt, price }, bookId)
-    await fetchBook()
-  }
-
-  const uploadBookCover = async (file: File) => {
-    const path = `books-${bookId}`
-    await StorageService.uploadImage(path, file)
-    const url = await StorageService.getImageUrl(path)
-    await BookService.updateDoc({ image: { path, url } }, bookId)
-    await fetchBook()
-  }
-
-  const deleteBookCover = async () => {
-    if (!window.confirm('削除します。よろしいですか？')) return
-    assertIsDefined(book?.image)
-    await StorageService.deleteImage(book.image.path)
-    await BookService.updateDoc({ image: null }, bookId)
-    await fetchBook()
-  }
-
-  const addChapter = async () => {
-    assertIsDefined(chapters)
-    await ChapterService.createDoc({ number: chapters.length + 1 }, { bookId })
-    await fetchChapters()
-  }
+  const { book, chapters } = useBookEditPageQuery(bookId)
 
   return (
     <>
       {every([book, chapters], Boolean) && (
-        <BookEditPage
-          bookId={bookId}
-          book={book!}
-          chapters={chapters!}
-          saveBook={saveBook}
-          saveBookDetail={saveBookDetail}
-          uploadBookCover={uploadBookCover}
-          deleteBookCover={deleteBookCover}
-          addChapter={addChapter}
-        />
+        <BookEditPage bookId={bookId} book={book!} chapters={chapters!} />
       )}
     </>
   )

@@ -10,10 +10,12 @@ import {
 } from '@/service/firestore'
 import { StorageService } from '@/service/storage'
 
-const useBookEditPageQuery = (bookId: string) => {
-  const book = useSubscribeDoc(BookService.getDocRef(bookId))
+import { ChapterData } from './../domain/chapter'
 
-  const chapters = useSubscribeCollection(
+export const useBookEditPageQuery = (bookId: string) => {
+  const book = useSubscribeDoc<BookData>(BookService.getDocRef(bookId))
+
+  const chapters = useSubscribeCollection<ChapterData>(
     query(ChapterService.getCollectionRef({ bookId }), orderBy('number'))
   )
 
@@ -23,7 +25,7 @@ const useBookEditPageQuery = (bookId: string) => {
   }
 }
 
-const useBookEditPageCommand = () => {
+export const useBookEditPageCommand = () => {
   const saveBook = async (
     editedBookData: Pick<BookData, 'title' | 'description'>,
     bookId: string
@@ -62,15 +64,5 @@ const useBookEditPageCommand = () => {
     uploadBookCover,
     deleteBookCover,
     addChapter,
-  }
-}
-
-export const useBookEditPageContainer = (bookId: string) => {
-  const q = useBookEditPageQuery(bookId)
-  const c = useBookEditPageCommand()
-
-  return {
-    ...q,
-    ...c,
   }
 }

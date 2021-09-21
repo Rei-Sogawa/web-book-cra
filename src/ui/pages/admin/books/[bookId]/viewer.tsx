@@ -105,7 +105,7 @@ const BookViewer: VFC<BookViewerProps> = ({ book, chapters }) => {
             justifyContent="center"
           >
             {book.image ? (
-              <Image src={book.image.url} boxShadow="md" />
+              <Image src={book.image.url} />
             ) : (
               <Text fontWeight="bold" color="gray.500" pb="4">
                 Web Book
