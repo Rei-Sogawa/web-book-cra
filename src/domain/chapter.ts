@@ -12,7 +12,7 @@ export type ChapterData = {
 
 export type Chapter = WithId<ChapterData>
 
-export const getDefaultData = (): TimestampToFieldValue<ChapterData> => ({
+export const getDefaultChapterData = (): TimestampToFieldValue<ChapterData> => ({
   number: 0,
   title: '',
   content: '',

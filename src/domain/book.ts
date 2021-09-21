@@ -15,7 +15,7 @@ export type BookData = {
 
 export type Book = WithId<BookData>
 
-export const getDefaultData = (): TimestampToFieldValue<BookData> => ({
+export const getDefaultBookData = (): TimestampToFieldValue<BookData> => ({
   title: '',
   description: '',
   authorNames: [],
