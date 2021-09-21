@@ -1,7 +1,7 @@
 import { Box, Container, VStack } from '@chakra-ui/react'
 import { every } from 'lodash-es'
 import { useState, VFC } from 'react'
-import { Prompt, useHistory, useParams } from 'react-router-dom'
+import { Prompt, useHistory } from 'react-router-dom'
 
 import { Book, Chapter } from '@/domain'
 import { routeMap } from '@/routes'
@@ -14,12 +14,11 @@ import {
 } from '@/ui/AdminBookEditPage/useAdminBookEditPage'
 
 type BookEditPageProps = {
-  bookId: string
   book: Book
   chapters: Chapter[]
 }
 
-const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
+const BookEditPage: VFC<BookEditPageProps> = ({ book, chapters }) => {
   const history = useHistory()
 
   const { saveBook, saveBookDetail, uploadBookCover, deleteBookCover, addChapter } =
@@ -30,25 +29,19 @@ const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
   const changed = book.title !== title || book.description !== description
 
   const handleSaveBook: HeaderProps['onSaveBook'] = async () => {
-    await saveBook({ title, description }, bookId)
-  }
-  const handleSaveBookDetail: HeaderProps['onSaveBookDetail'] = async (v) => {
-    await saveBookDetail(v, bookId)
-  }
-  const handleUploadBookCover: BookBasicFormProps['onUploadBookCover'] = async (file) => {
-    await uploadBookCover(file, bookId)
+    await saveBook({ title, description })
   }
   const handleDeleteBookCover: BookBasicFormProps['onDeleteBookCover'] = async () => {
-    await deleteBookCover(book)
+    await deleteBookCover(book.image)
   }
   const handleClickChapter: ChaptersProps['onClickChapter'] = async (chapterId: string) => {
-    if (changed) await saveBook({ title, description }, bookId)
+    if (changed) await saveBook({ title, description })
     history.push(
-      routeMap['/admin/books/:bookId/chapters/:chapterId/edit'].path({ bookId, chapterId })
+      routeMap['/admin/books/:bookId/chapters/:chapterId/edit'].path({ bookId: book.id, chapterId })
     )
   }
   const handleAddChapter: ChaptersProps['onAddChapter'] = async () => {
-    await addChapter(chapters.length, bookId)
+    await addChapter(chapters.length)
   }
 
   return (
@@ -57,7 +50,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
 
       <VStack minHeight="100vh">
         <Box alignSelf="stretch">
-          <Header book={book} onSaveBook={handleSaveBook} onSaveBookDetail={handleSaveBookDetail} />
+          <Header book={book} onSaveBook={handleSaveBook} onSaveBookDetail={saveBookDetail} />
         </Box>
 
         <Container maxW="container.md" py="8">
@@ -66,7 +59,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
               titleState: [title, setTitle],
               descriptionState: [description, setDescription],
               image: book.image,
-              onUploadBookCover: handleUploadBookCover,
+              onUploadBookCover: uploadBookCover,
               onDeleteBookCover: handleDeleteBookCover,
             }}
           />
@@ -87,16 +80,10 @@ const BookEditPage: VFC<BookEditPageProps> = ({ bookId, book, chapters }) => {
 }
 
 const Wrapper: VFC = () => {
-  const { bookId } = useParams<{ bookId: string }>()
-
-  const { book, chapters } = useAdminBookEditPageQuery(bookId)
+  const { book, chapters } = useAdminBookEditPageQuery()
 
   return (
-    <>
-      {every([book, chapters], Boolean) && (
-        <BookEditPage bookId={bookId} book={book!} chapters={chapters!} />
-      )}
-    </>
+    <>{every([book, chapters], Boolean) && <BookEditPage book={book!} chapters={chapters!} />}</>
   )
 }
 
