@@ -14,7 +14,6 @@ import { ChapterData } from './../domain/chapter'
 
 export const useBookEditPageQuery = (bookId: string) => {
   const book = useSubscribeDoc<BookData>(BookService.getDocRef(bookId))
-
   const chapters = useSubscribeCollection<ChapterData>(
     query(ChapterService.getCollectionRef({ bookId }), orderBy('number'))
   )

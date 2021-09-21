@@ -49,13 +49,13 @@ import { routeMap } from '@/routes'
 import { AutoResizeTextarea } from '@/ui/basics/AutoResizeTextarea'
 import { ImageUpload } from '@/ui/basics/ImageUpload'
 
-type BookDetail = Pick<BookData, 'published' | 'authorNames' | 'releasedAt' | 'price'>
-
 type BookDetailFormModalProps = {
-  book: BookDetail
+  book: Pick<BookData, 'published' | 'authorNames' | 'releasedAt' | 'price'>
   isOpen: boolean
   onClose: () => void
-  onSaveBookDetail: (book: BookDetail) => Promise<void>
+  onSaveBookDetail: (
+    editedBookData: Pick<BookData, 'published' | 'authorNames' | 'releasedAt' | 'price'>
+  ) => Promise<void>
 }
 
 const BookDetailFormModal: VFC<BookDetailFormModalProps> = ({
@@ -143,7 +143,7 @@ type HeaderProps = {
   book: Book
   onSaveBook: () => Promise<void>
   onSaveBookDetail: (
-    bookDetail: Pick<BookData, 'published' | 'authorNames' | 'releasedAt' | 'price'>
+    editedBookData: Pick<BookData, 'published' | 'authorNames' | 'releasedAt' | 'price'>
   ) => Promise<void>
 }
 
