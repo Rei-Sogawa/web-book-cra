@@ -286,15 +286,15 @@ const ChapterEditPageContainer: VFC = () => {
       chapterId,
       { bookId }
     )
-    await Promise.all(deletedFiles.map((image) => StorageService.deleteImage({ path: image.path })))
+    await Promise.all(deletedFiles.map((image) => StorageService.deleteImage(image.path)))
     await fetchChapter()
   }
 
   const uploadImage = async (file: File) => {
     assertIsDefined(chapter)
     const path = `books-${bookId}-chapters-${chapterId}-${new Date().getTime()}`
-    await StorageService.uploadImage({ path, blob: file })
-    const url = await StorageService.getImageUrl({ path })
+    await StorageService.uploadImage(path, file)
+    const url = await StorageService.getImageUrl(path)
     await ChapterService.updateDoc({ images: [...chapter.images, { path, url }] }, chapterId, {
       bookId,
     })

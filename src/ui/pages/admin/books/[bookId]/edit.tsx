@@ -418,8 +418,8 @@ const BookEditPageContainer: VFC = () => {
 
   const uploadBookCover = async (file: File) => {
     const path = `books-${bookId}`
-    await StorageService.uploadImage({ path, blob: file })
-    const url = await StorageService.getImageUrl({ path })
+    await StorageService.uploadImage(path, file)
+    const url = await StorageService.getImageUrl(path)
     await BookService.updateDoc({ image: { path, url } }, bookId)
     await fetchBook()
   }
@@ -427,7 +427,7 @@ const BookEditPageContainer: VFC = () => {
   const deleteBookCover = async () => {
     if (!window.confirm('削除します。よろしいですか？')) return
     assertIsDefined(book?.image)
-    await StorageService.deleteImage({ path: book.image.path })
+    await StorageService.deleteImage(book.image.path)
     await BookService.updateDoc({ image: null }, bookId)
     await fetchBook()
   }

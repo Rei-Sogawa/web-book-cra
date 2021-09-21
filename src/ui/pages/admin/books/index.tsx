@@ -199,7 +199,7 @@ const BooksPageContainer: VFC = () => {
   const deleteBook = async (book: Book) => {
     if (!window.confirm('削除します。よろしいですか？')) return
     await BookService.deleteDoc(book.id)
-    if (book.image) await StorageService.deleteImage({ path: book.image.path })
+    if (book.image) await StorageService.deleteImage(book.image.path)
     const chapters = await ChapterService.getDocs({ bookId: book.id })
     await Promise.all(
       chapters.map((chapter) => ChapterService.deleteDoc(chapter.id, { bookId: book.id }))
@@ -209,9 +209,7 @@ const BooksPageContainer: VFC = () => {
       .map((images) => images.map((image) => image.path))
       .flat()
     await Promise.all(
-      chapterImagePaths.map((chapterImagePath) =>
-        StorageService.deleteImage({ path: chapterImagePath })
-      )
+      chapterImagePaths.map((chapterImagePath) => StorageService.deleteImage(chapterImagePath))
     )
     await fetchBooks()
   }
