@@ -3,15 +3,15 @@ import { every } from 'lodash-es'
 import { useState, VFC } from 'react'
 import { Prompt, useHistory, useParams } from 'react-router-dom'
 
-import {
-  useAdminBookEditPageCommand,
-  useAdminBookEditPageQuery,
-} from '@/application/adminBookEditPage'
 import { Book, Chapter } from '@/domain'
 import { routeMap } from '@/routes'
 import { BookBasicForm, BookBasicFormProps } from '@/ui/AdminBookEditPage/BookBasicForm'
 import { Chapters, ChaptersProps } from '@/ui/AdminBookEditPage/Chapters'
 import { Header, HeaderProps } from '@/ui/AdminBookEditPage/Header'
+import {
+  useAdminBookEditPageCommand,
+  useAdminBookEditPageQuery,
+} from '@/ui/AdminBookEditPage/useAdminBookEditPage'
 
 type BookEditPageProps = {
   bookId: string

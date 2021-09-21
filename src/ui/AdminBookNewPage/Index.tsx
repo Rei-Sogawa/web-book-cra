@@ -3,8 +3,8 @@ import { FormEventHandler, useState, VFC } from 'react'
 import { FaArrowLeft } from 'react-icons/fa'
 import { useHistory } from 'react-router'
 
-import { useAdminBookNewPageCommands } from '@/application/adminBookNewPage'
 import { routeMap } from '@/routes'
+import { useAdminBookNewPageCommands } from '@/ui/AdminBookNewPage/useAdminBookNewPage'
 
 const BookNewPage: VFC = () => {
   const history = useHistory()
