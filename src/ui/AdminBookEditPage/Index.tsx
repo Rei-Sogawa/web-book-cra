@@ -5,13 +5,11 @@ import { Prompt, useHistory } from 'react-router-dom'
 
 import { Book, Chapter } from '@/domain'
 import { routeMap } from '@/routes'
-import { BookBasicForm, BookBasicFormProps } from '@/ui/AdminBookEditPage/BookBasicForm'
-import { Chapters, ChaptersProps } from '@/ui/AdminBookEditPage/Chapters'
-import { Header, HeaderProps } from '@/ui/AdminBookEditPage/Header'
-import {
-  useAdminBookEditPageCommand,
-  useAdminBookEditPageQuery,
-} from '@/ui/AdminBookEditPage/useAdminBookEditPage'
+
+import { BookBasicForm, BookBasicFormProps } from './BookBasicForm'
+import { Chapters, ChaptersProps } from './Chapters'
+import { Header, HeaderProps } from './Header'
+import { useAdminBookEditPageCommand, useAdminBookEditPageQuery } from './useAdminBookEditPage'
 
 type BookEditPageProps = {
   book: Book

@@ -4,12 +4,13 @@ import { FaArrowLeft } from 'react-icons/fa'
 import { useHistory } from 'react-router'
 
 import { routeMap } from '@/routes'
-import { useAdminBookNewPageCommands } from '@/ui/AdminBookNewPage/useAdminBookNewPage'
+
+import { useAdminBookNewPageCommand } from './useAdminBookNewPage'
 
 const BookNewPage: VFC = () => {
   const history = useHistory()
 
-  const { createBook } = useAdminBookNewPageCommands()
+  const { createBook } = useAdminBookNewPageCommand()
 
   const [title, setTitle] = useState('')
 

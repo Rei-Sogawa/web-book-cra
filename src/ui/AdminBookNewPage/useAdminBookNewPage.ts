@@ -1,7 +1,7 @@
 import { BookData } from '@/domain'
 import { BookService } from '@/service/firestore'
 
-export const useAdminBookNewPageCommands = () => {
+export const useAdminBookNewPageCommand = () => {
   const createBook = async (newBookData: Pick<BookData, 'title'>) => {
     const docSnap = await BookService.createDoc(newBookData)
     return docSnap.id
