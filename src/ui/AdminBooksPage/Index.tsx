@@ -4,16 +4,16 @@ import { VFC } from 'react'
 
 import { Book } from '@/domain'
 
+import { useAdminBooksPageMutation, useAdminBooksPageQuery } from './application'
 import { BookItem } from './BookItem'
 import { Header } from './Header'
-import { useAdminBooksPageCommand, useAdminBooksPageQuery } from './useAdminBooksPage'
 
 type BooksPageProps = {
   books: Book[]
 }
 
 const BooksPage: VFC<BooksPageProps> = ({ books }) => {
-  const { deleteBook } = useAdminBooksPageCommand()
+  const { deleteBook } = useAdminBooksPageMutation()
 
   return (
     <VStack spacing="8">
@@ -41,10 +41,10 @@ const BooksPage: VFC<BooksPageProps> = ({ books }) => {
   )
 }
 
-const BooksPageContainer: VFC = () => {
+const Wrapper: VFC = () => {
   const { books } = useAdminBooksPageQuery()
 
   return <>{every([books], Boolean) && <BooksPage books={books!} />}</>
 }
 
-export default BooksPageContainer
+export default Wrapper

@@ -7,10 +7,10 @@ import { Book, Chapter } from '@/domain'
 import { useAppToast } from '@/hooks/useAppToast'
 import { routeMap } from '@/routes'
 
+import { useAdminBookEditPageMutation, useAdminBookEditPageQuery } from './application'
 import { BookBasicForm, BookBasicFormProps } from './BookBasicForm'
 import { Chapters, ChaptersProps } from './Chapters'
 import { Header, HeaderProps } from './Header'
-import { useAdminBookEditPageCommand, useAdminBookEditPageQuery } from './useAdminBookEditPage'
 
 type BookEditPageProps = {
   book: Book
@@ -22,7 +22,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({ book, chapters }) => {
   const toast = useAppToast()
 
   const { saveBook, saveBookDetail, uploadBookCover, deleteBookCover, addChapter } =
-    useAdminBookEditPageCommand()
+    useAdminBookEditPageMutation()
 
   const [title, setTitle] = useState(book.title)
   const [description, setDescription] = useState(book.description)

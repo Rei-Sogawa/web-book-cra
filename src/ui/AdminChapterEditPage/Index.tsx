@@ -6,12 +6,9 @@ import { Prompt } from 'react-router-dom'
 
 import { Book, Chapter } from '@/domain'
 
+import { useAdminChapterEditPageMutation, useAdminChapterEditPageQuery } from './application'
 import { ChapterEditor } from './ChapterEditor'
 import { Header } from './Header'
-import {
-  useAdminChapterEditPageCommand,
-  useAdminChapterEditPageQuery,
-} from './useAdminChapterEditPage'
 
 type ChapterEditPageProps = {
   book: Book
@@ -19,7 +16,7 @@ type ChapterEditPageProps = {
 }
 
 const ChapterEditPage: VFC<ChapterEditPageProps> = ({ book, chapter }) => {
-  const { saveChapter, uploadImage } = useAdminChapterEditPageCommand()
+  const { saveChapter, uploadImage } = useAdminChapterEditPageMutation()
 
   const [title, setTitle] = useState(chapter.title)
   const [content, setContent] = useState(chapter.content)
@@ -51,7 +48,7 @@ const ChapterEditPage: VFC<ChapterEditPageProps> = ({ book, chapter }) => {
   )
 }
 
-const ChapterEditPageContainer: VFC = () => {
+const Wrapper: VFC = () => {
   const { book, chapter } = useAdminChapterEditPageQuery()
 
   return (
@@ -59,4 +56,4 @@ const ChapterEditPageContainer: VFC = () => {
   )
 }
 
-export default ChapterEditPageContainer
+export default Wrapper

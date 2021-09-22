@@ -13,7 +13,7 @@ export const useAdminChapterEditPageQuery = () => {
   return { book, chapter }
 }
 
-export const useAdminChapterEditPageCommand = () => {
+export const useAdminChapterEditPageMutation = () => {
   const { bookId, chapterId } = useParams<{ bookId: string; chapterId: string }>()
 
   const saveChapter = async (

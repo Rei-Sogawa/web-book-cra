@@ -8,7 +8,7 @@ export const useAdminBooksPageQuery = () => {
   return { books }
 }
 
-export const useAdminBooksPageCommand = () => {
+export const useAdminBooksPageMutation = () => {
   const deleteBook = async (book: Pick<Book, 'id' | 'image'>) => {
     if (!window.confirm('削除します。よろしいですか？')) return
 

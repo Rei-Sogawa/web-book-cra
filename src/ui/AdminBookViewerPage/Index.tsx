@@ -5,9 +5,9 @@ import { Route, Switch, useHistory } from 'react-router-dom'
 
 import { Book, Chapter } from '@/domain'
 
+import { useAdminBookViewerQuery } from './application'
 import { ChapterPage } from './ChapterPage'
 import { Sidebar } from './Siderbar'
-import { useAdminBookViewerQuery } from './useAdminBookViewer'
 
 type BookViewerProps = {
   book: Book
@@ -48,10 +48,10 @@ const BookViewer: VFC<BookViewerProps> = ({ book, chapters }) => {
   )
 }
 
-const BookViewerContainer: VFC = () => {
+const Wrapper: VFC = () => {
   const { book, chapters } = useAdminBookViewerQuery()
 
   return <>{every([book, chapters], Boolean) && <BookViewer book={book!} chapters={chapters!} />}</>
 }
 
-export default BookViewerContainer
+export default Wrapper

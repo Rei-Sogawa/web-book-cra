@@ -5,12 +5,12 @@ import { useHistory } from 'react-router'
 
 import { routeMap } from '@/routes'
 
-import { useAdminBookNewPageCommand } from './useAdminBookNewPage'
+import { useAdminBookNewPageMutation } from './application'
 
 const BookNewPage: VFC = () => {
   const history = useHistory()
 
-  const { createBook } = useAdminBookNewPageCommand()
+  const { createBook } = useAdminBookNewPageMutation()
 
   const [title, setTitle] = useState('')
 

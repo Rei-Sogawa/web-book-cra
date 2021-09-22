@@ -25,7 +25,7 @@ export const useAdminBookEditPageQuery = () => {
   }
 }
 
-export const useAdminBookEditPageCommand = () => {
+export const useAdminBookEditPageMutation = () => {
   const { bookId } = useParams<{ bookId: string }>()
 
   const saveBook = async (editedBookData: Pick<BookData, 'title' | 'description'>) => {
