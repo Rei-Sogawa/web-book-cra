@@ -10,15 +10,19 @@ admin.initializeApp();
 const auth = admin.auth();
 const db = admin.firestore();
 
-export const onCreateAdminAuth = functions.auth.user().onCreate((user) => {
-  const isSGUser = last(user.email?.split("@")) === "sonicgarden.jp";
+export const onCreateAdminAuth = functions
+    .region("asia-northeast1")
+    .auth.user()
+    .onCreate((user) => {
+      const isSGUser = last(user.email?.split("@")) === "sonicgarden.jp";
 
-  if (isSGUser) {
-    assertIsDefined(user.email);
-    const adminData: AdminData = {email: user.email};
-    db.collection("admins").doc(user.uid).set(adminData);
-    return;
-  }
+      if (!isSGUser) {
+        auth.deleteUser(user.uid);
+        return;
+      }
 
-  auth.deleteUser(user.uid);
-});
+      assertIsDefined(user.email);
+      const adminData: AdminData = {email: user.email};
+      db.collection("admins").doc(user.uid).set(adminData);
+      return;
+    });
