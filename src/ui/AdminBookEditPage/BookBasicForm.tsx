@@ -37,14 +37,13 @@ export const BookBasicForm: VFC<BookBasicFormProps> = ({
         <BookImage imageUrl={image?.url} size="md" />
 
         <HStack alignItems="center" spacing="0">
-          <Button variant="link" fontSize="sm">
-            <ImageUpload onUploadImage={handleUploadImage}>
-              <Text>画像を設定</Text>
-            </ImageUpload>
-          </Button>
-
-          {image && (
+          {image ? (
             <>
+              <Button variant="link" fontSize="sm">
+                <ImageUpload onUploadImage={handleUploadImage}>
+                  <Text>画像を設定</Text>
+                </ImageUpload>
+              </Button>
               <Text fontWeight="bold" fontSize="sm" color="gray.500" pl="1.5" pb="1">
                 /
               </Text>
@@ -52,6 +51,12 @@ export const BookBasicForm: VFC<BookBasicFormProps> = ({
                 削除
               </Button>
             </>
+          ) : (
+            <Button variant="link" fontSize="sm">
+              <ImageUpload onUploadImage={handleUploadImage}>
+                <Text>画像を設定</Text>
+              </ImageUpload>
+            </Button>
           )}
         </HStack>
       </VStack>

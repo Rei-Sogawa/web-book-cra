@@ -6,7 +6,10 @@ export type ImageUploadProps = {
 }
 
 export const ImageUpload: VFC<ImageUploadProps> = ({ children, onUploadImage }) => {
+  // ui
   const inputImageRef = useRef<HTMLInputElement>(null)
+
+  // handler
   const handleClick = () => {
     inputImageRef.current?.click()
   }
