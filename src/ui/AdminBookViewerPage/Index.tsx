@@ -3,11 +3,15 @@ import { every, head, last } from 'lodash-es'
 import { VFC } from 'react'
 import { Route, Switch, useHistory } from 'react-router-dom'
 
-import { Book, Chapter } from '@/domain'
+import { Book } from '@/model/book'
+import { Chapter } from '@/model/chapter'
 
-import { useAdminBookViewerQuery } from './application'
 import { ChapterPage } from './ChapterPage'
+import { useAdminBookViewerQuery } from './container'
 import { Sidebar } from './Siderbar'
+
+const VIEWER_PATH = '/admin/books/:bookId/viewer'
+const VIEWER_SHOW_PATH = '/admin/books/:bookId/viewer/:chapterId'
 
 type BookViewerProps = {
   book: Book
@@ -15,12 +19,11 @@ type BookViewerProps = {
 }
 
 const BookViewer: VFC<BookViewerProps> = ({ book, chapters }) => {
+  // app
   const history = useHistory()
-
-  const rootPathTemplate = '/admin/books/:bookId/viewer'
-  const chapterPathTemplate = '/admin/books/:bookId/viewer/:chapterId'
-
   const lastPathname = last(history.location.pathname.split('/'))
+
+  // container
   const currentChapter = chapters.find(({ id }) => id === lastPathname) || head(chapters)
 
   return (
@@ -28,7 +31,7 @@ const BookViewer: VFC<BookViewerProps> = ({ book, chapters }) => {
       <Sidebar book={book} chapters={chapters} currentChapterId={currentChapter?.id} />
 
       <Switch>
-        <Route path={rootPathTemplate}>
+        <Route path={VIEWER_PATH}>
           {currentChapter && (
             <Box flex="1">
               <ChapterPage chapter={currentChapter} />
@@ -36,7 +39,7 @@ const BookViewer: VFC<BookViewerProps> = ({ book, chapters }) => {
           )}
         </Route>
 
-        <Route path={chapterPathTemplate} exact>
+        <Route path={VIEWER_SHOW_PATH} exact>
           {currentChapter && (
             <Box flex="1">
               <ChapterPage chapter={currentChapter} />

@@ -2,7 +2,8 @@ import { Box, HStack, Image, Link, Text, VStack } from '@chakra-ui/react'
 import { VFC } from 'react'
 import { Link as ReactRouterLink, useHistory } from 'react-router-dom'
 
-import { Book, Chapter } from '@/domain'
+import { Book } from '@/model/book'
+import { Chapter } from '@/model/chapter'
 import { routeMap } from '@/routes'
 
 export type SidebarProps = {
@@ -12,11 +13,12 @@ export type SidebarProps = {
 }
 
 export const Sidebar: VFC<SidebarProps> = ({ book, chapters, currentChapterId }) => {
+  // app
   const history = useHistory()
+  const adminBookViewerPath = routeMap['/admin/books/:bookId/viewer'].path({ bookId: book.id })
+  const viewerShowPath = (chapterId: string) => `${adminBookViewerPath}/${chapterId}`
 
-  const rootPath = routeMap['/admin/books/:bookId/viewer'].path({ bookId: book.id })
-  const chapterPath = (chapterId: string) => `${rootPath}/${chapterId}`
-
+  // handler
   const handleClickHome = () => {
     history.push(routeMap['/admin/books'].path())
   }
@@ -75,7 +77,7 @@ export const Sidebar: VFC<SidebarProps> = ({ book, chapters, currentChapterId })
           <Link
             key={chapter.id}
             as={ReactRouterLink}
-            to={chapterPath(chapter.id)}
+            to={viewerShowPath(chapter.id)}
             fontWeight="bold"
           >
             <HStack color={chapter.id === currentChapterId ? 'blue.500' : 'gray.500'}>

@@ -13,25 +13,24 @@ import {
 import { ChangeEventHandler, VFC } from 'react'
 import { FaRegImage } from 'react-icons/fa'
 
-import { ImageUpload } from '../Shared/ImageUpload'
+import { UseStateReturn } from '@/types'
+import { ImageUpload } from '@/ui/Shared/ImageUpload'
+
 import { MarkedContentEditor } from './MarkedContentEditor'
 import { MarkedContentViewer } from './MarkedContentViewer'
 
 export type ChapterEditorProps = {
-  title: string
-  setTitle: (title: string) => void
-  content: string
-  setContent: (content: string) => void
+  titleState: UseStateReturn<string>
+  contentState: UseStateReturn<string>
   handleUploadImage: ChangeEventHandler<HTMLInputElement>
 }
 
 export const ChapterEditor: VFC<ChapterEditorProps> = ({
-  title,
-  setTitle,
-  content,
-  setContent,
+  titleState: [title, setTitle],
+  contentState,
   handleUploadImage,
 }) => {
+  // ui
   const { isOpen: isPreviewing, onOpen: preview, onClose: edit } = useDisclosure()
 
   return (
@@ -71,9 +70,9 @@ export const ChapterEditor: VFC<ChapterEditorProps> = ({
 
         <HStack spacing="8">
           {isPreviewing ? (
-            <MarkedContentViewer content={content} />
+            <MarkedContentViewer content={contentState[1]} />
           ) : (
-            <MarkedContentEditor value={content} onChange={(e) => setContent(e.target.value)} />
+            <MarkedContentEditor contentState={contentState} />
           )}
 
           <VStack alignSelf="start" spacing="4">

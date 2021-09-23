@@ -5,8 +5,10 @@ import { useHistory } from 'react-router-dom'
 import { routeMap } from '@/routes'
 
 export const Header: VFC = () => {
+  // app
   const history = useHistory()
 
+  // handler
   const handleClickAddBook = () => {
     history.push(routeMap['/admin/books/new'].path())
   }

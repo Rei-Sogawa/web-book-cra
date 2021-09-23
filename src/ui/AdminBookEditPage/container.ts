@@ -6,8 +6,9 @@ import { Chapter, useChapters } from '@/model/chapter'
 
 export const useAdminBookEditPageQuery = () => {
   const { bookId } = useParams<{ bookId: string }>()
+
   const book = useBook(bookId)
-  const chapters = useChapters({ bookId })
+  const chapters = useChapters(bookId)
 
   return {
     book,

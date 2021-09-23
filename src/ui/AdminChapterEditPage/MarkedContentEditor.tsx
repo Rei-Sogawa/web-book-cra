@@ -1,13 +1,15 @@
-import { ChangeEventHandler, VFC } from 'react'
+import { VFC } from 'react'
 
+import { UseStateReturn } from '@/types'
 import { AutoResizeTextarea } from '@/ui/Shared/AutoResizeTextarea'
 
 export type MarkedContentEditorProps = {
-  value: string
-  onChange: ChangeEventHandler<HTMLTextAreaElement>
+  contentState: UseStateReturn<string>
 }
 
-export const MarkedContentEditor: VFC<MarkedContentEditorProps> = ({ value, onChange }) => {
+export const MarkedContentEditor: VFC<MarkedContentEditorProps> = ({
+  contentState: [content, setContent],
+}) => {
   return (
     <AutoResizeTextarea
       placeholder="Write in Markdown"
@@ -17,8 +19,10 @@ export const MarkedContentEditor: VFC<MarkedContentEditorProps> = ({ value, onCh
       bg="white"
       minH="440px"
       width="720px"
-      value={value}
-      onChange={onChange}
+      value={content}
+      onChange={(e) => {
+        setContent(e.target.value)
+      }}
     />
   )
 }

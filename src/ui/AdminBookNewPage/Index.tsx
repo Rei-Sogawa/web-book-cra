@@ -5,18 +5,23 @@ import { useHistory } from 'react-router'
 
 import { routeMap } from '@/routes'
 
-import { useAdminBookNewPageMutation } from './application'
+import { useAdminBookNewPageMutation } from './container'
 
 const BookNewPage: VFC = () => {
+  // app
   const history = useHistory()
 
+  // container
   const { createBook } = useAdminBookNewPageMutation()
 
+  // ui
   const [title, setTitle] = useState('')
 
+  // handler
   const handleClickBack = () => {
     history.push(routeMap['/admin/books'].path())
   }
+
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
     const newBookId = await createBook({ title })

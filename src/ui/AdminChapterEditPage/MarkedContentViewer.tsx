@@ -10,6 +10,7 @@ export type MarkedContentViewerProps = {
 }
 
 export const MarkedContentViewer: VFC<MarkedContentViewerProps> = ({ content }) => {
+  // ui
   const markedContent = useMarked(content)
 
   return (

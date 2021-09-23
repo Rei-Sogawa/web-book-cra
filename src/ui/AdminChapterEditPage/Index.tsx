@@ -4,10 +4,11 @@ import { every } from 'lodash-es'
 import { ChangeEventHandler, useState, VFC } from 'react'
 import { Prompt } from 'react-router-dom'
 
-import { Book, Chapter } from '@/domain'
+import { Book } from '@/model/book'
+import { Chapter } from '@/model/chapter'
 
-import { useAdminChapterEditPageMutation, useAdminChapterEditPageQuery } from './application'
 import { ChapterEditor } from './ChapterEditor'
+import { useAdminChapterEditPageMutation, useAdminChapterEditPageQuery } from './container'
 import { Header } from './Header'
 
 type ChapterEditPageProps = {
@@ -16,19 +17,24 @@ type ChapterEditPageProps = {
 }
 
 const ChapterEditPage: VFC<ChapterEditPageProps> = ({ book, chapter }) => {
-  const { saveChapter, uploadImage } = useAdminChapterEditPageMutation()
+  // container
+  const { saveChapter, uploadImage } = useAdminChapterEditPageMutation(book, chapter)
 
+  // ui
   const [title, setTitle] = useState(chapter.title)
   const [content, setContent] = useState(chapter.content)
+
   const changed = chapter.title !== title || chapter.content !== content
 
+  // handler
   const handleSaveChapter = async () => {
-    await saveChapter({ title, content }, chapter)
+    await saveChapter({ title, content })
   }
+
   const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {
     const file = head(e.target.files)
     if (!file) return
-    const url = await uploadImage(file, chapter)
+    const url = await uploadImage(file)
     const markedUrl = `![](${url})`
     setContent((prev) => prev + markedUrl + '\n')
   }
@@ -42,7 +48,13 @@ const ChapterEditPage: VFC<ChapterEditPageProps> = ({ book, chapter }) => {
           <Header book={book} onSaveChapter={handleSaveChapter} />
         </Box>
 
-        <ChapterEditor {...{ title, setTitle, content, setContent, handleUploadImage }} />
+        <ChapterEditor
+          {...{
+            titleState: [title, setTitle],
+            contentState: [content, setContent],
+            handleUploadImage,
+          }}
+        />
       </VStack>
     </>
   )

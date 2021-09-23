@@ -18,7 +18,7 @@ import { DependencyList, useEffect, useState } from 'react'
 import { db } from '@/firebaseApp'
 import { TimestampToFieldValue, WithId } from '@/types'
 
-export const createFirestoreService = <Data, PathParams>(
+export const createFirestoreService = <Data, PathParams = void>(
   getDefaultData: () => TimestampToFieldValue<Data>,
   getCollectionPath: (pathParams: PathParams) => string
 ) => {
@@ -71,16 +71,22 @@ export const createFirestoreService = <Data, PathParams>(
   }
 }
 
-export const useSubscribeCollection = <Data>(query: Query, deps: DependencyList = []) => {
-  const [values, setValues] = useState<WithId<Data>[]>()
+export const useSubscribeCollection = <T extends { id: string }>(
+  query: Query,
+  deps: DependencyList = []
+) => {
+  const [values, setValues] = useState<T[]>()
 
   useEffect(() => {
     const unsubscirbe = onSnapshot(query, (snap) => {
       setValues(
-        snap.docs.map((doc) => ({
-          id: doc.id,
-          ...(doc.data({ serverTimestamps: 'estimate' }) as Data),
-        }))
+        snap.docs.map(
+          (doc) =>
+            ({
+              id: doc.id,
+              ...doc.data({ serverTimestamps: 'estimate' }),
+            } as T)
+        )
       )
     })
     return unsubscirbe
@@ -90,12 +96,15 @@ export const useSubscribeCollection = <Data>(query: Query, deps: DependencyList 
   return values
 }
 
-export const useSubscribeDoc = <Data>(docRef: DocumentReference, deps: DependencyList = []) => {
-  const [value, setValue] = useState<WithId<Data>>()
+export const useSubscribeDoc = <T extends { id: string }>(
+  docRef: DocumentReference,
+  deps: DependencyList = []
+) => {
+  const [value, setValue] = useState<T>()
 
   useEffect(() => {
     const unsubscribe = onSnapshot(docRef, (snap) => {
-      setValue({ id: snap.id, ...(snap.data() as Data) })
+      setValue({ id: snap.id, ...snap.data() } as T)
     })
     return unsubscribe
     // eslint-disable-next-line react-hooks/exhaustive-deps

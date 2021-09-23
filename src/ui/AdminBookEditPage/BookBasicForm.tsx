@@ -2,7 +2,7 @@ import { Box, Button, HStack, Image, Input, Text, VStack } from '@chakra-ui/reac
 import { head } from 'lodash-es'
 import { ChangeEventHandler, Dispatch, SetStateAction, VFC } from 'react'
 
-import { Book } from '@/domain'
+import { Book } from '@/model/book'
 import { AutoResizeTextarea } from '@/ui/Shared/AutoResizeTextarea'
 import { ImageUpload } from '@/ui/Shared/ImageUpload'
 
@@ -23,6 +23,7 @@ export const BookBasicForm: VFC<BookBasicFormProps> = ({
   onUploadBookCover,
   onDeleteBookCover,
 }) => {
+  // handler
   const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {
     const file = head(e.target.files)
     if (!file) return

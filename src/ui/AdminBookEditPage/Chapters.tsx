@@ -2,7 +2,7 @@ import { AddIcon } from '@chakra-ui/icons'
 import { Button, HStack, Text, VStack } from '@chakra-ui/react'
 import { VFC } from 'react'
 
-import { Chapter } from '@/domain'
+import { Chapter } from '@/model/chapter'
 
 export type ChaptersProps = {
   chapters: Chapter[]

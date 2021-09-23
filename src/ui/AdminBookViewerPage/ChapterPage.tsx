@@ -1,14 +1,15 @@
 import { Box, Container, Text, VStack } from '@chakra-ui/react'
 import { VFC } from 'react'
 
-import { Chapter } from '@/domain'
 import { useMarked } from '@/hooks/useMarked'
+import { Chapter } from '@/model/chapter'
 
 export type ChapterPageProps = {
   chapter: Chapter
 }
 
 export const ChapterPage: VFC<ChapterPageProps> = ({ chapter }) => {
+  // ui
   const markedContent = useMarked(chapter.content)
 
   return (

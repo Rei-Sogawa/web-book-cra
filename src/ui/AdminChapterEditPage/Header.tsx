@@ -3,7 +3,7 @@ import { VFC } from 'react'
 import { FaArrowLeft } from 'react-icons/fa'
 import { Link as ReactRouterLink } from 'react-router-dom'
 
-import { Book } from '@/domain'
+import { Book } from '@/model/book'
 import { routeMap } from '@/routes'
 
 export type HeaderProps = {

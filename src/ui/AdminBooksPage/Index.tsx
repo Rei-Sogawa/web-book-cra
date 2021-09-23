@@ -2,10 +2,10 @@ import { Box, Container, Text, VStack } from '@chakra-ui/react'
 import { every } from 'lodash-es'
 import { VFC } from 'react'
 
-import { Book } from '@/domain'
+import { Book } from '@/model/book'
 
-import { useAdminBooksPageMutation, useAdminBooksPageQuery } from './application'
 import { BookItem } from './BookItem'
+import { useAdminBooksPageMutation, useAdminBooksPageQuery } from './container'
 import { Header } from './Header'
 
 type BooksPageProps = {
@@ -13,6 +13,7 @@ type BooksPageProps = {
 }
 
 const BooksPage: VFC<BooksPageProps> = ({ books }) => {
+  // container
   const { deleteBook } = useAdminBooksPageMutation()
 
   return (

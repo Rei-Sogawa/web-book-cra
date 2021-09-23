@@ -37,23 +37,25 @@ const getDefaultBookData = (): TimestampToFieldValue<BookData> => ({
 })
 
 // Service
-export const BookService = createFirestoreService<BookData, void>(
-  getDefaultBookData,
-  () => '/books'
-)
+export const BookService = createFirestoreService(getDefaultBookData, () => '/books')
 
 // Query
 export const useBook = (bookId: string) => {
-  const book = useSubscribeDoc<BookData>(BookService.getDocRef(bookId))
+  const book = useSubscribeDoc<Book>(BookService.getDocRef(bookId))
   return book
 }
 
 export const useBooks = () => {
-  const books = useSubscribeCollection<BookData>(BookService.getCollectionRef())
+  const books = useSubscribeCollection<Book>(BookService.getCollectionRef())
   return books
 }
 
 // Mutation
+const createBook = async (newBookData: Pick<BookData, 'title'>) => {
+  const docSnap = await BookService.createDoc(newBookData)
+  return docSnap.id
+}
+
 const saveBook = async (book: Book, editedBookData: Pick<BookData, 'title' | 'description'>) => {
   await BookService.updateDoc(editedBookData, book.id)
 }
@@ -69,10 +71,8 @@ const deleteBook = async (book: Book) => {
   await BookService.deleteDoc(book.id)
   if (book.image) await StorageService.deleteImage(book.image.path)
 
-  const chapters = await ChapterService.getDocs({ bookId: book.id })
-  await Promise.all(
-    chapters.map((chapter) => ChapterService.deleteDoc(chapter.id, { bookId: book.id }))
-  )
+  const chapters = await ChapterService.getDocs(book.id)
+  await Promise.all(chapters.map((chapter) => ChapterService.deleteDoc(chapter.id, book.id)))
   const chapterImagePaths = chapters
     .map((chapter) => chapter.images)
     .map((images) => images.map((image) => image.path))
@@ -94,10 +94,11 @@ const deleteBookCover = async (book: Book) => {
 }
 
 const addChapter = async (book: Book, chaptersLength: number) => {
-  await ChapterService.createDoc({ number: chaptersLength + 1 }, { bookId: book.id })
+  await ChapterService.createDoc({ number: chaptersLength + 1 }, book.id)
 }
 
 export const BookModel = {
+  createBook,
   saveBook,
   saveBookDetail,
   deleteBook,

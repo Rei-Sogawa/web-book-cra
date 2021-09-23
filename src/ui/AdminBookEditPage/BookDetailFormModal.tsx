@@ -18,8 +18,8 @@ import { format } from 'date-fns'
 import { FormEventHandler, useEffect, VFC } from 'react'
 import { useForm } from 'react-hook-form'
 
-import { BookData } from '@/domain'
 import { fromDate } from '@/lib/date'
+import { BookData } from '@/model/book'
 
 export type BookDetailFormModalProps = {
   book: Pick<BookData, 'published' | 'authorNames' | 'releasedAt' | 'price'>
@@ -36,6 +36,7 @@ export const BookDetailFormModal: VFC<BookDetailFormModalProps> = ({
   onClose,
   onSaveBookDetail,
 }) => {
+  // ui
   const { register, handleSubmit: hookFormSubmit, reset } = useForm()
 
   useEffect(() => {
@@ -49,6 +50,7 @@ export const BookDetailFormModal: VFC<BookDetailFormModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, reset])
 
+  // handler
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     hookFormSubmit(async ({ published, authorNames, releasedAt, price }) => {
       await onSaveBookDetail({

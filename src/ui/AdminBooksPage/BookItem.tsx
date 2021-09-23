@@ -5,7 +5,7 @@ import { BiRightArrow } from 'react-icons/bi'
 import { HiOutlinePencil, HiOutlineTrash } from 'react-icons/hi'
 import { Link as ReactRouterLink, useHistory } from 'react-router-dom'
 
-import { Book } from '@/domain'
+import { Book } from '@/model/book'
 import { routeMap } from '@/routes'
 
 export type BookItemProps = {
@@ -14,8 +14,10 @@ export type BookItemProps = {
 }
 
 export const BookItem: VFC<BookItemProps> = ({ book, onDeleteBook }) => {
+  // app
   const history = useHistory()
 
+  // handler
   const handleClickShow = () => {
     history.push(routeMap['/admin/books/:bookId/viewer'].path({ bookId: book.id }))
   }

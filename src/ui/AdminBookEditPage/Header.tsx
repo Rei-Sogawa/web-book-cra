@@ -13,20 +13,26 @@ import { VFC } from 'react'
 import { FaArrowLeft, FaBars } from 'react-icons/fa'
 import { Link as ReactRouterLink } from 'react-router-dom'
 
-import { Book, BookData } from '@/domain'
+import { Book } from '@/model/book'
 import { routeMap } from '@/routes'
-import { BookDetailFormModal } from '@/ui/AdminBookEditPage/BookDetailFormModal'
+import {
+  BookDetailFormModal,
+  BookDetailFormModalProps,
+} from '@/ui/AdminBookEditPage/BookDetailFormModal'
 
 export type HeaderProps = {
   book: Book
   onSaveBook: () => Promise<void>
-  onSaveBookDetail: (
-    editedBookData: Pick<BookData, 'published' | 'authorNames' | 'releasedAt' | 'price'>
-  ) => Promise<void>
+  onSaveBookDetail: BookDetailFormModalProps['onSaveBookDetail']
 }
 
 export const Header: VFC<HeaderProps> = ({ book, onSaveBook, onSaveBookDetail }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  // ui
+  const {
+    isOpen: isBookDetailFormModalOpen,
+    onOpen: openBookDetailFormModal,
+    onClose: closeBookDetailFormModal,
+  } = useDisclosure()
 
   return (
     <Box h="14" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
@@ -43,7 +49,7 @@ export const Header: VFC<HeaderProps> = ({ book, onSaveBook, onSaveBookDetail })
                 icon={<Icon as={FaBars} h="4" w="4" color="gray.500" />}
                 size="sm"
                 isRound
-                onClick={onOpen}
+                onClick={openBookDetailFormModal}
               />
             </Tooltip>
             <Button size="sm" colorScheme="blue" onClick={onSaveBook}>
@@ -55,8 +61,8 @@ export const Header: VFC<HeaderProps> = ({ book, onSaveBook, onSaveBookDetail })
 
       <BookDetailFormModal
         book={book}
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={isBookDetailFormModalOpen}
+        onClose={closeBookDetailFormModal}
         onSaveBookDetail={onSaveBookDetail}
       />
     </Box>
