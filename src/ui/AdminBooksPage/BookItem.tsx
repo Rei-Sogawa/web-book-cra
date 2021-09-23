@@ -1,4 +1,15 @@
-import { Box, HStack, Icon, IconButton, Image, Link, Tag, Text, VStack } from '@chakra-ui/react'
+import {
+  Box,
+  Center,
+  HStack,
+  Icon,
+  IconButton,
+  Image,
+  Link,
+  Tag,
+  Text,
+  VStack,
+} from '@chakra-ui/react'
 import { format } from 'date-fns'
 import { VFC } from 'react'
 import { BiRightArrow } from 'react-icons/bi'
@@ -35,21 +46,21 @@ export const BookItem: VFC<BookItemProps> = ({ book, onDeleteBook }) => {
       <HStack justifyContent="space-between">
         <HStack spacing="4">
           <Box
-            width="100px"
-            height="140px"
-            bg="gray.100"
+            w="100px"
+            h="140px"
+            position="relative"
             borderRadius="md"
             boxShadow="md"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
+            bg="gray.100"
           >
             {book.image ? (
-              <Image src={book.image.url} />
+              <Image src={book.image.url} w="full" h="full" />
             ) : (
-              <Text fontWeight="bold" color="gray.500" pb="4">
-                Web Book
-              </Text>
+              <Center position="absolute" inset="0">
+                <Text pb="4" fontWeight="bold" color="gray.500">
+                  Web Book
+                </Text>
+              </Center>
             )}
           </Box>
 

@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Image, Input, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, Center, HStack, Image, Input, Text, VStack } from '@chakra-ui/react'
 import { head } from 'lodash-es'
 import { ChangeEventHandler, Dispatch, SetStateAction, VFC } from 'react'
 
@@ -36,19 +36,19 @@ export const BookBasicForm: VFC<BookBasicFormProps> = ({
         <Box
           width="200px"
           height="280px"
-          bg="gray.100"
+          position="relative"
           borderRadius="md"
           boxShadow="md"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
+          bg="gray.100"
         >
           {image ? (
-            <Image src={image.url} />
+            <Image src={image.url} w="full" h="full" />
           ) : (
-            <Text fontWeight="bold" fontSize="2xl" color="gray.500" pb="8">
-              Web Book
-            </Text>
+            <Center position="absolute" inset="0">
+              <Text pb="8" fontWeight="bold" color="gray.500">
+                Web Book
+              </Text>
+            </Center>
           )}
         </Box>
 

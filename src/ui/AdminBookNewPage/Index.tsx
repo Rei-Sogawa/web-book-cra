@@ -12,7 +12,7 @@ const BookNewPage: VFC = () => {
   const history = useHistory()
 
   // container
-  const { createBook } = useAdminBookNewPageMutation()
+  const { addBook } = useAdminBookNewPageMutation()
 
   // ui
   const [title, setTitle] = useState('')
@@ -24,7 +24,7 @@ const BookNewPage: VFC = () => {
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
-    const newBookId = await createBook({ title })
+    const newBookId = await addBook({ title })
     history.push(routeMap['/admin/books/:bookId/edit'].path({ bookId: newBookId }))
   }
 

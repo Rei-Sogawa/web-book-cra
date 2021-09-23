@@ -3,8 +3,9 @@ import { every } from 'lodash-es'
 import { useState, VFC } from 'react'
 import { Prompt, useHistory } from 'react-router-dom'
 
-import { Book, Chapter } from '@/domain'
 import { useAppToast } from '@/hooks/useAppToast'
+import { Book } from '@/model/book'
+import { Chapter } from '@/model/chapter'
 import { routeMap } from '@/routes'
 
 import { BookBasicForm } from './BookBasicForm'
