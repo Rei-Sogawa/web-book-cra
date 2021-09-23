@@ -7,7 +7,10 @@ export const useAdminBooksPageQuery = () => {
 }
 
 export const useAdminBooksPageMutation = () => {
-  const deleteBook = BookModel.deleteBook
+  const deleteBook = async () => {
+    if (!window.confirm('削除します。よろしいですか？')) return
+    await BookModel.deleteBook
+  }
 
   return { deleteBook }
 }

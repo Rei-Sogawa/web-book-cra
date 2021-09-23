@@ -54,7 +54,7 @@ export const Header: VFC<HeaderProps> = ({ book, onSaveBook, onSaveBookDetail, c
               />
             </Tooltip>
             <Button size="sm" colorScheme="blue" onClick={onSaveBook} disabled={!changed}>
-              {changed ? '保存する' : '保存済み'}
+              保存する
             </Button>
           </HStack>
         </HStack>

@@ -73,31 +73,23 @@ export const BookDetailFormModal: VFC<BookDetailFormModalProps> = ({
           <ModalBody>
             <VStack spacing="4">
               <FormControl>
-                <FormLabel fontSize="sm" fontWeight="bold" color="gray.500">
-                  未公開 / 公開
-                </FormLabel>
+                <FormLabel fontSize="sm">未公開 / 公開</FormLabel>
                 <Switch size="lg" {...register('published')} />
               </FormControl>
 
               <FormControl>
-                <FormLabel fontSize="sm" fontWeight="bold" color="gray.500">
-                  著者名
-                </FormLabel>
+                <FormLabel fontSize="sm">著者名</FormLabel>
                 <Input autoComplete="off" {...register('authorNames')} placeholder="著者A, 著者B" />
                 <FormHelperText>複数人の場合はカンマ区切りで入力してください。</FormHelperText>
               </FormControl>
 
               <FormControl>
-                <FormLabel fontSize="sm" fontWeight="bold" color="gray.500">
-                  発売日
-                </FormLabel>
+                <FormLabel fontSize="sm">発売日</FormLabel>
                 <Input type="date" {...register('releasedAt')} />
               </FormControl>
 
               <FormControl>
-                <FormLabel fontSize="sm" fontWeight="bold" color="gray.500">
-                  価格（円）
-                </FormLabel>
+                <FormLabel fontSize="sm">価格（円）</FormLabel>
                 <Input type="number" autoComplete="off" {...register('price')} />
               </FormControl>
             </VStack>
