@@ -1,11 +1,10 @@
-import { serverTimestamp } from '@/lib/date'
+import { serverTimestamp, Timestamp, TimestampToFieldValue, WithId } from '@/lib/firestore'
 import {
   createFirestoreService,
   useSubscribeCollection,
   useSubscribeDoc,
 } from '@/service/firestore'
 import { StorageService } from '@/service/storage'
-import { Timestamp, TimestampToFieldValue, WithId } from '@/types'
 
 import { ChapterService } from './chapter'
 

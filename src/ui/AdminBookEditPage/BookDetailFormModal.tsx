@@ -18,7 +18,7 @@ import { format } from 'date-fns'
 import { FormEventHandler, useEffect, VFC } from 'react'
 import { useForm } from 'react-hook-form'
 
-import { fromDate } from '@/lib/date'
+import { fromDate } from '@/lib/firestore'
 import { BookData } from '@/model/book'
 
 export type BookDetailFormModalProps = {

@@ -16,7 +16,7 @@ import {
 import { DependencyList, useEffect, useState } from 'react'
 
 import { db } from '@/firebaseApp'
-import { TimestampToFieldValue, WithId } from '@/types'
+import { TimestampToFieldValue, WithId } from '@/lib/firestore'
 
 export const createFirestoreService = <Data, PathParams = void>(
   getDefaultData: () => TimestampToFieldValue<Data>,

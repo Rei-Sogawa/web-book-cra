@@ -1,13 +1,12 @@
-import { orderBy, query } from 'firebase/firestore'
+import { orderBy, query, Timestamp } from 'firebase/firestore'
 
-import { serverTimestamp } from '@/lib/date'
+import { serverTimestamp, TimestampToFieldValue, WithId } from '@/lib/firestore'
 import {
   createFirestoreService,
   useSubscribeCollection,
   useSubscribeDoc,
 } from '@/service/firestore'
 import { StorageService } from '@/service/storage'
-import { Timestamp, TimestampToFieldValue, WithId } from '@/types'
 
 import { Book } from './book'
 

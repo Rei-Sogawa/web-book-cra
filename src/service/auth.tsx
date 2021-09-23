@@ -10,6 +10,8 @@ import { useMount } from 'react-use'
 import { auth } from '@/firebaseApp'
 import { assertIsDefined } from '@/lib/assert'
 
+import { useSubscribeDoc } from './firestore'
+
 const signUp = ({ email, password }: { email: string; password: string }) => {
   return createUserWithEmailAndPassword(auth, email, password)
 }
@@ -22,6 +24,11 @@ export const AuthService = {
   signUp,
   signIn,
   signOut: () => signOut(auth),
+}
+
+// query
+export const useAdmin = (uid: string) => {
+  // const admin = useSubscribeDoc()
 }
 
 // AuthProvider
