@@ -1,4 +1,7 @@
+import { useCallback } from 'react'
+
 import { Book, BookData } from '@/domain'
+import { deleteBook } from '@/model/book'
 import { BookService, ChapterService, useSubscribeCollection } from '@/service/firestore'
 import { StorageService } from '@/service/storage'
 
@@ -9,24 +12,7 @@ export const useAdminBooksPageQuery = () => {
 }
 
 export const useAdminBooksPageMutation = () => {
-  const deleteBook = async (book: Pick<Book, 'id' | 'image'>) => {
-    if (!window.confirm('削除します。よろしいですか？')) return
+  const _deleteBook = useCallback(deleteBook, [])
 
-    await BookService.deleteDoc(book.id)
-    if (book.image) await StorageService.deleteImage(book.image.path)
-
-    const chapters = await ChapterService.getDocs({ bookId: book.id })
-    await Promise.all(
-      chapters.map((chapter) => ChapterService.deleteDoc(chapter.id, { bookId: book.id }))
-    )
-    const chapterImagePaths = chapters
-      .map((chapter) => chapter.images)
-      .map((images) => images.map((image) => image.path))
-      .flat()
-    await Promise.all(
-      chapterImagePaths.map((chapterImagePath) => StorageService.deleteImage(chapterImagePath))
-    )
-  }
-
-  return { deleteBook }
+  return { deleteBook: _deleteBook }
 }

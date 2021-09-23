@@ -7,9 +7,9 @@ import { Book, Chapter } from '@/domain'
 import { useAppToast } from '@/hooks/useAppToast'
 import { routeMap } from '@/routes'
 
-import { useAdminBookEditPageMutation, useAdminBookEditPageQuery } from './application'
-import { BookBasicForm, BookBasicFormProps } from './BookBasicForm'
+import { BookBasicForm } from './BookBasicForm'
 import { Chapters, ChaptersProps } from './Chapters'
+import { useAdminBookEditPageMutation, useAdminBookEditPageQuery } from './container'
 import { Header, HeaderProps } from './Header'
 
 type BookEditPageProps = {
@@ -18,16 +18,21 @@ type BookEditPageProps = {
 }
 
 const BookEditPage: VFC<BookEditPageProps> = ({ book, chapters }) => {
+  // app
   const history = useHistory()
   const toast = useAppToast()
 
+  // container
   const { saveBook, saveBookDetail, uploadBookCover, deleteBookCover, addChapter } =
-    useAdminBookEditPageMutation()
+    useAdminBookEditPageMutation({ book, chapters })
 
+  // ui
   const [title, setTitle] = useState(book.title)
   const [description, setDescription] = useState(book.description)
+
   const changed = book.title !== title || book.description !== description
 
+  // handler
   const handleSaveBook: HeaderProps['onSaveBook'] = async () => {
     if (!title.trim()) {
       toast.error('本のタイトルを入力してください。')
@@ -35,9 +40,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({ book, chapters }) => {
     }
     await saveBook({ title, description })
   }
-  const handleDeleteBookCover: BookBasicFormProps['onDeleteBookCover'] = async () => {
-    await deleteBookCover(book)
-  }
+
   const handleClickChapter: ChaptersProps['onClickChapter'] = async (chapterId: string) => {
     if (!title.trim()) {
       toast.error('本のタイトルを入力してください。')
@@ -47,9 +50,6 @@ const BookEditPage: VFC<BookEditPageProps> = ({ book, chapters }) => {
     history.push(
       routeMap['/admin/books/:bookId/chapters/:chapterId/edit'].path({ bookId: book.id, chapterId })
     )
-  }
-  const handleAddChapter: ChaptersProps['onAddChapter'] = async () => {
-    await addChapter(chapters.length)
   }
 
   return (
@@ -68,7 +68,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({ book, chapters }) => {
               descriptionState: [description, setDescription],
               image: book.image,
               onUploadBookCover: uploadBookCover,
-              onDeleteBookCover: handleDeleteBookCover,
+              onDeleteBookCover: deleteBookCover,
             }}
           />
         </Container>
@@ -77,7 +77,7 @@ const BookEditPage: VFC<BookEditPageProps> = ({ book, chapters }) => {
           <Container maxW="container.md" py="8">
             <Chapters
               chapters={chapters}
-              onAddChapter={handleAddChapter}
+              onAddChapter={addChapter}
               onClickChapter={handleClickChapter}
             />
           </Container>
