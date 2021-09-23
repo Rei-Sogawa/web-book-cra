@@ -59,7 +59,12 @@ const BookEditPage: VFC<BookEditPageProps> = ({ book, chapters }) => {
 
       <VStack minHeight="100vh">
         <Box alignSelf="stretch">
-          <Header book={book} onSaveBook={handleSaveBook} onSaveBookDetail={saveBookDetail} />
+          <Header
+            book={book}
+            onSaveBook={handleSaveBook}
+            onSaveBookDetail={saveBookDetail}
+            changed={changed}
+          />
         </Box>
 
         <Container maxW="container.md" py="8">

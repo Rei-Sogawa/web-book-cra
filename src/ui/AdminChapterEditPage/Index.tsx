@@ -45,7 +45,7 @@ const ChapterEditPage: VFC<ChapterEditPageProps> = ({ book, chapter }) => {
 
       <VStack spacing="8" minHeight="100vh" bg="gray.50">
         <Box alignSelf="stretch">
-          <Header book={book} onSaveChapter={handleSaveChapter} />
+          <Header book={book} onSaveChapter={handleSaveChapter} changed={changed} />
         </Box>
 
         <ChapterEditor

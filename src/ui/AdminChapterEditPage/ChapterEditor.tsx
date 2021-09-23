@@ -70,7 +70,7 @@ export const ChapterEditor: VFC<ChapterEditorProps> = ({
 
         <HStack spacing="8">
           {isPreviewing ? (
-            <MarkedContentViewer content={contentState[1]} />
+            <MarkedContentViewer content={contentState[0]} />
           ) : (
             <MarkedContentEditor contentState={contentState} />
           )}

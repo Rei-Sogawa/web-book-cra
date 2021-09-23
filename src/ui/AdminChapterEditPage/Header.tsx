@@ -9,9 +9,10 @@ import { routeMap } from '@/routes'
 export type HeaderProps = {
   book: Book
   onSaveChapter: () => Promise<void>
+  changed: boolean
 }
 
-export const Header: VFC<HeaderProps> = ({ book, onSaveChapter }) => {
+export const Header: VFC<HeaderProps> = ({ book, onSaveChapter, changed }) => {
   return (
     <Box h="14" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
       <Container maxW="container.lg" h="100%">
@@ -28,8 +29,8 @@ export const Header: VFC<HeaderProps> = ({ book, onSaveChapter }) => {
             </Text>
           </HStack>
 
-          <Button size="sm" colorScheme="blue" onClick={onSaveChapter}>
-            保存する
+          <Button size="sm" colorScheme="blue" onClick={onSaveChapter} disabled={!changed}>
+            {changed ? '保存する' : '保存済み'}
           </Button>
         </HStack>
       </Container>

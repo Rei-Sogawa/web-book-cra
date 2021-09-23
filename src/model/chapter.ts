@@ -66,22 +66,22 @@ const saveChapter = async (
   },
   editedChapterData: Pick<ChapterData, 'title' | 'content'>
 ) => {
-  const deletedFiles = chapter.images.filter((image) =>
-    editedChapterData.content.includes(image.url)
+  const deletedImages = chapter.images.filter(
+    (image) => !editedChapterData.content.includes(image.url)
   )
 
   await ChapterService.updateDoc(
     {
       ...editedChapterData,
       images: chapter.images.filter(
-        (image) => !deletedFiles.find((deletedImage) => deletedImage.path === image.path)
+        (image) => !deletedImages.find((deletedImage) => deletedImage.path === image.path)
       ),
     },
     chapter.id,
     book.id
   )
 
-  await Promise.all(deletedFiles.map((image) => StorageService.deleteImage(image.path)))
+  await Promise.all(deletedImages.map((image) => StorageService.deleteImage(image.path)))
 }
 
 const uploadImage = async (

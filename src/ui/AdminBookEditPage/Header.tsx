@@ -24,9 +24,10 @@ export type HeaderProps = {
   book: Book
   onSaveBook: () => Promise<void>
   onSaveBookDetail: BookDetailFormModalProps['onSaveBookDetail']
+  changed: boolean
 }
 
-export const Header: VFC<HeaderProps> = ({ book, onSaveBook, onSaveBookDetail }) => {
+export const Header: VFC<HeaderProps> = ({ book, onSaveBook, onSaveBookDetail, changed }) => {
   // ui
   const {
     isOpen: isBookDetailFormModalOpen,
@@ -52,8 +53,8 @@ export const Header: VFC<HeaderProps> = ({ book, onSaveBook, onSaveBookDetail })
                 onClick={openBookDetailFormModal}
               />
             </Tooltip>
-            <Button size="sm" colorScheme="blue" onClick={onSaveBook}>
-              保存する
+            <Button size="sm" colorScheme="blue" onClick={onSaveBook} disabled={!changed}>
+              {changed ? '保存する' : '保存済み'}
             </Button>
           </HStack>
         </HStack>
