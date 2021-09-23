@@ -1,15 +1,4 @@
-import {
-  Box,
-  Center,
-  HStack,
-  Icon,
-  IconButton,
-  Image,
-  Link,
-  Tag,
-  Text,
-  VStack,
-} from '@chakra-ui/react'
+import { Box, HStack, Icon, IconButton, Link, Tag, Text, VStack } from '@chakra-ui/react'
 import { format } from 'date-fns'
 import { VFC } from 'react'
 import { BiRightArrow } from 'react-icons/bi'
@@ -18,6 +7,8 @@ import { Link as ReactRouterLink, useHistory } from 'react-router-dom'
 
 import { Book } from '@/model/book'
 import { routeMap } from '@/routes'
+
+import { BookImage } from '../Shared/BookImage'
 
 export type BookItemProps = {
   book: Book
@@ -45,24 +36,7 @@ export const BookItem: VFC<BookItemProps> = ({ book, onDeleteBook }) => {
     <Box>
       <HStack justifyContent="space-between">
         <HStack spacing="4">
-          <Box
-            w="100px"
-            h="140px"
-            position="relative"
-            borderRadius="md"
-            boxShadow="md"
-            bg="gray.100"
-          >
-            {book.image ? (
-              <Image src={book.image.url} w="full" h="full" />
-            ) : (
-              <Center position="absolute" inset="0">
-                <Text pb="4" fontWeight="bold" color="gray.500">
-                  Web Book
-                </Text>
-              </Center>
-            )}
-          </Box>
+          <BookImage imageUrl={book.image?.url} size="sm" />
 
           <VStack alignSelf="start" alignItems="start" spacing="1">
             <Link

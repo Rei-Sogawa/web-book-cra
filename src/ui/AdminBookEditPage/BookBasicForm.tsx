@@ -1,9 +1,10 @@
-import { Box, Button, Center, HStack, Image, Input, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, HStack, Input, Text, VStack } from '@chakra-ui/react'
 import { head } from 'lodash-es'
 import { ChangeEventHandler, Dispatch, SetStateAction, VFC } from 'react'
 
 import { Book } from '@/model/book'
 import { AutoResizeTextarea } from '@/ui/Shared/AutoResizeTextarea'
+import { BookImage } from '@/ui/Shared/BookImage'
 import { ImageUpload } from '@/ui/Shared/ImageUpload'
 
 type UseStateReturn<T> = [T, Dispatch<SetStateAction<T>>]
@@ -33,24 +34,7 @@ export const BookBasicForm: VFC<BookBasicFormProps> = ({
   return (
     <HStack spacing="8">
       <VStack alignSelf="start">
-        <Box
-          width="200px"
-          height="280px"
-          position="relative"
-          borderRadius="md"
-          boxShadow="md"
-          bg="gray.100"
-        >
-          {image ? (
-            <Image src={image.url} w="full" h="full" />
-          ) : (
-            <Center position="absolute" inset="0">
-              <Text pb="8" fontWeight="bold" color="gray.500">
-                Web Book
-              </Text>
-            </Center>
-          )}
-        </Box>
+        <BookImage imageUrl={image?.url} size="md" />
 
         <HStack alignItems="center" spacing="0">
           <Button variant="link" fontSize="sm">
