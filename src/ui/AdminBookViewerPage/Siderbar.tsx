@@ -2,6 +2,7 @@ import { Box, HStack, Image, Link, Text, VStack } from '@chakra-ui/react'
 import { VFC } from 'react'
 import { Link as ReactRouterLink, useHistory } from 'react-router-dom'
 
+import { numberToTwoDigits } from '@/lib/display'
 import { Book } from '@/model/book'
 import { Chapter } from '@/model/chapter'
 import { routeMap } from '@/routes'
@@ -81,7 +82,7 @@ export const Sidebar: VFC<SidebarProps> = ({ book, chapters, currentChapterId })
             fontWeight="bold"
           >
             <HStack color={chapter.id === currentChapterId ? 'blue.500' : 'gray.500'}>
-              <Text fontFamily="mono">{chapter.number.toString().padStart(2, '0')}.</Text>
+              <Text fontFamily="mono">{numberToTwoDigits(chapter.number)}.</Text>
               <Text pb="0.5">{chapter.title || '無題のチャプター'}</Text>
             </HStack>
           </Link>

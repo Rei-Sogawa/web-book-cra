@@ -9,7 +9,7 @@ import { Timestamp, TimestampToFieldValue, WithId } from '@/types'
 
 import { ChapterService } from './chapter'
 
-// Schema
+// schema
 export type BookData = {
   title: string
   description: string
@@ -36,10 +36,10 @@ const getDefaultBookData = (): TimestampToFieldValue<BookData> => ({
   updatedAt: serverTimestamp(),
 })
 
-// Service
+// service
 export const BookService = createFirestoreService(getDefaultBookData, () => '/books')
 
-// Query
+// query
 export const useBook = (bookId: string) => {
   const book = useSubscribeDoc<Book>(BookService.getDocRef(bookId))
   return book
@@ -50,7 +50,7 @@ export const useBooks = () => {
   return books
 }
 
-// Mutation
+// mutation
 const createBook = async (newBookData: Pick<BookData, 'title'>) => {
   const docSnap = await BookService.createDoc(newBookData)
   return docSnap.id
@@ -98,6 +98,7 @@ const addChapter = async (book: Book, chaptersLength: number) => {
 }
 
 export const BookModel = {
+  // mutation
   createBook,
   saveBook,
   saveBookDetail,

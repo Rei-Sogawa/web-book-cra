@@ -11,7 +11,7 @@ import { Timestamp, TimestampToFieldValue, WithId } from '@/types'
 
 import { Book } from './book'
 
-// Schema
+// schema
 export type ChapterData = {
   number: number
   title: string
@@ -32,13 +32,13 @@ export const getDefaultChapterData = (): TimestampToFieldValue<ChapterData> => (
   updatedAt: serverTimestamp(),
 })
 
-// Service
+// service
 export const ChapterService = createFirestoreService(
   getDefaultChapterData,
   (bookId: string) => `books/${bookId}/chapters`
 )
 
-// Query
+// query
 export const useChapter = ({ chapterId, bookId }: { chapterId: string; bookId: string }) => {
   const chapter = useSubscribeDoc<Chapter>(ChapterService.getDocRef(chapterId, bookId))
   return chapter
@@ -51,7 +51,7 @@ export const useChapters = (bookId: string) => {
   return chapters
 }
 
-// Mutation
+// mutation
 const saveChapter = async (
   {
     chapter,
@@ -104,6 +104,7 @@ const uploadImage = async (
 }
 
 export const ChapterModel = {
+  // mutation
   saveChapter,
   uploadImage,
 }

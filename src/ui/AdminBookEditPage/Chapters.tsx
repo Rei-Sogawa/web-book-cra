@@ -2,6 +2,7 @@ import { AddIcon } from '@chakra-ui/icons'
 import { Button, HStack, Text, VStack } from '@chakra-ui/react'
 import { VFC } from 'react'
 
+import { numberToTwoDigits } from '@/lib/display'
 import { Chapter } from '@/model/chapter'
 
 export type ChaptersProps = {
@@ -22,7 +23,7 @@ export const Chapters: VFC<ChaptersProps> = ({ chapters, onAddChapter, onClickCh
           {chapters.map((chapter) => (
             <HStack key={chapter.id} bg="white" py="4" px="8" spacing="8">
               <Text fontWeight="bold" fontSize="lg" fontFamily="mono" color="blue.300">
-                {chapter.number.toString().padStart(2, '0')}
+                {numberToTwoDigits(chapter.number)}
               </Text>
               <Button
                 onClick={() => onClickChapter(chapter.id)}
