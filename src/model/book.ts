@@ -1,4 +1,4 @@
-import { serverTimestamp, Timestamp, TimestampToFieldValue, WithId } from '@/lib/firestore'
+import { serverTimestamp, Timestamp, TimestampOrFieldValue, WithId } from '@/lib/firestore'
 import {
   createFirestoreService,
   useSubscribeCollection,
@@ -23,7 +23,7 @@ export type BookData = {
 
 export type Book = WithId<BookData>
 
-const getDefaultBookData = (): TimestampToFieldValue<BookData> => ({
+const getDefaultBookData = (): TimestampOrFieldValue<BookData> => ({
   title: '',
   description: '',
   authorNames: [],
@@ -36,22 +36,22 @@ const getDefaultBookData = (): TimestampToFieldValue<BookData> => ({
 })
 
 // service
-export const BookService = createFirestoreService(getDefaultBookData, () => '/books')
+export const BookService = createFirestoreService<BookData, void>(() => '/books')
 
 // query
 export const useBook = (bookId: string) => {
-  const book = useSubscribeDoc<Book>(BookService.getDocRef(bookId))
+  const { value: book } = useSubscribeDoc<Book>(BookService.getDocRef(bookId))
   return book
 }
 
 export const useBooks = () => {
-  const books = useSubscribeCollection<Book>(BookService.getCollectionRef())
+  const { values: books } = useSubscribeCollection<Book>(BookService.getCollectionRef())
   return books
 }
 
 // mutation
 const addBook = async (newBookData: Pick<BookData, 'title'>) => {
-  const docSnap = await BookService.createDoc(newBookData)
+  const docSnap = await BookService.createDoc({ ...getDefaultBookData(), ...newBookData })
   return docSnap.id
 }
 
@@ -71,6 +71,8 @@ const deleteBook = async (book: Book) => {
   if (book.image) await StorageService.deleteImage(book.image.path)
 
   const chapters = await ChapterService.getDocs(book.id)
+  if (!chapters) return
+
   await Promise.all(chapters.map((chapter) => ChapterService.deleteDoc(chapter.id, book.id)))
   const chapterImagePaths = chapters
     .map((chapter) => chapter.images)

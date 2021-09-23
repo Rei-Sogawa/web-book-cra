@@ -1,10 +1,25 @@
-import { Avatar, Box, Button, Container, HStack, Text } from '@chakra-ui/react'
+import {
+  Avatar,
+  Box,
+  Button,
+  Container,
+  HStack,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Text,
+} from '@chakra-ui/react'
 import { VFC } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { routeMap } from '@/routes'
 
-export const Header: VFC = () => {
+export type HeaderProps = {
+  onSignOut: () => Promise<void>
+}
+
+export const Header: VFC<HeaderProps> = ({ onSignOut }) => {
   // app
   const history = useHistory()
 
@@ -25,7 +40,14 @@ export const Header: VFC = () => {
             <Button size="sm" colorScheme="blue" onClick={handleClickAddBook}>
               本を作る
             </Button>
-            <Avatar size="sm" />
+            <Menu placement="bottom-end" autoSelect={false}>
+              <MenuButton>
+                <Avatar size="sm" />
+              </MenuButton>
+              <MenuList>
+                <MenuItem onClick={onSignOut}>サインアウト</MenuItem>
+              </MenuList>
+            </Menu>
           </HStack>
         </HStack>
       </Container>

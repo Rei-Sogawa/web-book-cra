@@ -16,10 +16,9 @@ import {
 import { DependencyList, useEffect, useState } from 'react'
 
 import { db } from '@/firebaseApp'
-import { TimestampToFieldValue, WithId } from '@/lib/firestore'
+import { TimestampOrFieldValue, WithId } from '@/lib/firestore'
 
-export const createFirestoreService = <Data, PathParams = void>(
-  getDefaultData: () => TimestampToFieldValue<Data>,
+export const createFirestoreService = <Data, PathParams>(
   getCollectionPath: (pathParams: PathParams) => string
 ) => {
   const getCollectionRef = (pathParams: PathParams) => collection(db, getCollectionPath(pathParams))
@@ -29,7 +28,7 @@ export const createFirestoreService = <Data, PathParams = void>(
 
   const _getDoc = async (id: string, pathParams: PathParams) => {
     const docSnap = await getDoc(getDocRef(id, pathParams))
-    return { id: docSnap.id, ...docSnap.data() } as WithId<Data>
+    return docSnap.exists() ? ({ id: docSnap.id, ...docSnap.data() } as WithId<Data>) : undefined
   }
 
   const _getDocs = async (pathParams: PathParams, ...queryConstraints: QueryConstraint[]) => {
@@ -38,18 +37,17 @@ export const createFirestoreService = <Data, PathParams = void>(
         ? query(getCollectionRef(pathParams), ...queryConstraints)
         : getCollectionRef(pathParams)
     )
-    return querySnap.docs.map((doc) => ({ id: doc.id, ...doc.data() } as WithId<Data>))
+    return querySnap.empty
+      ? undefined
+      : querySnap.docs.map((doc) => ({ id: doc.id, ...doc.data() } as WithId<Data>))
   }
 
-  const _createDoc = (
-    newData: Partial<Data | TimestampToFieldValue<Data>>,
-    pathParams: PathParams
-  ) => {
-    return addDoc(getCollectionRef(pathParams), { ...getDefaultData(), ...newData })
+  const _createDoc = (newData: Data | TimestampOrFieldValue<Data>, pathParams: PathParams) => {
+    return addDoc<DocumentData>(getCollectionRef(pathParams), newData)
   }
 
   const _updateDoc = (
-    editedData: Partial<Data | TimestampToFieldValue<Data>>,
+    editedData: Partial<Data | TimestampOrFieldValue<Data>>,
     id: string,
     pathParams: PathParams
   ) => {
@@ -75,40 +73,54 @@ export const useSubscribeCollection = <T extends { id: string }>(
   query: Query,
   deps: DependencyList = []
 ) => {
+  const [initialized, setInitialize] = useState(false)
   const [values, setValues] = useState<T[]>()
 
   useEffect(() => {
     const unsubscirbe = onSnapshot(query, (snap) => {
-      setValues(
-        snap.docs.map(
-          (doc) =>
-            ({
-              id: doc.id,
-              ...doc.data({ serverTimestamps: 'estimate' }),
-            } as T)
+      if (!initialized) setInitialize(true)
+
+      if (snap.empty) {
+        setValues(undefined)
+      } else {
+        setValues(
+          snap.docs.map(
+            (doc) =>
+              ({
+                id: doc.id,
+                ...doc.data({ serverTimestamps: 'estimate' }),
+              } as T)
+          )
         )
-      )
+      }
     })
     return unsubscirbe
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 
-  return values
+  return { initialized, values }
 }
 
 export const useSubscribeDoc = <T extends { id: string }>(
   docRef: DocumentReference,
   deps: DependencyList = []
 ) => {
+  const [initialized, setInitialize] = useState(false)
   const [value, setValue] = useState<T>()
 
   useEffect(() => {
     const unsubscribe = onSnapshot(docRef, (snap) => {
-      setValue({ id: snap.id, ...snap.data() } as T)
+      if (!initialized) setInitialize(true)
+
+      if (snap.exists()) {
+        setValue({ id: snap.id, ...snap.data() } as T)
+      } else {
+        setValue(undefined)
+      }
     })
     return unsubscribe
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 
-  return value
+  return { initialized, value }
 }

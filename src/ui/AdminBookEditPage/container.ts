@@ -27,6 +27,7 @@ export const useAdminBookEditPageMutation = ({
   const saveBookDetail = curry(BookModel.saveBookDetail)(book)
   const uploadBookCover = curry(BookModel.uploadBookCover)(book)
   const deleteBookCover = () => BookModel.deleteBookCover(book)
+
   const addChapter = () => ChapterModel.addChapter(book, chapters.length)
 
   return {

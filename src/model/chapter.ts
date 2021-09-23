@@ -1,6 +1,6 @@
 import { orderBy, query, Timestamp } from 'firebase/firestore'
 
-import { serverTimestamp, TimestampToFieldValue, WithId } from '@/lib/firestore'
+import { serverTimestamp, TimestampOrFieldValue, WithId } from '@/lib/firestore'
 import {
   createFirestoreService,
   useSubscribeCollection,
@@ -22,7 +22,7 @@ export type ChapterData = {
 
 export type Chapter = WithId<ChapterData>
 
-export const getDefaultChapterData = (): TimestampToFieldValue<ChapterData> => ({
+export const getDefaultChapterData = (): TimestampOrFieldValue<ChapterData> => ({
   number: 0,
   title: '',
   content: '',
@@ -32,19 +32,18 @@ export const getDefaultChapterData = (): TimestampToFieldValue<ChapterData> => (
 })
 
 // service
-export const ChapterService = createFirestoreService(
-  getDefaultChapterData,
+export const ChapterService = createFirestoreService<ChapterData, string>(
   (bookId: string) => `books/${bookId}/chapters`
 )
 
 // query
 export const useChapter = ({ chapterId, bookId }: { chapterId: string; bookId: string }) => {
-  const chapter = useSubscribeDoc<Chapter>(ChapterService.getDocRef(chapterId, bookId))
+  const { value: chapter } = useSubscribeDoc<Chapter>(ChapterService.getDocRef(chapterId, bookId))
   return chapter
 }
 
 export const useChapters = (bookId: string) => {
-  const chapters = useSubscribeCollection<Chapter>(
+  const { values: chapters } = useSubscribeCollection<Chapter>(
     query(ChapterService.getCollectionRef(bookId), orderBy('number'))
   )
   return chapters
@@ -52,7 +51,10 @@ export const useChapters = (bookId: string) => {
 
 // mutation
 const addChapter = async (book: Book, chaptersLength: number) => {
-  await ChapterService.createDoc({ number: chaptersLength + 1 }, book.id)
+  await ChapterService.createDoc(
+    { ...getDefaultChapterData(), number: chaptersLength + 1 },
+    book.id
+  )
 }
 
 const saveChapter = async (

@@ -14,12 +14,12 @@ type BooksPageProps = {
 
 const BooksPage: VFC<BooksPageProps> = ({ books }) => {
   // container
-  const { deleteBook } = useAdminBooksPageMutation()
+  const { signOut, deleteBook } = useAdminBooksPageMutation()
 
   return (
     <VStack spacing="8">
       <Box alignSelf="stretch">
-        <Header />
+        <Header onSignOut={signOut} />
       </Box>
 
       <Container maxW="container.md" pb="8">

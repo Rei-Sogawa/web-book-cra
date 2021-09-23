@@ -9,9 +9,10 @@ import { useMount } from 'react-use'
 
 import { auth } from '@/firebaseApp'
 import { assertIsDefined } from '@/lib/assert'
+import { Admin, AdminService } from '@/model/admin'
 
-import { useSubscribeDoc } from './firestore'
-
+// signUp は functions.https 化した方が処理をまとめることができて扱いやすそう。
+// functions.auth.user().onCreate だと auth/user でどう判断するか実装が複雑になりそう。
 const signUp = ({ email, password }: { email: string; password: string }) => {
   return createUserWithEmailAndPassword(auth, email, password)
 }
@@ -26,13 +27,10 @@ export const AuthService = {
   signOut: () => signOut(auth),
 }
 
-// query
-export const useAdmin = (uid: string) => {
-  // const admin = useSubscribeDoc()
-}
-
 // AuthProvider
-type AuthValue = { uid?: string }
+type AuthState = { uid?: string; admin?: Admin }
+
+type AuthValue = AuthState & { fetchAdmin: () => Promise<void> }
 
 const AuthContext = createContext<AuthValue | undefined>(undefined)
 
@@ -41,16 +39,34 @@ type AuthProviderProps = {
 }
 
 export const AuthProvider: VFC<AuthProviderProps> = ({ children }) => {
-  // const [initialized, setInitialized] = useState(false)
-  const [value, setValue] = useState<AuthValue>({ uid: undefined })
+  const [initialized, setInitialized] = useState(false)
+  const [state, setState] = useState<AuthState>({})
 
   useMount(() => {
-    onAuthStateChanged(auth, (user) => {
-      setValue({ uid: user?.uid })
+    onAuthStateChanged(auth, async (user) => {
+      const uid = user?.uid
+      if (uid) {
+        const admin = await AdminService.getDoc(uid)
+        setState({ uid, admin })
+      } else {
+        setState({})
+      }
+
+      if (!initialized) setInitialized(true)
     })
   })
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  const fetchAdmin = async () => {
+    if (!state.uid) return
+    const admin = await AdminService.getDoc(state.uid)
+    setState((prev) => ({ ...prev, admin }))
+  }
+
+  return (
+    <AuthContext.Provider value={{ ...state, fetchAdmin }}>
+      {initialized && children}
+    </AuthContext.Provider>
+  )
 }
 
 export const useAuth = () => {

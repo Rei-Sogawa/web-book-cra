@@ -1,4 +1,5 @@
 import { BookModel, useBooks } from '@/model/book'
+import { AuthService } from '@/service/auth'
 
 export const useAdminBooksPageQuery = () => {
   const books = useBooks()
@@ -7,10 +8,12 @@ export const useAdminBooksPageQuery = () => {
 }
 
 export const useAdminBooksPageMutation = () => {
+  const signOut = AuthService.signOut
+
   const deleteBook = async () => {
     if (!window.confirm('削除します。よろしいですか？')) return
     await BookModel.deleteBook
   }
 
-  return { deleteBook }
+  return { signOut, deleteBook }
 }

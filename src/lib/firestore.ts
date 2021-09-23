@@ -5,11 +5,11 @@ export type WithId<T> = T & { id: string }
 export type Timestamp = firestore.Timestamp
 export type FieldValue = firestore.FieldValue
 
-export type TimestampToFieldValue<T> = {
+export type TimestampOrFieldValue<T> = {
   [key in keyof T]: T[key] extends Timestamp
-    ? FieldValue
+    ? Timestamp | FieldValue
     : T[key] extends Timestamp | null
-    ? FieldValue | null
+    ? Timestamp | null | FieldValue
     : T[key]
 }
 
