@@ -127,6 +127,6 @@ export const useSubscribeDoc = <T extends { id: string }>(
 }
 
 export const convertor = <T>(): FirestoreDataConverter<T> => ({
-  toFirestore: (data) => data as T,
+  toFirestore: (data) => data as DocumentData,
   fromFirestore: (snap, options) => snap.data(options) as T,
 })
