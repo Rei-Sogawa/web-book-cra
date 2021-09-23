@@ -51,7 +51,7 @@ export const useBooks = () => {
 }
 
 // mutation
-const createBook = async (newBookData: Pick<BookData, 'title'>) => {
+const addBook = async (newBookData: Pick<BookData, 'title'>) => {
   const docSnap = await BookService.createDoc(newBookData)
   return docSnap.id
 }
@@ -93,17 +93,12 @@ const deleteBookCover = async (book: Book) => {
   await BookService.updateDoc({ image: null }, book.id)
 }
 
-const addChapter = async (book: Book, chaptersLength: number) => {
-  await ChapterService.createDoc({ number: chaptersLength + 1 }, book.id)
-}
-
 export const BookModel = {
   // mutation
-  createBook,
+  addBook,
   saveBook,
   saveBookDetail,
   deleteBook,
   uploadBookCover,
   deleteBookCover,
-  addChapter,
 }

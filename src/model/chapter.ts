@@ -52,6 +52,10 @@ export const useChapters = (bookId: string) => {
 }
 
 // mutation
+const addChapter = async (book: Book, chaptersLength: number) => {
+  await ChapterService.createDoc({ number: chaptersLength + 1 }, book.id)
+}
+
 const saveChapter = async (
   {
     chapter,
@@ -105,6 +109,7 @@ const uploadImage = async (
 
 export const ChapterModel = {
   // mutation
+  addChapter,
   saveChapter,
   uploadImage,
 }
