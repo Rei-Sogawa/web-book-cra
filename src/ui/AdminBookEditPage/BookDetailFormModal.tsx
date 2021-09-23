@@ -74,12 +74,12 @@ export const BookDetailFormModal: VFC<BookDetailFormModalProps> = ({
             <VStack spacing="4">
               <FormControl>
                 <FormLabel fontSize="sm">未公開 / 公開</FormLabel>
-                <Switch size="lg" {...register('published')} />
+                <Switch {...register('published')} size="lg" />
               </FormControl>
 
               <FormControl>
                 <FormLabel fontSize="sm">著者名</FormLabel>
-                <Input autoComplete="off" {...register('authorNames')} placeholder="著者A, 著者B" />
+                <Input {...register('authorNames')} placeholder="著者A, 著者B" autoComplete="off" />
                 <FormHelperText>複数人の場合はカンマ区切りで入力してください。</FormHelperText>
               </FormControl>
 
@@ -90,7 +90,7 @@ export const BookDetailFormModal: VFC<BookDetailFormModalProps> = ({
 
               <FormControl>
                 <FormLabel fontSize="sm">価格（円）</FormLabel>
-                <Input type="number" autoComplete="off" {...register('price')} />
+                <Input type="number" {...register('price')} autoComplete="off" />
               </FormControl>
             </VStack>
           </ModalBody>

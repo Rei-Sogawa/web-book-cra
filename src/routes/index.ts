@@ -1,12 +1,15 @@
 import { generatePath } from 'react-router'
 
-import { Admin, Public } from '@/routes/authenticate'
 import AdminBookEditPage from '@/ui/AdminBookEditPage/Index'
 import AdminBookNewPage from '@/ui/AdminBookNewPage/Index'
 import AdminBooksPage from '@/ui/AdminBooksPage/Index'
 import AdminBookViewerPage from '@/ui/AdminBookViewerPage/Index'
 import AdminChapterEditPage from '@/ui/AdminChapterEditPage/Index'
+import AdminSignInPage from '@/ui/AdminSignInPage/Index'
+import AdminSignUpPage from '@/ui/AdminSignUpPage/Index'
 import HomePage from '@/ui/HomePage/Index'
+
+import { Admin, AdminSignIn, Public } from './authenticate'
 
 const basic = {
   exact: true,
@@ -19,6 +22,22 @@ export const routeMap = {
       return '/'
     },
     Component: Public(HomePage),
+  },
+
+  '/admin/sign-in': {
+    ...basic,
+    path: () => {
+      return '/admin/sign-in'
+    },
+    Component: AdminSignIn(AdminSignInPage),
+  },
+
+  '/admin/sign-up': {
+    ...basic,
+    path: () => {
+      return '/admin/sign-up'
+    },
+    Component: AdminSignIn(AdminSignUpPage),
   },
 
   '/admin/books': {
