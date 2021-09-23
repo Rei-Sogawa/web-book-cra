@@ -13,6 +13,7 @@ import { Admin, AdminService } from '@/model/admin'
 
 // signUp は functions.https 化した方が処理をまとめることができて扱いやすそう。
 // functions.auth.user().onCreate だと auth/user でどう判断するか実装が複雑になりそう。
+// adminSignUp と userSignUp ができるイメージ。
 const signUp = ({ email, password }: { email: string; password: string }) => {
   return createUserWithEmailAndPassword(auth, email, password)
 }
