@@ -46,7 +46,7 @@ export const useChapters = (bookId: string) => {
   const { values: chapters } = useSubscribeCollection<Chapter>(
     query(ChapterService.getCollectionRef(bookId), orderBy('number'))
   )
-  return chapters
+  return chapters || []
 }
 
 // mutation

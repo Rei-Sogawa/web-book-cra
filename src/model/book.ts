@@ -46,7 +46,7 @@ export const useBook = (bookId: string) => {
 
 export const useBooks = () => {
   const { values: books } = useSubscribeCollection<Book>(BookService.getCollectionRef())
-  return books
+  return books ?? []
 }
 
 // mutation
