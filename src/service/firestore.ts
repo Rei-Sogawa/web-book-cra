@@ -5,6 +5,7 @@ import {
   doc,
   DocumentData,
   DocumentReference,
+  FirestoreDataConverter,
   getDoc,
   getDocs,
   onSnapshot,
@@ -124,3 +125,8 @@ export const useSubscribeDoc = <T extends { id: string }>(
 
   return { initialized, value }
 }
+
+export const convertor = <T>(): FirestoreDataConverter<T> => ({
+  toFirestore: (data) => data as T,
+  fromFirestore: (snap, options) => snap.data(options) as T,
+})

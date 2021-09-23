@@ -1,5 +1,9 @@
+import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
+
+import { db } from '@/firebaseApp'
 import { serverTimestamp, Timestamp, TimestampOrFieldValue, WithId } from '@/lib/firestore'
 import {
+  convertor,
   createFirestoreService,
   useSubscribeCollection,
   useSubscribeDoc,
@@ -23,7 +27,7 @@ export type BookData = {
 
 export type Book = WithId<BookData>
 
-const getDefaultBookData = (): TimestampOrFieldValue<BookData> => ({
+export const getDefaultBookData = (): TimestampOrFieldValue<BookData> => ({
   title: '',
   description: '',
   authorNames: [],
@@ -35,39 +39,49 @@ const getDefaultBookData = (): TimestampOrFieldValue<BookData> => ({
   updatedAt: serverTimestamp(),
 })
 
+// ref
+const bookConvertor = convertor<BookData>()
+
+export const booksRef = () => {
+  return collection(db, 'books').withConverter(bookConvertor)
+}
+export const bookRef = (bookId: string) => {
+  return doc(db, booksRef().path, bookId).withConverter(bookConvertor)
+}
+
 // service
 export const BookService = createFirestoreService<BookData, void>(() => '/books')
 
 // query
 export const useBook = (bookId: string) => {
-  const { value: book } = useSubscribeDoc<Book>(BookService.getDocRef(bookId))
+  const { value: book } = useSubscribeDoc<Book>(bookRef(bookId))
   return book
 }
 
 export const useBooks = () => {
-  const { values: books } = useSubscribeCollection<Book>(BookService.getCollectionRef())
+  const { values: books } = useSubscribeCollection<Book>(booksRef())
   return books ?? []
 }
 
 // mutation
 const addBook = async (newBookData: Pick<BookData, 'title'>) => {
-  const docSnap = await BookService.createDoc({ ...getDefaultBookData(), ...newBookData })
+  const docSnap = await addDoc(booksRef(), { ...getDefaultBookData(), ...newBookData })
   return docSnap.id
 }
 
 const saveBook = async (book: Book, editedBookData: Pick<BookData, 'title' | 'description'>) => {
-  await BookService.updateDoc(editedBookData, book.id)
+  await updateDoc(bookRef(book.id), editedBookData)
 }
 
 const saveBookDetail = async (
   book: Book,
   editedBookData: Pick<BookData, 'published' | 'authorNames' | 'releasedAt' | 'price'>
 ) => {
-  await BookService.updateDoc(editedBookData, book.id)
+  await updateDoc(bookRef(book.id), editedBookData)
 }
 
 const deleteBook = async (book: Book) => {
-  await BookService.deleteDoc(book.id)
+  await deleteDoc(bookRef(book.id))
   if (book.image) await StorageService.deleteImage(book.image.path)
 
   const chapters = await ChapterService.getDocs(book.id)
@@ -85,13 +99,13 @@ const uploadBookCover = async (book: Book, file: File) => {
   const path = `books-${book.id}`
   await StorageService.uploadImage(path, file)
   const url = await StorageService.getImageUrl(path)
-  await BookService.updateDoc({ image: { path, url } }, book.id)
+  await updateDoc(bookRef(book.id), { image: { path, url } })
 }
 
 const deleteBookCover = async (book: Book) => {
   if (!book.image) return
   await StorageService.deleteImage(book.image.path)
-  await BookService.updateDoc({ image: null }, book.id)
+  await updateDoc(bookRef(book.id), { image: null })
 }
 
 export const BookModel = {
