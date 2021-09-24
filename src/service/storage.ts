@@ -3,19 +3,19 @@ import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage
 import { storage } from '@/firebaseApp'
 
 const uploadImage = (path: string, blob: Blob) => {
-  return uploadBytes(ref(storage, `images/${path}`), blob, { contentType: 'image/*' })
+  return uploadBytes(ref(storage, path), blob, { contentType: 'image/*' })
 }
 
-const getImageUrl = (path: string) => {
-  return getDownloadURL(ref(storage, `images/${path}`))
+const _getDownloadURL = (path: string) => {
+  return getDownloadURL(ref(storage, path))
 }
 
-const deleteImage = (path: string) => {
-  return deleteObject(ref(storage, `images/${path}`))
+const _deleteObject = (path: string) => {
+  return deleteObject(ref(storage, path))
 }
 
 export const StorageService = {
   uploadImage,
-  getImageUrl,
-  deleteImage,
+  getDownloadURL: _getDownloadURL,
+  deleteObject: _deleteObject,
 }

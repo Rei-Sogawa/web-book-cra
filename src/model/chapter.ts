@@ -1,11 +1,18 @@
-import { orderBy, query, Timestamp } from 'firebase/firestore'
-
-import { serverTimestamp, TimestampOrFieldValue, WithId } from '@/lib/firestore'
 import {
-  createFirestoreService,
-  useSubscribeCollection,
-  useSubscribeDoc,
-} from '@/service/firestore'
+  addDoc,
+  arrayRemove,
+  arrayUnion,
+  collection,
+  doc,
+  orderBy,
+  query,
+  Timestamp,
+  updateDoc,
+} from 'firebase/firestore'
+
+import { db } from '@/firebaseApp'
+import { serverTimestamp, TimestampOrFieldValue, WithId } from '@/lib/firestore'
+import { convertor, useSubscribeCollection, useSubscribeDoc } from '@/service/firestore'
 import { StorageService } from '@/service/storage'
 
 import { Book } from './book'
@@ -31,79 +38,76 @@ export const getDefaultChapterData = (): TimestampOrFieldValue<ChapterData> => (
   updatedAt: serverTimestamp(),
 })
 
-// service
-export const ChapterService = createFirestoreService<ChapterData, string>(
-  (bookId: string) => `books/${bookId}/chapters`
-)
+// ref
+const chapterConvertor = convertor<ChapterData>()
 
-// query
-export const useChapter = ({ chapterId, bookId }: { chapterId: string; bookId: string }) => {
-  const { value: chapter } = useSubscribeDoc<Chapter>(ChapterService.getDocRef(chapterId, bookId))
-  return chapter
+export const chaptersRef = ({ bookId }: { bookId: string }) => {
+  return collection(db, `books/${bookId}/chapters`).withConverter(chapterConvertor)
+}
+export const chapterRef = ({ bookId, chapterId }: { bookId: string; chapterId: string }) => {
+  return doc(db, chaptersRef({ bookId }).path, chapterId).withConverter(chapterConvertor)
 }
 
-export const useChapters = (bookId: string) => {
-  const { values: chapters } = useSubscribeCollection<Chapter>(
-    query(ChapterService.getCollectionRef(bookId), orderBy('number'))
+// query
+export const useChapters = ({ bookId }: { bookId: string }) => {
+  const { values: chapters } = useSubscribeCollection<ChapterData>(
+    query(chaptersRef({ bookId }), orderBy('number'))
   )
   return chapters || []
 }
 
-// mutation
-const addChapter = async (book: Book, chaptersLength: number) => {
-  await ChapterService.createDoc(
-    { ...getDefaultChapterData(), number: chaptersLength + 1 },
-    book.id
-  )
+export const useChapter = ({ bookId, chapterId }: { bookId: string; chapterId: string }) => {
+  const { value: chapter } = useSubscribeDoc<ChapterData>(chapterRef({ bookId, chapterId }))
+  return chapter
 }
 
-const saveChapter = async (
-  {
-    chapter,
-    book,
-  }: {
-    chapter: Chapter
-    book: Book
-  },
+// mutation
+const addChapter = async ({ book, chaptersLength }: { book: Book; chaptersLength: number }) => {
+  await addDoc(chaptersRef({ bookId: book.id }), {
+    ...getDefaultChapterData(),
+    number: chaptersLength + 1,
+  })
+}
+
+const saveChapter = async ({
+  book,
+  chapter,
+  editedChapterData,
+}: {
+  book: Book
+  chapter: Chapter
   editedChapterData: Pick<ChapterData, 'title' | 'content'>
-) => {
-  const deletedImages = chapter.images.filter(
+}) => {
+  const deletedImages: ChapterData['images'] = chapter.images.filter(
     (image) => !editedChapterData.content.includes(image.url)
   )
 
-  await ChapterService.updateDoc(
-    {
-      ...editedChapterData,
-      images: chapter.images.filter(
-        (image) => !deletedImages.find((deletedImage) => deletedImage.path === image.path)
-      ),
-    },
-    chapter.id,
-    book.id
-  )
+  await updateDoc(chapterRef({ bookId: book.id, chapterId: chapter.id }), {
+    ...editedChapterData,
+    images: arrayRemove(deletedImages),
+  })
 
-  await Promise.all(deletedImages.map((image) => StorageService.deleteImage(image.path)))
+  await Promise.all(deletedImages.map((image) => StorageService.deleteObject(image.path)))
 }
 
-const uploadImage = async (
-  {
-    chapter,
-    book,
-  }: {
-    chapter: Chapter
-    book: Book
-  },
+const uploadImage = async ({
+  book,
+  chapter,
+  file,
+}: {
+  book: Book
+  chapter: Chapter
   file: File
-) => {
-  const path = `books-${book.id}-chapters-${chapter.id}-${new Date().getTime()}`
+}) => {
+  const path = `books-${book.id}-chapters-${chapter.id}-images-${new Date().getTime()}`
   await StorageService.uploadImage(path, file)
+  const url = await StorageService.getDownloadURL(path)
 
-  const url = await StorageService.getImageUrl(path)
-  await ChapterService.updateDoc(
-    { images: [...chapter.images, { path, url }] },
-    chapter.id,
-    book.id
-  )
+  const addedImage: ChapterData['images'][number] = { path, url }
+
+  await updateDoc(chapterRef({ bookId: book.id, chapterId: chapter.id }), {
+    images: arrayUnion(addedImage),
+  })
 
   return url
 }
