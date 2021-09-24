@@ -1,8 +1,9 @@
-import { Book, BookModel, useBooks } from '@/model/book'
+import { useDocs } from '@/lib/firestore'
+import { Book, BookModel, booksRef } from '@/model/book'
 import { AuthService } from '@/service/auth'
 
 export const useAdminBooksPageQuery = () => {
-  const books = useBooks()
+  const [books] = useDocs(booksRef())
 
   return { books }
 }

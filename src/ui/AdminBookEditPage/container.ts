@@ -1,14 +1,16 @@
+import { orderBy, query } from 'firebase/firestore'
 import { curry } from 'lodash-es'
 import { useParams } from 'react-router-dom'
 
-import { Book, BookModel, useBook } from '@/model/book'
-import { Chapter, ChapterModel, useChapters } from '@/model/chapter'
+import { useDoc, useDocs } from '@/lib/firestore'
+import { Book, BookModel, bookRef } from '@/model/book'
+import { Chapter, ChapterModel, chaptersRef } from '@/model/chapter'
 
 export const useAdminBookEditPageQuery = () => {
   const { bookId } = useParams<{ bookId: string }>()
 
-  const book = useBook({ bookId })
-  const chapters = useChapters({ bookId })
+  const [book] = useDoc(bookRef({ bookId }))
+  const [chapters] = useDocs(query(chaptersRef({ bookId }), orderBy('number')))
 
   return {
     book,

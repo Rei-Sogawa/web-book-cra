@@ -11,7 +11,7 @@ import {
 
 import { db } from '@/firebaseApp'
 import { WithId } from '@/lib/firestore'
-import { convertor, fetchDocs, useSubscribeCollection, useSubscribeDoc } from '@/lib/firestore'
+import { convertor, fetchDocs } from '@/lib/firestore'
 import { StorageService } from '@/service/storage'
 
 import { chapterRef, chaptersRef } from './chapter'
@@ -51,17 +51,6 @@ export const booksRef = () => {
 }
 export const bookRef = ({ bookId }: { bookId: string }) => {
   return doc(db, booksRef().path, bookId).withConverter(bookConvertor)
-}
-
-// query
-export const useBooks = () => {
-  const { values: books } = useSubscribeCollection(booksRef())
-  return books || []
-}
-
-export const useBook = ({ bookId }: { bookId: string }) => {
-  const { value: book } = useSubscribeDoc(bookRef({ bookId }))
-  return book
 }
 
 // mutation

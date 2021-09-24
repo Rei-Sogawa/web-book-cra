@@ -7,6 +7,8 @@ import { Book } from '@/model/book'
 import { Chapter } from '@/model/chapter'
 import { routeMap } from '@/routes'
 
+import { BookImage } from '../Shared/BookImage'
+
 export type SidebarProps = {
   book: Book
   chapters: Chapter[]
@@ -49,24 +51,7 @@ export const Sidebar: VFC<SidebarProps> = ({ book, chapters, currentChapterId })
       </Box>
 
       <HStack alignSelf="start">
-        <Box
-          width="100px"
-          height="140px"
-          bg="gray.100"
-          borderRadius="md"
-          boxShadow="md"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          {book.image ? (
-            <Image src={book.image.url} />
-          ) : (
-            <Text fontWeight="bold" color="gray.500" pb="4">
-              Web Book
-            </Text>
-          )}
-        </Box>
+        <BookImage imageUrl={book.image?.url} size="sm" />
 
         <Text alignSelf="start" fontWeight="bold">
           {book.title}

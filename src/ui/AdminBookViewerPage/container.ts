@@ -1,13 +1,16 @@
+import { orderBy, query } from 'firebase/firestore'
 import { useParams } from 'react-router-dom'
 
-import { useBook } from '@/model/book'
-import { useChapters } from '@/model/chapter'
+import { useDoc, useDocs } from '@/lib/firestore'
+import { bookRef } from '@/model/book'
+import { chaptersRef } from '@/model/chapter'
 
 export const useAdminBookViewerQuery = () => {
   const { bookId } = useParams<{ bookId: string }>()
 
-  const book = useBook({ bookId })
-  const chapters = useChapters({ bookId })
+  const [book] = useDoc(bookRef({ bookId }))
+  const [_chapters] = useDocs(query(chaptersRef({ bookId }), orderBy('number')))
+  const chapters = _chapters || []
 
   return { book, chapters }
 }

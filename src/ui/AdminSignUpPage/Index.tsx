@@ -15,7 +15,7 @@ const AdminSignUpPage: VFC = () => {
       <VStack width="480px" spacing="4">
         <HStack justifyContent="center" alignItems="baseline">
           <Text textAlign="center" fontSize="5xl" fontWeight="extrabold">
-            Web Hook
+            Web Book
           </Text>
 
           <Text fontWeight="bold">（管理者）</Text>

@@ -1,14 +1,15 @@
 import { curry } from 'lodash-es'
 import { useParams } from 'react-router-dom'
 
-import { Book, useBook } from '@/model/book'
-import { Chapter, ChapterModel, useChapter } from '@/model/chapter'
+import { useDoc } from '@/lib/firestore'
+import { Book, bookRef } from '@/model/book'
+import { Chapter, ChapterModel, chapterRef } from '@/model/chapter'
 
 export const useAdminChapterEditPageQuery = () => {
   const { bookId, chapterId } = useParams<{ bookId: string; chapterId: string }>()
 
-  const book = useBook({ bookId })
-  const chapter = useChapter({ chapterId, bookId })
+  const [book] = useDoc(bookRef({ bookId }))
+  const [chapter] = useDoc(chapterRef({ bookId, chapterId }))
 
   return { book, chapter }
 }

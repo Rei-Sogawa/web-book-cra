@@ -14,7 +14,7 @@ export type WithId<T> = T & { id: string }
 
 const snapshotOptions: SnapshotOptions = { serverTimestamps: 'estimate' }
 
-export const useSubscribeCollection = <T>(query: Query<T>, deps: DependencyList = []) => {
+export const useDocs = <T>(query: Query<T>, deps: DependencyList = []) => {
   const [initialized, setInitialize] = useState(false)
   const [values, setValues] = useState<WithId<T>[]>()
 
@@ -37,10 +37,10 @@ export const useSubscribeCollection = <T>(query: Query<T>, deps: DependencyList 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 
-  return { initialized, values }
+  return [values, initialized] as const
 }
 
-export const useSubscribeDoc = <T>(docRef: DocumentReference<T>, deps: DependencyList = []) => {
+export const useDoc = <T>(docRef: DocumentReference<T>, deps: DependencyList = []) => {
   const [initialized, setInitialize] = useState(false)
   const [value, setValue] = useState<WithId<T>>()
 
@@ -58,7 +58,7 @@ export const useSubscribeDoc = <T>(docRef: DocumentReference<T>, deps: Dependenc
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 
-  return { initialized, value }
+  return [value, initialized] as const
 }
 
 export const fetchDocs = async <T>(query: Query<T>) => {
