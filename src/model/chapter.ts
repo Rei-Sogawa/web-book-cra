@@ -4,8 +4,6 @@ import {
   arrayUnion,
   collection,
   doc,
-  orderBy,
-  query,
   serverTimestamp,
   Timestamp,
   updateDoc,

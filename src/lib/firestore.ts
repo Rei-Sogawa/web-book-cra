@@ -16,12 +16,12 @@ const snapshotOptions: SnapshotOptions = { serverTimestamps: 'estimate' }
 
 export const useDocs = <T>(query: Query<T>, deps: DependencyList = []) => {
   const [initialized, setInitialize] = useState(false)
-  const [values, setValues] = useState<WithId<T>[]>()
+  const [values, setValues] = useState<WithId<T>[]>([])
 
   useEffect(() => {
     const unsubscirbe = onSnapshot(query, (snap) => {
       if (snap.empty) {
-        setValues(undefined)
+        setValues([])
       } else {
         setValues(
           snap.docs.map((doc) => ({

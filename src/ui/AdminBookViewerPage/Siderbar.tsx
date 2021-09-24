@@ -1,4 +1,4 @@
-import { Box, HStack, Image, Link, Text, VStack } from '@chakra-ui/react'
+import { Box, HStack, Link, Text, VStack } from '@chakra-ui/react'
 import { VFC } from 'react'
 import { Link as ReactRouterLink, useHistory } from 'react-router-dom'
 

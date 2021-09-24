@@ -5,9 +5,9 @@ import AdminBookNewPage from '@/ui/AdminBookNewPage/Index'
 import AdminBooksPage from '@/ui/AdminBooksPage/Index'
 import AdminBookViewerPage from '@/ui/AdminBookViewerPage/Index'
 import AdminChapterEditPage from '@/ui/AdminChapterEditPage/Index'
+import HomePage from '@/ui/AdminHomePage/Index'
 import AdminSignInPage from '@/ui/AdminSignInPage/Index'
 import AdminSignUpPage from '@/ui/AdminSignUpPage/Index'
-import HomePage from '@/ui/HomePage/Index'
 
 import { Admin, AdminSignIn, Public } from './authenticate'
 
