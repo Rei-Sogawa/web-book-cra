@@ -2,7 +2,7 @@ import { collection, doc } from 'firebase/firestore'
 
 import { db } from '@/firebaseApp'
 import { WithId } from '@/lib/firestore'
-import { convertor } from '@/service/firestore'
+import { convertor } from '@/lib/firestore'
 
 // schema
 export type AdminData = {

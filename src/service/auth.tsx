@@ -1,31 +1,17 @@
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-} from 'firebase/auth'
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { createContext, ReactNode, useContext, useState, VFC } from 'react'
 import { useMount } from 'react-use'
 
 import { auth } from '@/firebaseApp'
 import { assertIsDefined } from '@/lib/assert'
+import { fetchDoc } from '@/lib/firestore'
 import { Admin, adminRef } from '@/model/admin'
-
-import { fetchDoc } from './firestore'
-
-// signUp は functions.https 化した方が処理をまとめることができて扱いやすそう。
-// functions.auth.user().onCreate だと auth/user でどう判断するか実装が複雑になりそう。
-// adminSignUp と userSignUp ができるイメージ。
-const signUp = ({ email, password }: { email: string; password: string }) => {
-  return createUserWithEmailAndPassword(auth, email, password)
-}
 
 const signIn = ({ email, password }: { email: string; password: string }) => {
   return signInWithEmailAndPassword(auth, email, password)
 }
 
 export const AuthService = {
-  signUp,
   signIn,
   signOut: () => signOut(auth),
 }

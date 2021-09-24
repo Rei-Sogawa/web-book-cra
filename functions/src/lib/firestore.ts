@@ -1,6 +1,8 @@
-import * as admin from "firebase-admin";
+import { firestore } from "firebase-admin"
 
-export type WithId<T> = T & { id: string }
+export type WithId<T> = T & {id: string}
 
-export type Timestamp = admin.firestore.Timestamp
-export type FieldValue = admin.firestore.FieldValue
+export const convertor = <T>(): firestore.FirestoreDataConverter<T> => ({
+  toFirestore: (data) => data,
+  fromFirestore: (snap) => snap.data() as T,
+})

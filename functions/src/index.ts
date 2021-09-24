@@ -1,28 +1,44 @@
-import * as functions from "firebase-functions";
-import * as admin from "firebase-admin";
+import * as functions from 'firebase-functions'
 
-import {last} from "lodash";
-import {AdminData} from "./model/admin";
-import {assertIsDefined} from "./lib/assert";
+import { adminRef } from './model/admin'
+import {  auth } from './firebaseApp'
+import { userRef } from './model/user'
 
-admin.initializeApp();
+const TOKYO = 'asia-northeast1'
+const functionsWithRegion = functions.region(TOKYO)
 
-const auth = admin.auth();
-const db = admin.firestore();
+export const signUpAdmin = functionsWithRegion
+  .https.onCall(async (data: { email: string; password: string }) => {
+    const { email, password } = data
 
-export const onCreateAdminAuth = functions
-    .region("asia-northeast1")
-    .auth.user()
-    .onCreate((user) => {
-      const isSGUser = last(user.email?.split("@")) === "sonicgarden.jp";
+    // const isSGDomain = last(email.split('@')) === 'sonicgarden.jp'
+    // if (!isSGDomain) {
+    //   throw new functions.https.HttpsError("invalid-argument", "")
+    // }
 
-      if (!isSGUser) {
-        auth.deleteUser(user.uid);
-        return;
-      }
+    try {
+      const authUser = await auth.createUser({ email, password })
+      await adminRef({adminId:authUser.uid}).set({email})
+      return authUser.uid
+    } catch {
+      throw new functions.https.HttpsError("invalid-argument", "")
+    }
+  })
 
-      assertIsDefined(user.email);
-      const adminData: AdminData = {email: user.email};
-      db.collection("admins").doc(user.uid).set(adminData);
-      return;
-    });
+  export const signUpUser = functionsWithRegion
+  .https.onCall(async (data: { email: string; password: string }) => {
+    const { email, password } = data
+
+    // const isSGDomain = last(email.split('@')) === 'sonicgarden.jp'
+    // if (!isSGDomain) {
+    //   throw new functions.https.HttpsError("invalid-argument", "")
+    // }
+
+    try {
+      const authUser = await auth.createUser({ email, password })
+      await userRef({userId: authUser.uid}).set({email})
+      return authUser.uid
+    } catch {
+      throw new functions.https.HttpsError("invalid-argument", "")
+    }
+  })

@@ -14,7 +14,7 @@ import {
 
 import { db } from '@/firebaseApp'
 import { WithId } from '@/lib/firestore'
-import { convertor, useSubscribeCollection, useSubscribeDoc } from '@/service/firestore'
+import { convertor, useSubscribeCollection, useSubscribeDoc } from '@/lib/firestore'
 import { StorageService } from '@/service/storage'
 
 import { Book } from './book'

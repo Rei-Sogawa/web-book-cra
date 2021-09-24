@@ -4,13 +4,14 @@ import {
   deleteDoc,
   doc,
   serverTimestamp,
+  Timestamp,
   updateDoc,
   WithFieldValue,
 } from 'firebase/firestore'
 
 import { db } from '@/firebaseApp'
-import { Timestamp, WithId } from '@/lib/firestore'
-import { convertor, fetchDocs, useSubscribeCollection, useSubscribeDoc } from '@/service/firestore'
+import { WithId } from '@/lib/firestore'
+import { convertor, fetchDocs, useSubscribeCollection, useSubscribeDoc } from '@/lib/firestore'
 import { StorageService } from '@/service/storage'
 
 import { chapterRef, chaptersRef } from './chapter'
