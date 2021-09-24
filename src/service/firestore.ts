@@ -2,12 +2,17 @@ import {
   DocumentData,
   DocumentReference,
   FirestoreDataConverter,
+  getDoc,
+  getDocs,
   onSnapshot,
   Query,
+  SnapshotOptions,
 } from 'firebase/firestore'
 import { DependencyList, useEffect, useState } from 'react'
 
-export const useSubscribeCollection = <T>(query: Query, deps: DependencyList = []) => {
+const snapshotOptions: SnapshotOptions = { serverTimestamps: 'estimate' }
+
+export const useSubscribeCollection = <T>(query: Query<T>, deps: DependencyList = []) => {
   const [initialized, setInitialize] = useState(false)
   const [values, setValues] = useState<({ id: string } & T)[]>()
 
@@ -19,7 +24,7 @@ export const useSubscribeCollection = <T>(query: Query, deps: DependencyList = [
         setValues(
           snap.docs.map((doc) => ({
             id: doc.id,
-            ...(doc.data({ serverTimestamps: 'estimate' }) as T),
+            ...(doc.data(snapshotOptions) as T),
           }))
         )
       }
@@ -33,14 +38,14 @@ export const useSubscribeCollection = <T>(query: Query, deps: DependencyList = [
   return { initialized, values }
 }
 
-export const useSubscribeDoc = <T>(docRef: DocumentReference, deps: DependencyList = []) => {
+export const useSubscribeDoc = <T>(docRef: DocumentReference<T>, deps: DependencyList = []) => {
   const [initialized, setInitialize] = useState(false)
   const [value, setValue] = useState<{ id: string } & T>()
 
   useEffect(() => {
     const unsubscribe = onSnapshot(docRef, (snap) => {
       if (snap.exists()) {
-        setValue({ id: snap.id, ...(snap.data({ serverTimestamps: 'estimate' }) as T) })
+        setValue({ id: snap.id, ...(snap.data(snapshotOptions) as T) })
       } else {
         setValue(undefined)
       }
@@ -52,6 +57,27 @@ export const useSubscribeDoc = <T>(docRef: DocumentReference, deps: DependencyLi
   }, deps)
 
   return { initialized, value }
+}
+
+export const fetchDocs = async <T>(query: Query<T>) => {
+  const snap = await getDocs(query)
+  if (snap.empty) {
+    return undefined
+  } else {
+    return snap.docs.map((doc) => ({
+      id: doc.id,
+      ...(doc.data(snapshotOptions) as T),
+    }))
+  }
+}
+
+export const fetchDoc = async <T>(docRef: DocumentReference<T>) => {
+  const snap = await getDoc(docRef)
+  if (snap.exists()) {
+    return { id: snap.id, ...(snap.data() as T) }
+  } else {
+    return undefined
+  }
 }
 
 export const convertor = <T>(): FirestoreDataConverter<T> => ({

@@ -9,7 +9,9 @@ import { useMount } from 'react-use'
 
 import { auth } from '@/firebaseApp'
 import { assertIsDefined } from '@/lib/assert'
-import { Admin, AdminService } from '@/model/admin'
+import { Admin, adminRef } from '@/model/admin'
+
+import { fetchDoc } from './firestore'
 
 // signUp は functions.https 化した方が処理をまとめることができて扱いやすそう。
 // functions.auth.user().onCreate だと auth/user でどう判断するか実装が複雑になりそう。
@@ -47,7 +49,7 @@ export const AuthProvider: VFC<AuthProviderProps> = ({ children }) => {
     onAuthStateChanged(auth, async (user) => {
       const uid = user?.uid
       if (uid) {
-        const admin = await AdminService.getDoc(uid)
+        const admin = await fetchDoc(adminRef({ adminId: uid }))
         setState({ uid, admin })
       } else {
         setState({})
@@ -59,7 +61,7 @@ export const AuthProvider: VFC<AuthProviderProps> = ({ children }) => {
 
   const fetchAdmin = async () => {
     if (!state.uid) return
-    const admin = await AdminService.getDoc(state.uid)
+    const admin = await fetchDoc(adminRef({ adminId: state.uid }))
     setState((prev) => ({ ...prev, admin }))
   }
 

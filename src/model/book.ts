@@ -1,8 +1,8 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 
 import { db } from '@/firebaseApp'
 import { serverTimestamp, Timestamp, TimestampOrFieldValue, WithId } from '@/lib/firestore'
-import { convertor, useSubscribeCollection, useSubscribeDoc } from '@/service/firestore'
+import { convertor, fetchDocs, useSubscribeCollection, useSubscribeDoc } from '@/service/firestore'
 import { StorageService } from '@/service/storage'
 
 import { chapterRef, chaptersRef } from './chapter'
@@ -46,12 +46,12 @@ export const bookRef = ({ bookId }: { bookId: string }) => {
 
 // query
 export const useBooks = () => {
-  const { values: books } = useSubscribeCollection<Book>(booksRef())
+  const { values: books } = useSubscribeCollection(booksRef())
   return books || []
 }
 
 export const useBook = ({ bookId }: { bookId: string }) => {
-  const { value: book } = useSubscribeDoc<Book>(bookRef({ bookId }))
+  const { value: book } = useSubscribeDoc(bookRef({ bookId }))
   return book
 }
 
@@ -85,10 +85,8 @@ const deleteBook = async (book: Book) => {
   await deleteDoc(bookRef({ bookId: book.id }))
   if (book.image) await StorageService.deleteObject(book.image.path)
 
-  const chapters = (await getDocs(chaptersRef({ bookId: book.id }))).docs.map((snap) => ({
-    id: snap.id,
-    ...snap.data(),
-  }))
+  const chapters = await fetchDocs(chaptersRef({ bookId: book.id }))
+  if (!chapters) return
 
   await Promise.all(
     chapters.map((chapter) => deleteDoc(chapterRef({ bookId: book.id, chapterId: chapter.id })))

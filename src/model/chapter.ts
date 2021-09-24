@@ -50,14 +50,14 @@ export const chapterRef = ({ bookId, chapterId }: { bookId: string; chapterId: s
 
 // query
 export const useChapters = ({ bookId }: { bookId: string }) => {
-  const { values: chapters } = useSubscribeCollection<ChapterData>(
+  const { values: chapters } = useSubscribeCollection(
     query(chaptersRef({ bookId }), orderBy('number'))
   )
   return chapters || []
 }
 
 export const useChapter = ({ bookId, chapterId }: { bookId: string; chapterId: string }) => {
-  const { value: chapter } = useSubscribeDoc<ChapterData>(chapterRef({ bookId, chapterId }))
+  const { value: chapter } = useSubscribeDoc(chapterRef({ bookId, chapterId }))
   return chapter
 }
 
