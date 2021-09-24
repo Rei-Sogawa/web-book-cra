@@ -1,7 +1,15 @@
-import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  serverTimestamp,
+  updateDoc,
+  WithFieldValue,
+} from 'firebase/firestore'
 
 import { db } from '@/firebaseApp'
-import { serverTimestamp, Timestamp, TimestampOrFieldValue, WithId } from '@/lib/firestore'
+import { Timestamp, WithId } from '@/lib/firestore'
 import { convertor, fetchDocs, useSubscribeCollection, useSubscribeDoc } from '@/service/firestore'
 import { StorageService } from '@/service/storage'
 
@@ -22,7 +30,7 @@ export type BookData = {
 
 export type Book = WithId<BookData>
 
-export const getDefaultBookData = (): TimestampOrFieldValue<BookData> => ({
+export const getDefaultBookData = (): WithFieldValue<BookData> => ({
   title: '',
   description: '',
   authorNames: [],

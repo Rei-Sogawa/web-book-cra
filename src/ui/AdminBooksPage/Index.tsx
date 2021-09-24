@@ -30,7 +30,7 @@ const BooksPage: VFC<BooksPageProps> = ({ books }) => {
 
           <VStack alignItems="stretch" spacing="4">
             {books.map((book) => (
-              <VStack alignItems="stretch" spacing="4">
+              <VStack key={book.id} alignItems="stretch" spacing="4">
                 <BookItem key={book.id} book={book} onDeleteBook={deleteBook} />
                 <Box borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm" />
               </VStack>

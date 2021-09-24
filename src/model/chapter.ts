@@ -6,12 +6,14 @@ import {
   doc,
   orderBy,
   query,
+  serverTimestamp,
   Timestamp,
   updateDoc,
+  WithFieldValue,
 } from 'firebase/firestore'
 
 import { db } from '@/firebaseApp'
-import { serverTimestamp, TimestampOrFieldValue, WithId } from '@/lib/firestore'
+import { WithId } from '@/lib/firestore'
 import { convertor, useSubscribeCollection, useSubscribeDoc } from '@/service/firestore'
 import { StorageService } from '@/service/storage'
 
@@ -29,7 +31,7 @@ export type ChapterData = {
 
 export type Chapter = WithId<ChapterData>
 
-export const getDefaultChapterData = (): TimestampOrFieldValue<ChapterData> => ({
+export const getDefaultChapterData = (): WithFieldValue<ChapterData> => ({
   number: 0,
   title: '',
   content: '',
@@ -80,7 +82,7 @@ const saveChapter = async (
 
   await updateDoc(chapterRef({ bookId: book.id, chapterId: chapter.id }), {
     ...editedChapterData,
-    images: arrayRemove(deletedImages),
+    images: arrayRemove(...deletedImages),
   })
 
   await Promise.all(deletedImages.map((image) => StorageService.deleteObject(image.path)))

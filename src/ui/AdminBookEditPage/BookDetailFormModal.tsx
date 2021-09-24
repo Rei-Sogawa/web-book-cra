@@ -15,10 +15,10 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { format } from 'date-fns'
+import { Timestamp } from 'firebase/firestore'
 import { FormEventHandler, useEffect, VFC } from 'react'
 import { useForm } from 'react-hook-form'
 
-import { fromDate } from '@/lib/firestore'
 import { BookData } from '@/model/book'
 
 export type BookDetailFormModalProps = {
@@ -56,7 +56,7 @@ export const BookDetailFormModal: VFC<BookDetailFormModalProps> = ({
       await onSaveBookDetail({
         published,
         authorNames: authorNames.split(',').filter(Boolean),
-        releasedAt: releasedAt ? fromDate(new Date(releasedAt)) : null,
+        releasedAt: releasedAt ? Timestamp.fromDate(new Date(releasedAt)) : null,
         price: Number(price),
       })
       onClose()

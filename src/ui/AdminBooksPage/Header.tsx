@@ -40,14 +40,16 @@ export const Header: VFC<HeaderProps> = ({ onSignOut }) => {
             <Button size="sm" colorScheme="blue" onClick={handleClickAddBook}>
               本を作る
             </Button>
-            <Menu placement="bottom-end" autoSelect={false}>
-              <MenuButton>
-                <Avatar size="sm" />
-              </MenuButton>
-              <MenuList>
-                <MenuItem onClick={onSignOut}>サインアウト</MenuItem>
-              </MenuList>
-            </Menu>
+            <Box>
+              <Menu placement="bottom-end" autoSelect={false}>
+                <MenuButton>
+                  <Avatar size="sm" />
+                </MenuButton>
+                <MenuList>
+                  <MenuItem onClick={onSignOut}>サインアウト</MenuItem>
+                </MenuList>
+              </Menu>
+            </Box>
           </HStack>
         </HStack>
       </Container>
