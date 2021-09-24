@@ -6,8 +6,8 @@ import { useChapters } from '@/model/chapter'
 export const useAdminBookViewerQuery = () => {
   const { bookId } = useParams<{ bookId: string }>()
 
-  const book = useBook(bookId)
-  const chapters = useChapters(bookId)
+  const book = useBook({ bookId })
+  const chapters = useChapters({ bookId })
 
   return { book, chapters }
 }

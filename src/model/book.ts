@@ -61,23 +61,14 @@ const addBook = async ({ newBookData }: { newBookData: Pick<BookData, 'title'> }
   return docSnap.id
 }
 
-const saveBook = async ({
-  book,
-  editedBookData,
-}: {
-  book: Book
-  editedBookData: Pick<BookData, 'title' | 'description'>
-}) => {
+const saveBook = async (book: Book, editedBookData: Pick<BookData, 'title' | 'description'>) => {
   await updateDoc(bookRef({ bookId: book.id }), editedBookData)
 }
 
-const saveBookDetail = async ({
-  book,
-  editedBookData,
-}: {
-  book: Book
+const saveBookDetail = async (
+  book: Book,
   editedBookData: Pick<BookData, 'published' | 'authorNames' | 'releasedAt' | 'price'>
-}) => {
+) => {
   await updateDoc(bookRef({ bookId: book.id }), editedBookData)
 }
 

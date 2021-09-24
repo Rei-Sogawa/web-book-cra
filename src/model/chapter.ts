@@ -62,22 +62,18 @@ export const useChapter = ({ bookId, chapterId }: { bookId: string; chapterId: s
 }
 
 // mutation
-const addChapter = async ({ book, chaptersLength }: { book: Book; chaptersLength: number }) => {
+const addChapter = async (book: Book, editedChapterData: Pick<ChapterData, 'number'>) => {
   await addDoc(chaptersRef({ bookId: book.id }), {
     ...getDefaultChapterData(),
-    number: chaptersLength + 1,
+    number: editedChapterData.number,
   })
 }
 
-const saveChapter = async ({
-  book,
-  chapter,
-  editedChapterData,
-}: {
-  book: Book
-  chapter: Chapter
+const saveChapter = async (
+  book: Book,
+  chapter: Chapter,
   editedChapterData: Pick<ChapterData, 'title' | 'content'>
-}) => {
+) => {
   const deletedImages: ChapterData['images'] = chapter.images.filter(
     (image) => !editedChapterData.content.includes(image.url)
   )
@@ -90,15 +86,7 @@ const saveChapter = async ({
   await Promise.all(deletedImages.map((image) => StorageService.deleteObject(image.path)))
 }
 
-const uploadImage = async ({
-  book,
-  chapter,
-  file,
-}: {
-  book: Book
-  chapter: Chapter
-  file: File
-}) => {
+const uploadImage = async (book: Book, chapter: Chapter, file: File) => {
   const path = `books-${book.id}-chapters-${chapter.id}-images-${new Date().getTime()}`
   await StorageService.uploadImage(path, file)
   const url = await StorageService.getDownloadURL(path)

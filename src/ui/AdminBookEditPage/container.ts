@@ -7,8 +7,8 @@ import { Chapter, ChapterModel, useChapters } from '@/model/chapter'
 export const useAdminBookEditPageQuery = () => {
   const { bookId } = useParams<{ bookId: string }>()
 
-  const book = useBook(bookId)
-  const chapters = useChapters(bookId)
+  const book = useBook({ bookId })
+  const chapters = useChapters({ bookId })
 
   return {
     book,
@@ -28,7 +28,7 @@ export const useAdminBookEditPageMutation = ({
   const uploadBookCover = curry(BookModel.uploadBookCover)(book)
   const deleteBookCover = () => BookModel.deleteBookCover(book)
 
-  const addChapter = () => ChapterModel.addChapter(book, chapters.length)
+  const addChapter = () => ChapterModel.addChapter(book, { number: chapters.length + 1 })
 
   return {
     saveBook,
