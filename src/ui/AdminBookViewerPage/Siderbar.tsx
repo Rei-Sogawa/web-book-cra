@@ -37,6 +37,7 @@ export const Sidebar: VFC<SidebarProps> = ({ book, chapters, currentChapterId })
       py="2"
       px="6"
       spacing="8"
+      bg="gray.50"
     >
       <Box alignSelf="stretch" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm" p="2">
         <Text

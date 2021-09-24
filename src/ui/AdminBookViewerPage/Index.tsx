@@ -1,11 +1,13 @@
-import { Box } from '@chakra-ui/react'
-import { every, head, last } from 'lodash-es'
+import { Box, Container, Divider, HStack, Text, VStack } from '@chakra-ui/react'
+import { every, last } from 'lodash-es'
 import { VFC } from 'react'
 import { Route, Switch, useHistory } from 'react-router-dom'
 
+import { useMarked } from '@/hooks/useMarked'
 import { Book } from '@/model/book'
 import { Chapter } from '@/model/chapter'
 
+import { BookImage } from '../Shared/BookImage'
 import { ChapterPage } from './ChapterPage'
 import { useAdminBookViewerQuery } from './container'
 import { Sidebar } from './Siderbar'
@@ -24,17 +26,44 @@ const BookViewer: VFC<BookViewerProps> = ({ book, chapters }) => {
   const lastPathname = last(history.location.pathname.split('/'))
 
   // container
-  const currentChapter = chapters.find(({ id }) => id === lastPathname) || head(chapters)
+  const currentChapter = chapters.find(({ id }) => id === lastPathname)
+
+  // ui
+  const markedDescription = useMarked(book.description)
 
   return (
     <Box display="flex">
       <Sidebar book={book} chapters={chapters} currentChapterId={currentChapter?.id} />
 
       <Switch>
-        <Route path={VIEWER_PATH}>
-          {currentChapter && (
+        <Route path={VIEWER_PATH} exact>
+          {!currentChapter && (
             <Box flex="1">
-              <ChapterPage chapter={currentChapter} />
+              <Box maxH="100vh" overflow="auto">
+                <Container maxW="container.md" py="8">
+                  <HStack alignItems="start" spacing="8">
+                    <Box>
+                      <BookImage imageUrl={book.image?.url} size="md" />
+                    </Box>
+
+                    <VStack alignItems="start">
+                      <Box>
+                        <Text fontWeight="bold" fontSize="2xl">
+                          {book.title}
+                        </Text>
+                        <Text>{book.authorNames.join(', ')}</Text>
+                      </Box>
+
+                      <Divider />
+
+                      <Box
+                        className="markdown-body"
+                        dangerouslySetInnerHTML={{ __html: markedDescription }}
+                      />
+                    </VStack>
+                  </HStack>
+                </Container>
+              </Box>
             </Box>
           )}
         </Route>

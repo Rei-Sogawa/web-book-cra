@@ -1,5 +1,3 @@
-import 'github-markdown-css'
-
 import { Box } from '@chakra-ui/react'
 import { VFC } from 'react'
 

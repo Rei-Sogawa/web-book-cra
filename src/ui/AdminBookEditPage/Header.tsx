@@ -36,7 +36,7 @@ export const Header: VFC<HeaderProps> = ({ book, onSaveBook, onSaveBookDetail, c
   } = useDisclosure()
 
   return (
-    <Box h="14" bg="white" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm">
+    <Box h="14" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm" bg="white">
       <Container maxW="container.lg" h="100%">
         <HStack h="100%" justifyContent="space-between">
           <Link as={ReactRouterLink} to={routeMap['/admin/books'].path()}>
