@@ -56,7 +56,7 @@ export const useBook = ({ bookId }: { bookId: string }) => {
 }
 
 // mutation
-const addBook = async ({ newBookData }: { newBookData: Pick<BookData, 'title'> }) => {
+const addBook = async (newBookData: Pick<BookData, 'title'>) => {
   const docSnap = await addDoc(booksRef(), { ...getDefaultBookData(), ...newBookData })
   return docSnap.id
 }

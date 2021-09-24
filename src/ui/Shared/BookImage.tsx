@@ -35,15 +35,21 @@ export const BookImage: VFC<BookImageProps> = ({ imageUrl, size }) => {
       boxShadow="md"
       bg="gray.100"
     >
-      {imageUrl ? (
-        <Image src={imageUrl} w="full" h="full" borderRadius="md" />
-      ) : (
-        <Center position="absolute" inset="0">
+      <Center position="absolute" inset="0">
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            borderRadius="md"
+            width={style.boxW}
+            height={style.boxH}
+            objectFit="cover"
+          />
+        ) : (
           <Text pb={style.textPb} fontSize={style.textFontSize} fontWeight="bold" color="gray.500">
             Web Book
           </Text>
-        </Center>
-      )}
+        )}
+      </Center>
     </Box>
   )
 }

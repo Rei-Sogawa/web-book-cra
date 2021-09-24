@@ -62,10 +62,10 @@ export const useChapter = ({ bookId, chapterId }: { bookId: string; chapterId: s
 }
 
 // mutation
-const addChapter = async (book: Book, editedChapterData: Pick<ChapterData, 'number'>) => {
+const addChapter = async (book: Book, newChapterData: Pick<ChapterData, 'number'>) => {
   await addDoc(chaptersRef({ bookId: book.id }), {
     ...getDefaultChapterData(),
-    number: editedChapterData.number,
+    ...newChapterData,
   })
 }
 
