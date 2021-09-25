@@ -27,8 +27,9 @@ export const BookTab: VFC = () => {
   return (
     <Tabs index={activeIndex}>
       <TabList>
-        {PATH_AND_TAB_NAMES.map((pathAndTab) => (
+        {PATH_AND_TAB_NAMES.map((pathAndTab, index) => (
           <Tab
+            key={index}
             fontSize="xl"
             fontWeight="bold"
             color="gray.500"

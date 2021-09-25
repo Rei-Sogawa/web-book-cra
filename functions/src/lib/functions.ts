@@ -1,12 +1,16 @@
 import * as functions from 'firebase-functions'
 import { WithId } from './firestore'
 
-export const howDocWritten = <T>(
+export const docSnapToModel = <T>(docSnap: functions.firestore.DocumentSnapshot) => {
+  return { id: docSnap.id, ...docSnap.data() } as WithId<T>
+}
+
+export const onWrittenConvertor = <T>(
   change: functions.Change<functions.firestore.DocumentSnapshot>
 ) => {
   const { before, after } = change
-  const beforeModel = { id: before.id, ...before.data() } as WithId<T>
-  const afterModel = { id: after.id, ...after.data() } as WithId<T>
+  const beforeModel = docSnapToModel<T>(before)
+  const afterModel = docSnapToModel<T>(after)
 
   return {
     onCreate: !before.exists && after.exists,
@@ -15,8 +19,4 @@ export const howDocWritten = <T>(
     beforeModel,
     afterModel,
   }
-}
-
-export const docSnapToModel = <T>(docSnap: functions.firestore.DocumentSnapshot) => {
-  return { id: docSnap.id, ...docSnap.data() } as WithId<T>
 }

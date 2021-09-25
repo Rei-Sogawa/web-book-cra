@@ -15,19 +15,15 @@ type BooksPageProps = {
 
 const BooksPage: VFC<BooksPageProps> = ({ books }) => {
   return (
-    <Center>
-      <VStack alignItems="start" spacing="8">
-        <BookTab />
+    <VStack alignItems="start" spacing="8">
+      <BookTab />
 
-        <Box>
-          <SimpleGrid columns={2} spacing="4">
-            {books.map((book) => (
-              <BookItem key={book.id} book={book} />
-            ))}
-          </SimpleGrid>
-        </Box>
-      </VStack>
-    </Center>
+      <SimpleGrid columns={3} spacing="4">
+        {books.map((book) => (
+          <BookItem key={book.id} book={book} />
+        ))}
+      </SimpleGrid>
+    </VStack>
   )
 }
 

@@ -27,7 +27,6 @@ export type BookData = {
   releasedAt: Timestamp | null
   createdAt: Timestamp
   updatedAt: Timestamp
-  chapters: Pick<Chapter, 'id' | 'number' | 'title'>[]
 }
 
 export type Book = WithId<BookData>
@@ -42,7 +41,6 @@ export const getDefaultBookData = (): WithFieldValue<BookData> => ({
   releasedAt: null,
   createdAt: serverTimestamp(),
   updatedAt: serverTimestamp(),
-  chapters: [],
 })
 
 // ref

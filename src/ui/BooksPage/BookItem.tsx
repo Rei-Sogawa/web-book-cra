@@ -21,7 +21,7 @@ export const BookItem: VFC<BookItemProps> = ({ book }) => {
   }
 
   return (
-    <Box width="96" p="6" bg="gray.50" borderWidth="1px" borderRadius="md">
+    <Box width="90" p="6" bg="gray.50" borderWidth="1px" borderRadius="md">
       <HStack spacing="4">
         <BookImage
           imageUrl={book.image?.url}

@@ -3,7 +3,8 @@ import { Book, BookModel, booksRef } from '@/model/book'
 import { AuthService } from '@/service/auth'
 
 export const useAdminBooksPageQuery = () => {
-  const [books] = useDocs(booksRef())
+  const [_books] = useDocs(booksRef())
+  const books = _books || []
 
   return { books }
 }

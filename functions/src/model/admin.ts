@@ -11,7 +11,7 @@ export type Admin = WithId<AdminData>
 const adminConvertor = convertor<AdminData>()
 
 export const adminsRef = () => {
-  return db.collection("admin").withConverter(adminConvertor)
+  return db.collection("admins").withConverter(adminConvertor)
 } 
 export const adminRef = ({adminId}: {adminId: string}) => {
   return adminsRef().doc(adminId)

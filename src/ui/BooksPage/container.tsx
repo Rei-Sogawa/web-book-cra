@@ -4,7 +4,8 @@ import { useDocs } from '@/lib/firestore'
 import { booksRef } from '@/model/book'
 
 export const useBooksPageQuery = () => {
-  const [books] = useDocs(query(booksRef(), where('published', '==', true)))
+  const [_books] = useDocs(query(booksRef(), where('published', '==', true)))
+  const books = _books || []
 
   return { books }
 }

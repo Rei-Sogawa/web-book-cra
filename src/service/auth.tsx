@@ -1,11 +1,12 @@
+import { getDocs } from '@firebase/firestore'
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { createContext, ReactNode, useContext, useState, VFC } from 'react'
 import { useMount } from 'react-use'
 
 import { auth } from '@/firebaseApp'
 import { assertIsDefined } from '@/lib/assert'
-import { fetchDoc } from '@/lib/firestore'
-import { Admin, adminRef } from '@/model/admin'
+import { fetchDoc, fetchDocs } from '@/lib/firestore'
+import { Admin, adminRef, adminsRef } from '@/model/admin'
 
 const signIn = ({ email, password }: { email: string; password: string }) => {
   return signInWithEmailAndPassword(auth, email, password)
@@ -17,7 +18,7 @@ export const AuthService = {
 }
 
 // AuthProvider
-type AuthState = { uid?: string; currentAdmin?: Admin }
+type AuthState = { uid?: string; admin?: Admin }
 
 type AuthValue = AuthState & { fetchAdmin: () => Promise<void> }
 
@@ -36,11 +37,10 @@ export const AuthProvider: VFC<AuthProviderProps> = ({ children }) => {
       const uid = user?.uid
       if (uid) {
         const admin = await fetchDoc(adminRef({ adminId: uid }))
-        setState({ uid, currentAdmin: admin })
+        setState({ uid, admin })
       } else {
         setState({})
       }
-
       if (!initialized) setInitialized(true)
     })
   })

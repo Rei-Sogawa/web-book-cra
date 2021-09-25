@@ -1,6 +1,5 @@
 import { db } from "../firebaseApp"
 import { convertor, Timestamp, WithId } from "../lib/firestore"
-import { Chapter } from "./chapter"
 
 // schema
 export type BookData = {
@@ -13,7 +12,6 @@ export type BookData = {
   releasedAt: Timestamp | null
   createdAt: Timestamp
   updatedAt: Timestamp
-  chapters: Pick<Chapter, 'id' | 'number' | 'title'>[]
 }
 
 export type Book = WithId<BookData>
