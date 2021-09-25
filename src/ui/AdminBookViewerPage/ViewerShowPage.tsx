@@ -4,11 +4,11 @@ import { VFC } from 'react'
 import { useMarked } from '@/hooks/useMarked'
 import { Chapter } from '@/model/chapter'
 
-export type ChapterPageProps = {
+export type ViewerShowPageProps = {
   chapter: Chapter
 }
 
-export const ChapterPage: VFC<ChapterPageProps> = ({ chapter }) => {
+export const ViewerShowPage: VFC<ViewerShowPageProps> = ({ chapter }) => {
   // ui
   const markedContent = useMarked(chapter.content)
 

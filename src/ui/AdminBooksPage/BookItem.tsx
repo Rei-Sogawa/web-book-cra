@@ -56,15 +56,22 @@ export const BookItem: VFC<BookItemProps> = ({ book, onDeleteBook }) => {
               </Tag>
             )}
             <Box pl="2">
-              <Text fontSize="xs" color="gray.500">
-                著者: {book.authorNames.join(', ')}
-              </Text>
-              <Text fontSize="xs" color="gray.500">
-                発売日: {book.releasedAt ? format(book.releasedAt.toDate(), 'yyyy-MM-dd') : ''}
-              </Text>
-              <Text fontSize="xs" color="gray.500">
-                価格: {book.price} 円
-              </Text>
+              <HStack fontSize="xs" color="gray.500">
+                <Text>著者</Text>
+                <Text fontWeight="bold">{book.authorNames.join(', ')}</Text>
+              </HStack>
+
+              <HStack fontSize="xs" color="gray.500">
+                <Text>発売日</Text>
+                <Text fontWeight="bold">
+                  {book.releasedAt ? format(book.releasedAt.toDate(), 'yyyy-MM-dd') : ''}
+                </Text>
+              </HStack>
+
+              <HStack fontSize="xs" color="gray.500">
+                <Text>価格</Text>
+                <Text fontWeight="bold">{book.price} 円</Text>
+              </HStack>
             </Box>
           </VStack>
         </HStack>

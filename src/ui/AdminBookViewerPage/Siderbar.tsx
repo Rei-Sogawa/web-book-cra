@@ -6,8 +6,7 @@ import { numberToTwoDigits } from '@/lib/display'
 import { Book } from '@/model/book'
 import { Chapter } from '@/model/chapter'
 import { routeMap } from '@/routes'
-
-import { BookImage } from '../Shared/BookImage'
+import { BookImage } from '@/ui/Shared/BookImage'
 
 export type SidebarProps = {
   book: Book
@@ -26,6 +25,10 @@ export const Sidebar: VFC<SidebarProps> = ({ book, chapters, currentChapterId })
     history.push(routeMap['/admin/books'].path())
   }
 
+  const handleClickBook = () => {
+    history.push(routeMap['/admin/books/:bookId/viewer'].path({ bookId: book.id }))
+  }
+
   return (
     <VStack
       h="100vh"
@@ -37,7 +40,7 @@ export const Sidebar: VFC<SidebarProps> = ({ book, chapters, currentChapterId })
       py="2"
       px="6"
       spacing="8"
-      bg="gray.50"
+      bg="white"
     >
       <Box alignSelf="stretch" borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm" p="2">
         <Text
@@ -52,9 +55,14 @@ export const Sidebar: VFC<SidebarProps> = ({ book, chapters, currentChapterId })
       </Box>
 
       <HStack alignSelf="start">
-        <BookImage imageUrl={book.image?.url} size="sm" />
+        <BookImage
+          imageUrl={book.image?.url}
+          size="sm"
+          cursor="pointer"
+          onClick={handleClickBook}
+        />
 
-        <Text alignSelf="start" fontWeight="bold">
+        <Text alignSelf="start" fontWeight="bold" cursor="pointer" onClick={handleClickBook}>
           {book.title}
         </Text>
       </HStack>

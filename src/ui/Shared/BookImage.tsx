@@ -1,12 +1,12 @@
-import { Box, Center, Image, Text } from '@chakra-ui/react'
+import { Box, BoxProps, Center, Image, Text } from '@chakra-ui/react'
 import { useMemo, VFC } from 'react'
 
 export type BookImageProps = {
   imageUrl?: string
   size: 'sm' | 'md'
-}
+} & BoxProps
 
-export const BookImage: VFC<BookImageProps> = ({ imageUrl, size }) => {
+export const BookImage: VFC<BookImageProps> = ({ imageUrl, size, ...rest }) => {
   const style = useMemo(() => {
     switch (size) {
       case 'sm':
@@ -34,6 +34,7 @@ export const BookImage: VFC<BookImageProps> = ({ imageUrl, size }) => {
       borderRadius="md"
       boxShadow="md"
       bg="gray.100"
+      {...rest}
     >
       <Center position="absolute" inset="0">
         {imageUrl ? (
