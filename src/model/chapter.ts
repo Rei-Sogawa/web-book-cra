@@ -64,12 +64,10 @@ const saveChapter = async (
   const deletedImages: ChapterData['images'] = chapter.images.filter(
     (image) => !editedChapterData.content.includes(image.url)
   )
-
   await updateDoc(chapterRef({ bookId: book.id, chapterId: chapter.id }), {
     ...editedChapterData,
     images: arrayRemove(...deletedImages),
   })
-
   await Promise.all(deletedImages.map((image) => StorageService.deleteObject(image.path)))
 }
 

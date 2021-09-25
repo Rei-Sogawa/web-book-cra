@@ -31,12 +31,12 @@ const BooksPage: VFC<BooksPageProps> = ({ books }) => {
   )
 }
 
-const BooksPageWithLayout = UserPageLayout(BooksPage)
+const WithLayout = UserPageLayout(BooksPage)
 
 const Wrapper: VFC = () => {
   const { books } = useBooksPageQuery()
 
-  return <>{every([books], Boolean) && <BooksPageWithLayout books={books} />}</>
+  return <>{every([books], Boolean) && <WithLayout books={books!} />}</>
 }
 
 export default Wrapper

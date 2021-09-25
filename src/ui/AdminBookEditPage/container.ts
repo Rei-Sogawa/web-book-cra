@@ -10,7 +10,8 @@ export const useAdminBookEditPageQuery = () => {
   const { bookId } = useParams<{ bookId: string }>()
 
   const [book] = useDoc(bookRef({ bookId }))
-  const [chapters] = useDocs(query(chaptersRef({ bookId }), orderBy('number')))
+  const [_chapters] = useDocs(query(chaptersRef({ bookId }), orderBy('number')))
+  const chapters = _chapters || []
 
   return {
     book,

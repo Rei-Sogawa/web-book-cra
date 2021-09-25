@@ -1,6 +1,7 @@
 import { db } from "../firebaseApp";
 import { convertor, WithId } from "../lib/firestore";
 
+// schema
 export type UserData = {
   email: string
 }

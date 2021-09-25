@@ -10,14 +10,25 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { ComponentType, VFC } from 'react'
+import { useHistory } from 'react-router'
+
+import { routeMap } from '@/routes'
 
 import { HeaderWrapper } from '../Shared/HeaderWrapper'
 
 const Header: VFC = () => {
+  // app
+  const history = useHistory()
+
+  // handler
+  const handleClickHome = () => {
+    history.push(routeMap['/books'].path())
+  }
+
   return (
     <HeaderWrapper>
       <HStack h="full" justifyContent="space-between">
-        <Text fontSize="2xl" fontWeight="bold">
+        <Text fontSize="2xl" fontWeight="bold" cursor="pointer" onClick={handleClickHome}>
           Web Book
         </Text>
 
@@ -27,7 +38,7 @@ const Header: VFC = () => {
               <Avatar size="sm" />
             </MenuButton>
             <MenuList>
-              <MenuItem></MenuItem>
+              <MenuItem>サインアウト</MenuItem>
             </MenuList>
           </Menu>
         </Box>

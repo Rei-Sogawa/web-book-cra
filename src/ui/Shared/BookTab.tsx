@@ -31,7 +31,7 @@ export const BookTab: VFC = () => {
           <Tab
             fontSize="xl"
             fontWeight="bold"
-            color={isActive(pathAndTab) ? 'blue' : 'gray.500'}
+            color="gray.500"
             onClick={() => handleClickTab(pathAndTab)}
           >
             {pathAndTab[1]}

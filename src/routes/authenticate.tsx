@@ -15,9 +15,9 @@ export const Admin =
   <P extends object>(Component: ComponentType<P>) =>
   (props: P) => {
     const WithStateComponent = () => {
-      const { uid, admin } = useAuth()
+      const { uid, currentAdmin } = useAuth()
 
-      if (!(uid && admin)) return <Redirect to={routeMap['/admin/sign-in'].path()} />
+      if (!(uid && currentAdmin)) return <Redirect to={routeMap['/admin/sign-in'].path()} />
       return <Component {...props} />
     }
 
@@ -28,9 +28,9 @@ export const AdminSignIn =
   <P extends object>(Component: ComponentType<P>) =>
   (props: P) => {
     const WithStateComponent = () => {
-      const { uid, admin } = useAuth()
+      const { uid, currentAdmin } = useAuth()
 
-      if (uid && admin) return <Redirect to={routeMap['/admin/books'].path()} />
+      if (uid && currentAdmin) return <Redirect to={routeMap['/admin/books'].path()} />
       return <Component {...props} />
     }
 

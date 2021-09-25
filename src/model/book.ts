@@ -14,7 +14,7 @@ import { WithId } from '@/lib/firestore'
 import { convertor, fetchDocs } from '@/lib/firestore'
 import { StorageService } from '@/service/storage'
 
-import { chapterRef, chaptersRef } from './chapter'
+import { Chapter, chapterRef, chaptersRef } from './chapter'
 
 // schema
 export type BookData = {
@@ -27,6 +27,7 @@ export type BookData = {
   releasedAt: Timestamp | null
   createdAt: Timestamp
   updatedAt: Timestamp
+  chapters: Pick<Chapter, 'id' | 'number' | 'title'>[]
 }
 
 export type Book = WithId<BookData>
@@ -41,6 +42,7 @@ export const getDefaultBookData = (): WithFieldValue<BookData> => ({
   releasedAt: null,
   createdAt: serverTimestamp(),
   updatedAt: serverTimestamp(),
+  chapters: [],
 })
 
 // ref

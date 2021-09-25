@@ -17,7 +17,7 @@ export const AuthService = {
 }
 
 // AuthProvider
-type AuthState = { uid?: string; admin?: Admin }
+type AuthState = { uid?: string; currentAdmin?: Admin }
 
 type AuthValue = AuthState & { fetchAdmin: () => Promise<void> }
 
@@ -36,7 +36,7 @@ export const AuthProvider: VFC<AuthProviderProps> = ({ children }) => {
       const uid = user?.uid
       if (uid) {
         const admin = await fetchDoc(adminRef({ adminId: uid }))
-        setState({ uid, admin })
+        setState({ uid, currentAdmin: admin })
       } else {
         setState({})
       }

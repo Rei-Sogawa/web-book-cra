@@ -8,6 +8,7 @@ import AdminChapterEditPage from '@/ui/AdminChapterEditPage/Index'
 import AdminHomePage from '@/ui/AdminHomePage/Index'
 import AdminSignInPage from '@/ui/AdminSignInPage/Index'
 import AdminSignUpPage from '@/ui/AdminSignUpPage/Index'
+import BookShowPage from '@/ui/BookShowPage/Index'
 import BooksPage from '@/ui/BooksPage/Index'
 
 import { Admin, AdminSignIn, Public } from './authenticate'
@@ -31,6 +32,14 @@ export const routeMap = {
       return '/books'
     },
     Component: Public(BooksPage),
+  },
+
+  '/books/:bookId': {
+    ...basic,
+    path: ({ bookId }: { bookId: string }) => {
+      return generatePath('/books/:bookId', { bookId })
+    },
+    Component: Public(BookShowPage),
   },
 
   '/admin/sign-in': {

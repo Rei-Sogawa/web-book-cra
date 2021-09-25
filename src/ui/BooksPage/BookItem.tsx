@@ -17,7 +17,7 @@ export const BookItem: VFC<BookItemProps> = ({ book }) => {
 
   // handler
   const handleClickBook = () => {
-    history.push(routeMap['/books'].path())
+    history.push(routeMap['/books/:bookId'].path({ bookId: book.id }))
   }
 
   return (
