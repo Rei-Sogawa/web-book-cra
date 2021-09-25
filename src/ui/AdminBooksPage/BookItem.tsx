@@ -36,7 +36,7 @@ export const BookItem: VFC<BookItemProps> = ({ book, onDeleteBook }) => {
     <Box>
       <HStack justifyContent="space-between">
         <HStack spacing="4">
-          <BookImage imageUrl={book.image?.url} size="sm" />
+          <BookImage imageUrl={book.image?.url} size="sm" flexShrink={0} />
 
           <VStack alignSelf="start" alignItems="start" spacing="1">
             <Link
@@ -46,16 +46,20 @@ export const BookItem: VFC<BookItemProps> = ({ book, onDeleteBook }) => {
             >
               {book.title}
             </Link>
-            {book.published ? (
-              <Tag size="sm" colorScheme="blue" fontWeight="bold" fontSize="xs" color="blue.900">
-                公開中
-              </Tag>
-            ) : (
-              <Tag size="sm" fontWeight="bold" fontSize="xs" color="gray.500">
-                未公開
-              </Tag>
-            )}
-            <Box pl="2">
+
+            <Box>
+              {book.published ? (
+                <Tag size="sm" colorScheme="blue" fontWeight="bold" fontSize="xs" color="blue.900">
+                  公開中
+                </Tag>
+              ) : (
+                <Tag size="sm" fontWeight="bold" fontSize="xs" color="gray.500">
+                  未公開
+                </Tag>
+              )}
+            </Box>
+
+            <Box>
               <HStack fontSize="xs" color="gray.500">
                 <Text>著者</Text>
                 <Text fontWeight="bold">{book.authorNames.join(', ')}</Text>

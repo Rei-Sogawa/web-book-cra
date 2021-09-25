@@ -5,9 +5,10 @@ import AdminBookNewPage from '@/ui/AdminBookNewPage/Index'
 import AdminBooksPage from '@/ui/AdminBooksPage/Index'
 import AdminBookViewerPage from '@/ui/AdminBookViewerPage/Index'
 import AdminChapterEditPage from '@/ui/AdminChapterEditPage/Index'
-import HomePage from '@/ui/AdminHomePage/Index'
+import AdminHomePage from '@/ui/AdminHomePage/Index'
 import AdminSignInPage from '@/ui/AdminSignInPage/Index'
 import AdminSignUpPage from '@/ui/AdminSignUpPage/Index'
+import BooksPage from '@/ui/BooksPage/Index'
 
 import { Admin, AdminSignIn, Public } from './authenticate'
 
@@ -21,7 +22,15 @@ export const routeMap = {
     path: () => {
       return '/'
     },
-    Component: Public(HomePage),
+    Component: Public(AdminHomePage),
+  },
+
+  '/books': {
+    ...basic,
+    path: () => {
+      return '/books'
+    },
+    Component: Public(BooksPage),
   },
 
   '/admin/sign-in': {

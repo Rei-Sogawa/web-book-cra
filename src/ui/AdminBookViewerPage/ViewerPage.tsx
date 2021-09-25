@@ -14,9 +14,7 @@ export const ViewerPage: VFC<ViewerPageProps> = ({ book }) => {
   return (
     <Container maxW="container.md" py="8">
       <HStack alignItems="start" spacing="8">
-        <Box>
-          <BookImage imageUrl={book.image?.url} size="md" />
-        </Box>
+        <BookImage imageUrl={book.image?.url} size="md" flexShrink={0} />
 
         <VStack alignItems="start">
           <Box>

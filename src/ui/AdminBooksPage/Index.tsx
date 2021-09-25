@@ -1,4 +1,4 @@
-import { Box, Container, Text, VStack } from '@chakra-ui/react'
+import { Box, Container, Divider, Text, VStack } from '@chakra-ui/react'
 import { every } from 'lodash-es'
 import { VFC } from 'react'
 
@@ -32,7 +32,7 @@ const BooksPage: VFC<BooksPageProps> = ({ books }) => {
             {books.map((book) => (
               <VStack key={book.id} alignItems="stretch" spacing="4">
                 <BookItem key={book.id} book={book} onDeleteBook={deleteBook} />
-                <Box borderBottom="1px" borderBottomColor="gray.200" boxShadow="sm" />
+                <Divider />
               </VStack>
             ))}
           </VStack>

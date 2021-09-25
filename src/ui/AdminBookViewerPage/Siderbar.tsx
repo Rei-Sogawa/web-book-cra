@@ -58,6 +58,7 @@ export const Sidebar: VFC<SidebarProps> = ({ book, chapters, currentChapterId })
         <BookImage
           imageUrl={book.image?.url}
           size="sm"
+          flexShrink={0}
           cursor="pointer"
           onClick={handleClickBook}
         />
