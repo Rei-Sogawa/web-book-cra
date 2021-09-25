@@ -33,7 +33,11 @@ export const BookItem: VFC<BookItemProps> = ({ book }) => {
 
         <VStack alignSelf="start" alignItems="start">
           <Box alignSelf="start">
-            <AppLink to={routeMap['/books'].path()} fontWeight="bold" noOfLines={3}>
+            <AppLink
+              to={routeMap['/books/:bookId'].path({ bookId: book.id })}
+              fontWeight="bold"
+              noOfLines={3}
+            >
               {book.title}
             </AppLink>
 

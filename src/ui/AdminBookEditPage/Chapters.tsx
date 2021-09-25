@@ -18,26 +18,24 @@ export const Chapters: VFC<ChaptersProps> = ({ chapters, onAddChapter, onClickCh
         Chapters
       </Text>
 
-      {chapters.length && (
-        <VStack alignSelf="stretch" alignItems="stretch" spacing="0.5">
-          {chapters.map((chapter) => (
-            <HStack key={chapter.id} bg="white" py="4" px="8" spacing="8">
-              <Text fontWeight="bold" fontSize="lg" fontFamily="mono" color="blue.300">
-                {numberToTwoDigits(chapter.number)}
-              </Text>
-              <Button
-                onClick={() => onClickChapter(chapter.id)}
-                variant="link"
-                color="black"
-                fontWeight="bold"
-                fontSize="lg"
-              >
-                {chapter.title || '無題のチャプター'}
-              </Button>
-            </HStack>
-          ))}
-        </VStack>
-      )}
+      <VStack alignSelf="stretch" alignItems="stretch" spacing="0.5">
+        {chapters.map((chapter) => (
+          <HStack key={chapter.id} bg="white" py="4" px="8" spacing="8">
+            <Text fontWeight="bold" fontSize="lg" fontFamily="mono" color="blue.300">
+              {numberToTwoDigits(chapter.number)}
+            </Text>
+            <Button
+              onClick={() => onClickChapter(chapter.id)}
+              variant="link"
+              color="black"
+              fontWeight="bold"
+              fontSize="lg"
+            >
+              {chapter.title || '無題のチャプター'}
+            </Button>
+          </HStack>
+        ))}
+      </VStack>
 
       <Button
         alignSelf="stretch"
