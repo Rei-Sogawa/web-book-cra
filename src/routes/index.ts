@@ -10,8 +10,10 @@ import AdminSignInPage from '@/ui/AdminSignInPage/Index'
 import AdminSignUpPage from '@/ui/AdminSignUpPage/Index'
 import BookShowPage from '@/ui/BookShowPage/Index'
 import BooksPage from '@/ui/BooksPage/Index'
+import SignInPage from '@/ui/SignInPage/Index'
+import SignUpPage from '@/ui/SignUpPage/Index'
 
-import { Admin, AdminSignIn, Public } from './authenticate'
+import { Admin, AdminSignIn, Public, SignIn } from './authenticate'
 
 const basic = {
   exact: true,
@@ -24,6 +26,22 @@ export const routeMap = {
       return '/'
     },
     Component: Public(AdminHomePage),
+  },
+
+  '/sign-in': {
+    ...basic,
+    path: () => {
+      return '/sign-in'
+    },
+    Component: SignIn(SignInPage),
+  },
+
+  '/sign-up': {
+    ...basic,
+    path: () => {
+      return '/sign-up'
+    },
+    Component: SignIn(SignUpPage),
   },
 
   '/books': {

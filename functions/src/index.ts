@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions'
 
 import { adminRef } from './model/admin'
 import { auth } from './firebaseApp'
-import { userPrivateRef } from "./model/userPrivate"
+import { userPrivateRef } from './model/userPrivate'
 import { onWrittenConvertor } from './lib/functions'
 import { chapterSummaryRef } from './model/chapterSummary'
 import { Chapter } from './model/chapter'
