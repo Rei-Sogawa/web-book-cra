@@ -1,5 +1,5 @@
 import { db } from "../firebaseApp";
-import {convertor, WithId} from "../lib/firestore";
+import {createConvertor, WithId} from "../lib/firestore";
 
 export type AdminData = {
   email: string
@@ -8,7 +8,7 @@ export type AdminData = {
 export type Admin = WithId<AdminData>
 
 // ref
-const adminConvertor = convertor<AdminData>()
+const adminConvertor = createConvertor<AdminData>()
 
 export const adminsRef = () => {
   return db.collection("admins").withConverter(adminConvertor)

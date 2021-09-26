@@ -22,7 +22,7 @@ export type WithFieldValue<T> = T extends Primitive
   ? { [K in keyof T]: WithFieldValue<T[K]> | FieldValue }
   : Partial<T>
 
-export const convertor = <T>(): firestore.FirestoreDataConverter<T> => ({
+export const createConvertor = <T>(): firestore.FirestoreDataConverter<T> => ({
   toFirestore: (data: T | Partial<T>) => data,
   fromFirestore: (snap) => snap.data() as T,
 })

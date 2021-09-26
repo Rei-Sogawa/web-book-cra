@@ -4,8 +4,9 @@ import { adminRef } from './model/admin'
 import { auth } from './firebaseApp'
 import { userRef } from './model/user'
 import { onWrittenConvertor } from './lib/functions'
-import { publicChapterRef } from './model/publicChapter'
+import { chapterSummaryRef } from './model/chapterSummary'
 import { Chapter } from './model/chapter'
+import { cartRef } from './model/userPrivateState'
 
 const TOKYO = 'asia-northeast1'
 const functionsWithRegion = functions.region(TOKYO)
@@ -29,6 +30,7 @@ export const signUpUser = functionsWithRegion.https.onCall(
     try {
       const authUser = await auth.createUser({ email, password })
       await userRef({ userId: authUser.uid }).set({ email })
+      await cartRef({ userId: authUser.uid }).set({ bookIds: [] })
       return authUser.uid
     } catch {
       throw new functions.https.HttpsError('invalid-argument', '')
@@ -42,11 +44,12 @@ export const onWriteChapter = functionsWithRegion.firestore
     const { bookId, chapterId } = context.params as { bookId: string; chapterId: string }
     const { onCreate, onUpdate, onDelete, afterModel } = onWrittenConvertor<Chapter>(change)
     if (onCreate || onUpdate) {
-      await publicChapterRef({ bookId, chapterId }).set({
+      await chapterSummaryRef({ bookId, chapterId }).set({
         number: afterModel.number,
         title: afterModel.title,
+        wardCount: afterModel.wardCount
       })
     } else if (onDelete) {
-      await publicChapterRef({ bookId, chapterId }).delete()
+      await chapterSummaryRef({ bookId, chapterId }).delete()
     }
   })

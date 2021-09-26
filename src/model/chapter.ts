@@ -12,7 +12,7 @@ import {
 
 import { db } from '@/firebaseApp'
 import { WithId } from '@/lib/firestore'
-import { convertor } from '@/lib/firestore'
+import { createConvertor } from '@/lib/firestore'
 import { StorageService } from '@/service/storage'
 
 import { Book } from './book'
@@ -22,24 +22,25 @@ export type ChapterData = {
   number: number
   title: string
   content: string
+  wardCount: number
   images: { path: string; url: string }[]
   createdAt: Timestamp
   updatedAt: Timestamp
 }
-
 export type Chapter = WithId<ChapterData>
 
 export const getDefaultChapterData = (): WithFieldValue<ChapterData> => ({
   number: 0,
   title: '',
   content: '',
+  wardCount: 0,
   images: [],
   createdAt: serverTimestamp(),
   updatedAt: serverTimestamp(),
 })
 
 // ref
-const chapterConvertor = convertor<ChapterData>()
+const chapterConvertor = createConvertor<ChapterData>()
 
 export const chaptersRef = ({ bookId }: { bookId: string }) => {
   return collection(db, `books/${bookId}/chapters`).withConverter(chapterConvertor)

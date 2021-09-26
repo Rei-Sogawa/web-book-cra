@@ -1,5 +1,5 @@
 import { db } from "../firebaseApp";
-import { convertor, WithId } from "../lib/firestore";
+import { createConvertor, WithId } from "../lib/firestore";
 
 // schema
 export type UserData = {
@@ -9,7 +9,7 @@ export type UserData = {
 export type User = WithId<UserData>
 
 // ref
-const userConvertor = convertor<UserData>()
+const userConvertor = createConvertor<UserData>()
 
 export const usersRef = () => {
   return db.collection("users").withConverter(userConvertor)

@@ -82,7 +82,7 @@ export const fetchDoc = async <T>(docRef: DocumentReference<T>) => {
   }
 }
 
-export const convertor = <T>(): FirestoreDataConverter<T> => ({
+export const createConvertor = <T>(): FirestoreDataConverter<T> => ({
   toFirestore: (data) => data as DocumentData,
   fromFirestore: (snap, options) => snap.data(options) as T,
 })

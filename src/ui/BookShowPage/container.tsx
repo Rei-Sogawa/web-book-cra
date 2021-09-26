@@ -3,14 +3,14 @@ import { useParams } from 'react-router-dom'
 
 import { useDoc, useDocs } from '@/lib/firestore'
 import { bookRef } from '@/model/book'
-import { publicChaptersRef } from '@/model/publicChapter'
+import { chapterSummariesRef } from '@/model/chapterSummary'
 
 export const useBookShowPageQuery = () => {
   const { bookId } = useParams<{ bookId: string }>()
 
   const [book] = useDoc(bookRef({ bookId }))
-  const [_publicChapters] = useDocs(query(publicChaptersRef({ bookId }), orderBy('number')))
-  const publicChapters = _publicChapters || []
+  const [_chapterSummaries] = useDocs(query(chapterSummariesRef({ bookId }), orderBy('number')))
+  const chapterSummaries = _chapterSummaries || []
 
-  return { book, publicChapters }
+  return { book, chapterSummaries }
 }

@@ -11,10 +11,10 @@ import {
 
 import { db } from '@/firebaseApp'
 import { WithId } from '@/lib/firestore'
-import { convertor, fetchDocs } from '@/lib/firestore'
+import { createConvertor, fetchDocs } from '@/lib/firestore'
 import { StorageService } from '@/service/storage'
 
-import { Chapter, chapterRef, chaptersRef } from './chapter'
+import { chapterRef, chaptersRef } from './chapter'
 
 // schema
 export type BookData = {
@@ -28,7 +28,6 @@ export type BookData = {
   createdAt: Timestamp
   updatedAt: Timestamp
 }
-
 export type Book = WithId<BookData>
 
 export const getDefaultBookData = (): WithFieldValue<BookData> => ({
@@ -44,7 +43,7 @@ export const getDefaultBookData = (): WithFieldValue<BookData> => ({
 })
 
 // ref
-const bookConvertor = convertor<BookData>()
+const bookConvertor = createConvertor<BookData>()
 
 export const booksRef = () => {
   return collection(db, 'books').withConverter(bookConvertor)

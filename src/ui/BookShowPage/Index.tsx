@@ -7,7 +7,7 @@ import { BiCart } from 'react-icons/bi'
 import { useMarked } from '@/hooks/useMarked'
 import { numberToTwoDigits } from '@/lib/display'
 import { Book } from '@/model/book'
-import { PublicChapter } from '@/model/publicChapter'
+import { chapterSummary } from '@/model/chapterSummary'
 import { UserPageLayout } from '@/ui/Layout/UserPageLayout'
 import { BookImage } from '@/ui/Shared/BookImage'
 
@@ -15,10 +15,10 @@ import { useBookShowPageQuery } from './container'
 
 export type BookShowPageProps = {
   book: Book
-  publicChapters: PublicChapter[]
+  chapterSummaries: chapterSummary[]
 }
 
-const BookShowPage: VFC<BookShowPageProps> = ({ book, publicChapters }) => {
+const BookShowPage: VFC<BookShowPageProps> = ({ book, chapterSummaries }) => {
   // ui
   const markedDescription = useMarked(book.description)
 
@@ -47,7 +47,7 @@ const BookShowPage: VFC<BookShowPageProps> = ({ book, publicChapters }) => {
             Chapters
           </Text>
           <VStack alignItems="stretch" spacing="0.5">
-            {publicChapters.map((chapter) => (
+            {chapterSummaries.map((chapter) => (
               <HStack key={chapter.id}>
                 <Text fontWeight="bold" fontFamily="mono" color="blue.300">
                   {numberToTwoDigits(chapter.number)}
@@ -89,12 +89,12 @@ const BookShowPage: VFC<BookShowPageProps> = ({ book, publicChapters }) => {
 const WithLayout = UserPageLayout(BookShowPage)
 
 const Wrapper: VFC = () => {
-  const { book, publicChapters } = useBookShowPageQuery()
+  const { book, chapterSummaries } = useBookShowPageQuery()
 
   return (
     <>
-      {every([book, publicChapters], Boolean) && (
-        <WithLayout book={book!} publicChapters={publicChapters!} />
+      {every([book, chapterSummaries], Boolean) && (
+        <WithLayout book={book!} chapterSummaries={chapterSummaries!} />
       )}
     </>
   )
