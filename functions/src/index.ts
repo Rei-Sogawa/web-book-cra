@@ -2,11 +2,10 @@ import * as functions from 'firebase-functions'
 
 import { adminRef } from './model/admin'
 import { auth } from './firebaseApp'
-import { userRef } from './model/user'
+import { userPrivateRef } from "./model/userPrivate"
 import { onWrittenConvertor } from './lib/functions'
 import { chapterSummaryRef } from './model/chapterSummary'
 import { Chapter } from './model/chapter'
-import { cartRef } from './model/userPrivateState'
 
 const TOKYO = 'asia-northeast1'
 const functionsWithRegion = functions.region(TOKYO)
@@ -29,8 +28,7 @@ export const signUpUser = functionsWithRegion.https.onCall(
     const { email, password } = data
     try {
       const authUser = await auth.createUser({ email, password })
-      await userRef({ userId: authUser.uid }).set({ email })
-      await cartRef({ userId: authUser.uid }).set({ bookIds: [] })
+      await userPrivateRef({ userId: authUser.uid }).set({ email, cart: [] })
       return authUser.uid
     } catch {
       throw new functions.https.HttpsError('invalid-argument', '')
@@ -47,7 +45,7 @@ export const onWriteChapter = functionsWithRegion.firestore
       await chapterSummaryRef({ bookId, chapterId }).set({
         number: afterModel.number,
         title: afterModel.title,
-        wardCount: afterModel.wardCount
+        wardCount: afterModel.wardCount,
       })
     } else if (onDelete) {
       await chapterSummaryRef({ bookId, chapterId }).delete()

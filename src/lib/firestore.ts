@@ -14,47 +14,53 @@ export type WithId<T> = T & { id: string }
 
 const snapshotOptions: SnapshotOptions = { serverTimestamps: 'estimate' }
 
-export const useDocs = <T>(query: Query<T>, deps: DependencyList = []) => {
+export const useDocs = <T>(query: Query<T> | null, deps: DependencyList = []) => {
   const [initialized, setInitialize] = useState(false)
   const [values, setValues] = useState<WithId<T>[]>()
 
   useEffect(() => {
-    const unsubscirbe = onSnapshot(query, (snap) => {
-      if (snap.empty) {
-        setValues(undefined)
-      } else {
-        setValues(
-          snap.docs.map((doc) => ({
-            id: doc.id,
-            ...(doc.data(snapshotOptions) as T),
-          }))
-        )
-      }
-
-      if (!initialized) setInitialize(true)
-    })
-    return unsubscirbe
+    if (query) {
+      const unsubscirbe = onSnapshot(query, (snap) => {
+        if (snap.empty) {
+          setValues(undefined)
+        } else {
+          setValues(
+            snap.docs.map((doc) => ({
+              id: doc.id,
+              ...(doc.data(snapshotOptions) as T),
+            }))
+          )
+        }
+        if (!initialized) setInitialize(true)
+      })
+      return unsubscirbe
+    } else {
+      setValues(undefined)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 
   return [values, initialized] as const
 }
 
-export const useDoc = <T>(docRef: DocumentReference<T>, deps: DependencyList = []) => {
+export const useDoc = <T>(docRef: DocumentReference<T> | null, deps: DependencyList = []) => {
   const [initialized, setInitialize] = useState(false)
   const [value, setValue] = useState<WithId<T>>()
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(docRef, (snap) => {
-      if (snap.exists()) {
-        setValue({ id: snap.id, ...(snap.data(snapshotOptions) as T) })
-      } else {
-        setValue(undefined)
-      }
-
-      if (!initialized) setInitialize(true)
-    })
-    return unsubscribe
+    if (docRef) {
+      const unsubscribe = onSnapshot(docRef, (snap) => {
+        if (snap.exists()) {
+          setValue({ id: snap.id, ...(snap.data(snapshotOptions) as T) })
+        } else {
+          setValue(undefined)
+        }
+        if (!initialized) setInitialize(true)
+      })
+      return unsubscribe
+    } else {
+      setValue(undefined)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 

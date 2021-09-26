@@ -1,4 +1,4 @@
-import { Box, Center, SimpleGrid, VStack } from '@chakra-ui/react'
+import { SimpleGrid, VStack } from '@chakra-ui/react'
 import { every } from 'lodash-es'
 import { VFC } from 'react'
 

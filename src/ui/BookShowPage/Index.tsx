@@ -1,6 +1,6 @@
 import { Box, Button, Divider, HStack, Icon, Text, VStack } from '@chakra-ui/react'
 import { format } from 'date-fns'
-import { every } from 'lodash-es'
+import { every, sumBy } from 'lodash-es'
 import { VFC } from 'react'
 import { BiCart } from 'react-icons/bi'
 
@@ -62,16 +62,25 @@ const BookShowPage: VFC<BookShowPageProps> = ({ book, chapterSummaries }) => {
       </VStack>
 
       <Box flexShrink={0} w="60" p="6" borderWidth="3px" borderRadius="md">
-        <VStack>
+        <VStack spacing="8">
           <Button colorScheme="blue" w="full" leftIcon={<Icon as={BiCart} h="6" w="6" />}>
             カートへ入れる
           </Button>
 
-          <Box alignSelf="stretch">
+          <VStack alignSelf="stretch" alignItems="stretch">
             <HStack justifyContent="space-between" color="gray.500">
               <Text>発売日</Text>
               <Text>{book.releasedAt ? format(book.releasedAt.toDate(), 'yyyy-MM-dd') : ''}</Text>
             </HStack>
+
+            <Divider />
+
+            <HStack justifyContent="space-between" color="gray.500">
+              <Text>文字量</Text>
+              <Text>{sumBy(chapterSummaries, ({ wardCount }) => wardCount)}</Text>
+            </HStack>
+
+            <Divider />
 
             <HStack justifyContent="space-between" color="gray.500">
               <Text>価格</Text>
@@ -79,7 +88,7 @@ const BookShowPage: VFC<BookShowPageProps> = ({ book, chapterSummaries }) => {
                 {book.price} 円
               </Text>
             </HStack>
-          </Box>
+          </VStack>
         </VStack>
       </Box>
     </HStack>
