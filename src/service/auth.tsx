@@ -6,7 +6,7 @@ import { auth } from '@/firebaseApp'
 import { assertIsDefined } from '@/lib/assert'
 import { useDoc } from '@/lib/firestore'
 import { Admin, adminRef } from '@/model/admin'
-import { UserPrivate, userPrivateRef } from '@/model/userPrivate'
+import { User, userRef } from '@/model/user'
 
 const signIn = ({ email, password }: { email: string; password: string }) => {
   return signInWithEmailAndPassword(auth, email, password)
@@ -18,7 +18,7 @@ export const AuthService = {
 }
 
 // AuthProvider
-type AuthState = { uid?: string; admin?: Admin; userPrivate?: UserPrivate }
+type AuthState = { uid?: string; admin?: Admin; user?: User }
 type AuthValue = AuthState
 
 const AuthContext = createContext<AuthValue | undefined>(undefined)
@@ -32,8 +32,8 @@ export const AuthProvider: VFC<AuthProviderProps> = ({ children }) => {
   const [state, setState] = useState<AuthState>({})
 
   useMount(() => {
-    onAuthStateChanged(auth, (userPrivate) => {
-      const uid = userPrivate?.uid
+    onAuthStateChanged(auth, (user) => {
+      const uid = user?.uid
       setState((prev) => ({ ...prev, uid }))
       if (!uidInitialized) {
         setUidInitialized(true)
@@ -44,22 +44,22 @@ export const AuthProvider: VFC<AuthProviderProps> = ({ children }) => {
   const [admin, adminInitialized] = useDoc(state.uid ? adminRef({ adminId: state.uid }) : null, [
     state.uid,
   ])
-  const [userPrivate, userPrivateInitialized] = useDoc(
-    state.uid ? userPrivateRef({ userId: state.uid }) : null,
-    [state.uid]
-  )
+  const [user, userInitialized] = useDoc(state.uid ? userRef({ userId: state.uid }) : null, [
+    state.uid,
+  ])
 
   useEffect(() => {
     setState((prev) => ({ ...prev, admin }))
   }, [admin])
   useEffect(() => {
-    setState((prev) => ({ ...prev, userPrivate }))
-  }, [userPrivate])
+    setState((prev) => ({ ...prev, user }))
+  }, [user])
+
+  console.log('admin', admin, 'user', user)
 
   return (
     <AuthContext.Provider value={{ ...state }}>
-      {uidInitialized &&
-        (state.uid ? adminInitialized && userPrivateInitialized && children : children)}
+      {uidInitialized && (state.uid ? adminInitialized && userInitialized && children : children)}
     </AuthContext.Provider>
   )
 }

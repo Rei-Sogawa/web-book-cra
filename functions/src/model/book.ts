@@ -1,5 +1,5 @@
-import { db } from "../firebaseApp"
-import { createConvertor, Timestamp, WithId } from "../lib/firestore"
+import { db } from '../firebaseApp'
+import { createConvertor, Timestamp, WithId } from '../lib/firestore'
 
 // schema
 export type BookData = {
@@ -12,6 +12,7 @@ export type BookData = {
   releasedAt: Timestamp | null
   createdAt: Timestamp
   updatedAt: Timestamp
+  purchaserIds: string[]
 }
 
 export type Book = WithId<BookData>
@@ -20,8 +21,8 @@ export type Book = WithId<BookData>
 const bookConvertor = createConvertor<BookData>()
 
 export const booksRef = () => {
-  return db.collection("books").withConverter(bookConvertor)
+  return db.collection('books').withConverter(bookConvertor)
 }
-export const bookRef = ({bookId}:{bookId: string}) => {
+export const bookRef = ({ bookId }: { bookId: string }) => {
   return booksRef().doc(bookId)
 }

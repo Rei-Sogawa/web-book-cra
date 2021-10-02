@@ -1,10 +1,9 @@
-import { SimpleGrid, VStack } from '@chakra-ui/react'
+import { SimpleGrid, Text, VStack } from '@chakra-ui/react'
 import { every } from 'lodash-es'
 import { VFC } from 'react'
 
 import { Book } from '@/model/book'
 import { UserPageLayout } from '@/ui/Layout/UserPageLayout'
-import { BookTab } from '@/ui/Shared/BookTab'
 
 import { BookItem } from './BookItem'
 import { useBooksPageQuery } from './container'
@@ -15,8 +14,10 @@ type BooksPageProps = {
 
 const BooksPage: VFC<BooksPageProps> = ({ books }) => {
   return (
-    <VStack alignItems="start" spacing="8">
-      <BookTab />
+    <VStack alignItems="start" spacing="4">
+      <Text fontWeight="bold" fontSize="2xl">
+        Books
+      </Text>
 
       <SimpleGrid columns={3} spacing="4">
         {books.map((book) => (

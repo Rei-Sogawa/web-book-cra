@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions'
 
 import { adminRef } from './model/admin'
 import { auth } from './firebaseApp'
-import { userPrivateRef } from './model/userPrivate'
+import { userRef } from './model/user'
 import { onWrittenConvertor } from './lib/functions'
 import { chapterSummaryRef } from './model/chapterSummary'
 import { Chapter } from './model/chapter'
@@ -28,7 +28,7 @@ export const signUpUser = functionsWithRegion.https.onCall(
     const { email, password } = data
     try {
       const authUser = await auth.createUser({ email, password })
-      await userPrivateRef({ userId: authUser.uid }).set({ email, cart: [] })
+      await userRef({ userId: authUser.uid }).set({ email, cart: [] })
       return authUser.uid
     } catch {
       throw new functions.https.HttpsError('invalid-argument', '')

@@ -15,9 +15,9 @@ export const User =
   <P extends object>(Component: ComponentType<P>) =>
   (props: P) => {
     const WithStateComponent = () => {
-      const { uid, userPrivate } = useAuth()
+      const { uid, user } = useAuth()
 
-      if (!(uid && userPrivate)) return <Redirect to={routeMap['/sign-in'].path()} />
+      if (!(uid && user)) return <Redirect to={routeMap['/sign-in'].path()} />
       return <Component {...props} />
     }
 
@@ -28,9 +28,9 @@ export const SignIn =
   <P extends object>(Component: ComponentType<P>) =>
   (props: P) => {
     const WithStateComponent = () => {
-      const { uid, userPrivate } = useAuth()
-      console.log(uid, userPrivate)
-      if (uid && userPrivate) return <Redirect to={routeMap['/books'].path()} />
+      const { uid, user } = useAuth()
+      console.log(uid, user)
+      if (uid && user) return <Redirect to={routeMap['/books'].path()} />
       return <Component {...props} />
     }
 

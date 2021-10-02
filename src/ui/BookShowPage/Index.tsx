@@ -8,10 +8,11 @@ import { useMarked } from '@/hooks/useMarked'
 import { numberToTwoDigits } from '@/lib/display'
 import { Book } from '@/model/book'
 import { chapterSummary } from '@/model/chapterSummary'
+import { useAuth } from '@/service/auth'
 import { UserPageLayout } from '@/ui/Layout/UserPageLayout'
 import { BookImage } from '@/ui/Shared/BookImage'
 
-import { useBookShowPageQuery } from './container'
+import { useBookShowPageMutation, useBookShowPageQuery } from './container'
 
 export type BookShowPageProps = {
   book: Book
@@ -19,6 +20,13 @@ export type BookShowPageProps = {
 }
 
 const BookShowPage: VFC<BookShowPageProps> = ({ book, chapterSummaries }) => {
+  // app
+  const { user } = useAuth()
+  console.log(user)
+
+  // container
+  const { addBookToCart } = useBookShowPageMutation(book)
+
   // ui
   const markedDescription = useMarked(book.description)
 
@@ -61,11 +69,24 @@ const BookShowPage: VFC<BookShowPageProps> = ({ book, chapterSummaries }) => {
         </VStack>
       </VStack>
 
-      <Box flexShrink={0} w="60" p="6" borderWidth="3px" borderRadius="md">
+      <Box flexShrink={0} w="60" p="6" borderWidth="1px" borderRadius="md">
         <VStack spacing="8">
-          <Button colorScheme="blue" w="full" leftIcon={<Icon as={BiCart} h="6" w="6" />}>
-            カートへ入れる
-          </Button>
+          {user ? (
+            user.cart.includes(book.id) ? (
+              <Button></Button>
+            ) : (
+              <Button
+                colorScheme="blue"
+                w="full"
+                leftIcon={<Icon as={BiCart} h="6" w="6" />}
+                onClick={addBookToCart}
+              >
+                カートへ入れる
+              </Button>
+            )
+          ) : (
+            <Button></Button>
+          )}
 
           <VStack alignSelf="stretch" alignItems="stretch">
             <HStack justifyContent="space-between" color="gray.500">
