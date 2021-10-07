@@ -73,13 +73,45 @@ const BookShowPage: VFC<BookShowPageProps> = ({ book, chapterSummaries }) => {
       </VStack>
 
       <Box flexShrink={0} w="60" p="6" borderWidth="1px" borderRadius="md">
-        <VStack spacing="8">
-          {user ? (
-            user.cart.includes(book.id) ? (
-              <Button disabled colorScheme="blue" leftIcon={<CheckIcon />}>
-                カートに登録済み
-              </Button>
-            ) : (
+        <VStack spacing="8" alignItems="stretch">
+          {(() => {
+            if (!user) {
+              return (
+                <Button
+                  onClick={() => {
+                    history.push(routeMap['/sign-in'].path())
+                  }}
+                >
+                  サインインして購入する
+                </Button>
+              )
+            }
+
+            if (book.purchaserIds.includes(user.id)) {
+              return (
+                <Button disabled colorScheme="blue" leftIcon={<CheckIcon />}>
+                  購入済み
+                </Button>
+              )
+            }
+
+            if (book.ordererIds.includes(user.id)) {
+              return (
+                <Button disabled colorScheme="blue" leftIcon={<CheckIcon />}>
+                  注文済み
+                </Button>
+              )
+            }
+
+            if (user.cart.includes(book.id)) {
+              return (
+                <Button disabled colorScheme="blue" leftIcon={<CheckIcon />}>
+                  カートに登録済み
+                </Button>
+              )
+            }
+
+            return (
               <Button
                 colorScheme="blue"
                 w="full"
@@ -89,15 +121,7 @@ const BookShowPage: VFC<BookShowPageProps> = ({ book, chapterSummaries }) => {
                 カートに入れる
               </Button>
             )
-          ) : (
-            <Button
-              onClick={() => {
-                history.push(routeMap['/sign-in'].path())
-              }}
-            >
-              サインインして購入する
-            </Button>
-          )}
+          })()}
 
           <VStack alignSelf="stretch" alignItems="stretch">
             <HStack justifyContent="space-between" color="gray.500">

@@ -10,6 +10,9 @@ import AdminSignInPage from '@/ui/AdminSignInPage/Index'
 import AdminSignUpPage from '@/ui/AdminSignUpPage/Index'
 import BookShowPage from '@/ui/BookShowPage/Index'
 import BooksPage from '@/ui/BooksPage/Index'
+import BookViewerPage from '@/ui/BookViewerPage/Index'
+import CartPage from '@/ui/CartPage/Index'
+import MyPage from '@/ui/MyPage/Index'
 import SignInPage from '@/ui/SignInPage/Index'
 import SignUpPage from '@/ui/SignUpPage/Index'
 
@@ -60,6 +63,31 @@ export const routeMap = {
     Component: Public(BookShowPage),
   },
 
+  '/books/:bookId/viewer': {
+    ...basic,
+    path: ({ bookId }: { bookId: string }) => {
+      return generatePath('/books/:bookId/viewer', { bookId })
+    },
+    Component: Public(BookViewerPage),
+    exact: false,
+  },
+
+  '/cart': {
+    ...basic,
+    path: () => {
+      return generatePath('/cart')
+    },
+    Component: Public(CartPage),
+  },
+
+  '/my-page': {
+    ...basic,
+    path: () => {
+      return generatePath('/my-page')
+    },
+    Component: Public(MyPage),
+  },
+
   '/admin/sign-in': {
     ...basic,
     path: () => {
@@ -74,6 +102,14 @@ export const routeMap = {
       return '/admin/sign-up'
     },
     Component: AdminSignIn(AdminSignUpPage),
+  },
+
+  '/admin': {
+    ...basic,
+    path: () => {
+      return '/admin'
+    },
+    Component: Admin(AdminBooksPage),
   },
 
   '/admin/books': {

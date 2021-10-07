@@ -28,6 +28,7 @@ export type BookData = {
   createdAt: Timestamp
   updatedAt: Timestamp
   purchaserIds: string[]
+  ordererIds: string[]
 }
 export type Book = WithId<BookData>
 
@@ -42,6 +43,7 @@ export const getDefaultBookData = (): WithFieldValue<BookData> => ({
   createdAt: serverTimestamp(),
   updatedAt: serverTimestamp(),
   purchaserIds: [],
+  ordererIds: [],
 })
 
 // ref

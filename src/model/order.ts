@@ -45,7 +45,7 @@ export const orderRef = ({ orderId }: { orderId: string }) => {
 }
 
 // mutation
-const orderBooks = async (newOrderData: Pick<OrderData, 'userId' | 'books'>) => {
+const createOrder = async (newOrderData: Pick<OrderData, 'userId' | 'books'>) => {
   await addDoc(ordersRef(), { ...getDefaultOrderData(), ...newOrderData })
 }
 
@@ -64,7 +64,7 @@ const cancelOrder = async (order: Order) => {
 }
 
 export const OrderModel = {
-  orderBooks,
+  createOrder,
   acceptOrder,
   cancelOrder,
 }

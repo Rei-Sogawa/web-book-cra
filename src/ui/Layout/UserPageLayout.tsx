@@ -42,7 +42,12 @@ const Header: VFC = () => {
 
         {user ? (
           <HStack spacing="4">
-            <Button size="sm">
+            <Button
+              size="sm"
+              onClick={() => {
+                history.push(routeMap['/cart'].path())
+              }}
+            >
               <Icon as={BiCart} h="6" w="6" />
               <Text ml="1" fontSize="md" fontWeight="bold">
                 {user.cart.length}
@@ -55,7 +60,13 @@ const Header: VFC = () => {
                   <Avatar size="sm" />
                 </MenuButton>
                 <MenuList>
-                  <MenuItem>マイページ</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      history.push(routeMap['/my-page'].path())
+                    }}
+                  >
+                    マイページ
+                  </MenuItem>
                   <MenuDivider />
                   <MenuItem onClick={() => AuthService.signOut()}>サインアウト</MenuItem>
                 </MenuList>
