@@ -55,8 +55,6 @@ export const AuthProvider: VFC<AuthProviderProps> = ({ children }) => {
     setState((prev) => ({ ...prev, user }))
   }, [user])
 
-  console.log('admin', admin, 'user', user)
-
   return (
     <AuthContext.Provider value={{ ...state }}>
       {uidInitialized && (state.uid ? adminInitialized && userInitialized && children : children)}

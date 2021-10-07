@@ -1,13 +1,16 @@
+import { CheckIcon } from '@chakra-ui/icons'
 import { Box, Button, Divider, HStack, Icon, Text, VStack } from '@chakra-ui/react'
 import { format } from 'date-fns'
 import { every, sumBy } from 'lodash-es'
 import { VFC } from 'react'
 import { BiCart } from 'react-icons/bi'
+import { useHistory } from 'react-router'
 
 import { useMarked } from '@/hooks/useMarked'
 import { numberToTwoDigits } from '@/lib/display'
 import { Book } from '@/model/book'
 import { chapterSummary } from '@/model/chapterSummary'
+import { routeMap } from '@/routes'
 import { useAuth } from '@/service/auth'
 import { UserPageLayout } from '@/ui/Layout/UserPageLayout'
 import { BookImage } from '@/ui/Shared/BookImage'
@@ -21,8 +24,8 @@ export type BookShowPageProps = {
 
 const BookShowPage: VFC<BookShowPageProps> = ({ book, chapterSummaries }) => {
   // app
+  const history = useHistory()
   const { user } = useAuth()
-  console.log(user)
 
   // container
   const { addBookToCart } = useBookShowPageMutation(book)
@@ -73,7 +76,9 @@ const BookShowPage: VFC<BookShowPageProps> = ({ book, chapterSummaries }) => {
         <VStack spacing="8">
           {user ? (
             user.cart.includes(book.id) ? (
-              <Button></Button>
+              <Button disabled colorScheme="blue" leftIcon={<CheckIcon />}>
+                カートに登録済み
+              </Button>
             ) : (
               <Button
                 colorScheme="blue"
@@ -81,11 +86,17 @@ const BookShowPage: VFC<BookShowPageProps> = ({ book, chapterSummaries }) => {
                 leftIcon={<Icon as={BiCart} h="6" w="6" />}
                 onClick={addBookToCart}
               >
-                カートへ入れる
+                カートに入れる
               </Button>
             )
           ) : (
-            <Button></Button>
+            <Button
+              onClick={() => {
+                history.push(routeMap['/sign-in'].path())
+              }}
+            >
+              サインインして購入する
+            </Button>
           )}
 
           <VStack alignSelf="stretch" alignItems="stretch">

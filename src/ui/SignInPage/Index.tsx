@@ -26,9 +26,14 @@ const SignInPage: VFC = () => {
           />
         </Box>
 
-        <AppLink alignSelf="start" color="blue.500" to={routeMap['/sign-up'].path()}>
-          サインアップ画面へ
-        </AppLink>
+        <VStack alignSelf="stretch" alignItems="start" spacing="0">
+          <AppLink alignSelf="start" color="blue.500" to={routeMap['/sign-up'].path()}>
+            サインアップ画面へ
+          </AppLink>
+          <AppLink alignSelf="start" color="blue.500" to={routeMap['/books'].path()}>
+            ホームへ
+          </AppLink>
+        </VStack>
       </VStack>
     </Center>
   )
